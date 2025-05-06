@@ -17,10 +17,23 @@ const Sign = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    // For now, just log the form data
-    console.log('Signup form submitted:', formData);
+    
+    try {
+      const res = await fetch("http://localhost:8888/api/signUp",{
+        method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData),
+        });
+    }
+    catch(e)
+    {
+      console.log("Error in sending data",e)
+    }
+
   };
 
   return (
@@ -59,19 +72,9 @@ const Sign = () => {
           placeholder="Enter your last name"
         />
 
-        <label htmlFor="username" className="block mb-2 font-semibold">
-          Username
-        </label>
-        <input
-          type="text"
-          id="username"
-          name="username"
-          value={formData.username}
-          onChange={handleChange}
-          required
-          className="w-full p-2 mb-4 border border-gray-300 rounded"
-          placeholder="Enter your username"
-        />
+{/* 2. *Username Generation*:
+   - Use email addresses as usernames (most common approach)
+   - Alternatively: firstname.lastname + number if needed */}
 
         <label htmlFor="email" className="block mb-2 font-semibold">
           Email
@@ -85,6 +88,20 @@ const Sign = () => {
           required
           className="w-full p-2 mb-4 border border-gray-300 rounded"
           placeholder="Enter your email"
+        />
+
+        <label htmlFor="username" className="block mb-2 font-semibold">
+          Username
+        </label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          value={formData.username}
+          onChange={handleChange}
+          required
+          className="w-full p-2 mb-4 border border-gray-300 rounded"
+          placeholder="Enter your username"
         />
 
         <label htmlFor="password" className="block mb-2 font-semibold">
