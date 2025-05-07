@@ -8,7 +8,9 @@ router.post("/", async (req, res) => {
     console.log(email, username, password);
     if (email === "admin@gmail.com" && password === "admin" && username === "admin") {
         const token = jwt.sign({ username }, 'your_jwt_secret', { expiresIn: '1h' });
-        return res.status(200).json({ message: "Login successful", token });
+        const isLoggedIn = true;
+        const userType = "admin";
+        return res.status(200).json({ message: "Login successful",loggedIn: isLoggedIn, userType : userType, token });
     } else {
         return res.status(401).json({ message: "Invalid credentials" });
     }

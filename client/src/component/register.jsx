@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Dashboard = () => {
+const Ragister = () => {
   return (
     <div>
       <h1>Dashboard</h1>
@@ -9,4 +9,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default Ragister;
