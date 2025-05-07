@@ -7,6 +7,7 @@ import UserProfile from './component/userProfile.jsx';
 import Register from './component/register.jsx';
 import './App.css';
 import ProtectedRoute from './component/protectedRoute.js';
+import ForgetPassword from './component/forgetPassword.jsx';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("loggedIn") === "true");
@@ -18,16 +19,21 @@ function App() {
       setUserType(localStorage.getItem("userType"));
     };
 
-    // When localStorage changes (from login), update state
     window.addEventListener("storage", handleStorageChange);
-
-    // Run once at mount
     handleStorageChange();
 
     return () => {
       window.removeEventListener("storage", handleStorageChange);
     };
   }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("loggedIn");
+    localStorage.removeItem("userType");
+    localStorage.removeItem("token"); // Remove the JWT token if stored
+    setIsLoggedIn(false);
+    setUserType(null);
+  };
 
   return (
     <Router>
@@ -49,20 +55,20 @@ function App() {
           <>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgetPassword" element={ <ForgetPassword/>} />
           </>
         )}
 
         {/* Protected routes */}
         <Route element={<ProtectedRoute isLoggedIn={isLoggedIn} />}>
           <Route path="/sign" element={userType === "admin" ? <Sign /> : <Navigate to="/" />} />
-          <Route path="/dashboard" element={userType === "admin" ? <Dashboard /> : <Navigate to="/" />} />
-          <Route path="/userProfile" element={<UserProfile />} />
+          <Route path="/dashboard" element={userType === "admin" ? <Dashboard onLogout={handleLogout} /> : <Navigate to="/" />} />
+          <Route path="/userProfile" element={<UserProfile onLogout={handleLogout} />} />
         </Route>
 
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
-
     </Router>
   );
 }
