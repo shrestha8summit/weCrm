@@ -8,6 +8,7 @@ import Register from './component/register.jsx';
 import './App.css';
 import ProtectedRoute from './component/protectedRoute.js';
 import ForgetPassword from './component/forgetPassword.jsx';
+import OTPPage from './component/Otp.jsx';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("loggedIn") === "true");
@@ -56,6 +57,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgetPassword" element={ <ForgetPassword/>} />
+            <Route path="/otp" element={ <OTPPage/>} />
           </>
         )}
 
@@ -64,6 +66,7 @@ function App() {
           <Route path="/sign" element={userType === "admin" ? <Sign /> : <Navigate to="/" />} />
           <Route path="/dashboard" element={userType === "admin" ? <Dashboard onLogout={handleLogout} /> : <Navigate to="/" />} />
           <Route path="/userProfile" element={<UserProfile onLogout={handleLogout} />} />
+          
         </Route>
 
         {/* Fallback */}
