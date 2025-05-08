@@ -56,82 +56,49 @@ const Login = () => {
   
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.title}>Login</h2>
-      <form onSubmit={handleSubmit} style={styles.form}>
-        <input 
-          type="email" 
-          name="email" 
-          placeholder="Email" 
-          onChange={handleChange} 
-          required 
-          style={styles.input} 
-        />
-        <input 
-          type="text" 
-          name="username" 
-          placeholder="Username" 
-          onChange={handleChange} 
-          required 
-          style={styles.input} 
-        />
-        <input 
-          type="password" 
-          name="password" 
-          placeholder="Password" 
-          onChange={handleChange} 
-          required 
-          style={styles.input} 
-        />
+    <div className="flex flex-col items-center justify-center h-screen bg-gray-100 p-5 rounded-lg shadow-md">
+    <h2 className="mb-5 text-2xl text-gray-800">Login</h2>
+    <form onSubmit={handleSubmit} className="flex flex-col w-72">
+      <input
+        type="email"
+        name="email"
+        placeholder="Email"
+        onChange={handleChange}
+        required
+        className="mb-4 p-2.5 rounded border border-gray-300 text-base"
+      />
+      <input
+        type="text"
+        name="username"
+        placeholder="Username"
+        onChange={handleChange}
+        required
+        className="mb-4 p-2.5 rounded border border-gray-300 text-base"
+      />
+      <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        onChange={handleChange}
+        required
+        className="mb-4 p-2.5 rounded border border-gray-300 text-base"
+      />
 
-          <p><a href="/forgetPassword">Forget password</a></p> <br />
+      <p className="mb-4">
+        <a href="/forgetPassword" className="text-blue-600 hover:text-blue-800">
+          Forget password
+        </a>
+      </p>
 
-        <button type="submit" style={styles.button}>Login</button>
-
-      </form>
-    </div>
+      <button
+        type="submit"
+        className="p-2.5 rounded bg-blue-600 text-white text-base cursor-pointer hover:bg-blue-700 transition-colors"
+      >
+        Login
+      </button>
+    </form>
+  </div>
   );
-};
-
-const styles = {
-  container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '100vh',
-    backgroundColor: '#f4f4f4',
-    padding: '20px',
-    borderRadius: '8px',
-    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-  },
-  title: {
-    marginBottom: '20px',
-    fontSize: '24px',
-    color: '#333',
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-    width: '300px',
-  },
-  input: {
-    marginBottom: '15px',
-    padding: '10px',
-    borderRadius: '4px',
-    border: '1px solid #ccc',
-    fontSize: '16px',
-  },
-  button: {
-    padding: '10px',
-    borderRadius: '4px',
-    border: 'none',
-    backgroundColor: '#007bff',
-    color: '#fff',
-    fontSize: '16px',
-    cursor: 'pointer',
-    transition: 'background-color 0.3s',
-  },
 };
 
 export default Login;
