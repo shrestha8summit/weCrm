@@ -83,7 +83,11 @@ const Login = () => {
           required 
           style={styles.input} 
         />
+
+          <p><a href="/forgetPassword">Forget password</a></p> <br />
+
         <button type="submit" style={styles.button}>Login</button>
+
       </form>
     </div>
   );
