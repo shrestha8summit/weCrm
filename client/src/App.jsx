@@ -52,7 +52,7 @@ function App() {
         />
 
         {/* Public routes */}
-        {!isLoggedIn && (
+        {!isLoggedIn && ( 
           <>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Sign />} />
