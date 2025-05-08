@@ -55,7 +55,7 @@ function App() {
         {!isLoggedIn && (
           <>
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/register" element={<Sign />} />
             <Route path="/forgetPassword" element={ <ForgetPassword/>} />
             <Route path="/otp" element={ <OTPPage/>} />
           </>
