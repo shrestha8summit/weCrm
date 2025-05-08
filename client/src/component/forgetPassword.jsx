@@ -16,7 +16,7 @@ const ForgetPassword = () => {
     }
 
     try {
-      const response = await fetch("/forgotPassword", {
+      const response = await fetch("http://localhost:8888/api/verify1", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -83,7 +83,7 @@ const ForgetPassword = () => {
               cursor: "pointer"
             }}
           >
-            Send Reset Link
+            Send otp
           </button>
         </form>
         {message && <p style={{ color: "green", marginTop: "10px" }}>{message}</p>}
