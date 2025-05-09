@@ -56,10 +56,7 @@ const Login = () => {
   
 
   return (
-<<<<<<< HEAD
-    <>
-=======
->>>>>>> newriyabranch
+<>
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100 p-5 rounded-lg shadow-md">
     <h2 className="mb-5 text-2xl text-gray-800">Login</h2>
     <form onSubmit={handleSubmit} className="flex flex-col w-72">
@@ -102,15 +99,9 @@ const Login = () => {
       </button>
     </form>
   </div>
-<<<<<<< HEAD
   </>
   );
 };
 
 
-=======
-  );
-};
-
->>>>>>> newriyabranch
 export default Login;
