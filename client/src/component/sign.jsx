@@ -7,7 +7,11 @@ const Sign = () => {
     username: '',
     email: '',
     password: '',
+<<<<<<< HEAD
      role: 'user',
+=======
+    role: 'user',
+>>>>>>> newriyabranch
   });
 
   const handleChange = (e) => {
@@ -119,6 +123,10 @@ const Sign = () => {
   </div>
 </div>
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> newriyabranch
         <label htmlFor="username" className="block mb-2 font-semibold">
           Username
         </label>
