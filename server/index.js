@@ -3,7 +3,8 @@ import "dotenv/config"
 import cors from "cors"
 import signUp from "./api/signUp.api.js"
 import logIn from "./api/logIn.api.js"
-import verify1 from "./api/verify1.api.js"
+import checkingOTP from "./api/checkingOTP.js"
+import connectDB from "./prisma/dbConnect.js"
 
 const app = express()
 app.use(express.json())
@@ -13,9 +14,11 @@ app.use(cors({
 
 const port = process.env.PORT || 3333;
 
+connectDB()
+
 app.use("/api/signUp",signUp)
 app.use("/api/logIn",logIn)
-app.use("/api/verify1",verify1);
+app.use("/api/checkingOTP",checkingOTP);
 app.get("/",(req,res)=>{
     res.send("Welcome to index page")
 })

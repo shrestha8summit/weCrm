@@ -1,4 +1,3 @@
-// OTPPage.jsx
 import { useState } from 'react';
 
 const OTPPage = () => {
@@ -11,34 +10,48 @@ const OTPPage = () => {
       const newOtp = [...otp];
       newOtp[index] = value;
       setOtp(newOtp);
-
-      // Auto focus to next input
       if (value && index < 3) {
         document.getElementById(`otp-${index + 1}`).focus();
       }
     }
   };
 
-  const handleSubmit = (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
 
-    // Simulate API call
-    setTimeout(() => {
-      const enteredOtp = otp.join('');
-      if (enteredOtp.length === 4 && enteredOtp === '1234') { // Example valid OTP
-        alert('OTP verified successfully! Redirecting to password reset...');
-        // Here you would typically redirect to password reset page
-      } else {
-        setError('Invalid OTP. Please try again.');
-      }
-      setIsLoading(false);
-    }, 1000);
-  };
+    try {
+        const enteredOtp = otp.join('');
+        console.log("Entered OTP:", enteredOtp);
+
+        if (enteredOtp.length === 4) {
+            const res = await fetch("http://localhost:8888/api/checkingOTP", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ otp: enteredOtp }) 
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.message || "Something went wrong");
+            }
+            alert('OTP verified successfully! Redirecting to password reset...');
+        } else {
+            setError('Invalid OTP length. Please enter a 4-digit OTP.');
+        }
+
+    } catch (e) {
+        console.error("Error while verifying OTP:", e);
+        setError(e.message || 'An error occurred while verifying the OTP. Please try again.');
+    } finally {
+        setIsLoading(false); 
+    }
+}
 
   const handleResendOtp = () => {
-    // Simulate resend OTP
     alert('New OTP has been sent to your email/phone');
   };
 

@@ -2,7 +2,6 @@ import express from "express"
 import nodemailer from "nodemailer"
 
 export function mailer(mailling, otp) {
-    console.log(mailling, otp);
     console.log(process.env.EMAIL,process.env.PASSWORD)
     const transporter = nodemailer.createTransport({
         service: 'gmail',

@@ -31,7 +31,7 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem("loggedIn");
     localStorage.removeItem("userType");
-    localStorage.removeItem("token"); // Remove the JWT token if stored
+    localStorage.removeItem("token"); 
     setIsLoggedIn(false);
     setUserType(null);
   };
@@ -51,7 +51,6 @@ function App() {
           }
         />
 
-        {/* Public routes */}
         {!isLoggedIn && ( 
           <>
             <Route path="/login" element={<Login />} />
@@ -61,7 +60,6 @@ function App() {
           </>
         )}
 
-        {/* Protected routes */}
         <Route element={<ProtectedRoute isLoggedIn={isLoggedIn} />}>
           <Route path="/sign" element={userType === "admin" ? <Sign /> : <Navigate to="/" />} />
           <Route path="/dashboard" element={userType === "admin" ? <Dashboard onLogout={handleLogout} /> : <Navigate to="/" />} />
