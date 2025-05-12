@@ -10,28 +10,46 @@ const OTPPage = () => {
       const newOtp = [...otp];
       newOtp[index] = value;
       setOtp(newOtp);
-
       if (value && index < 3) {
         document.getElementById(`otp-${index + 1}`).focus();
       }
     }
   };
 
-  const handleSubmit = (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setError('');
 
-    setTimeout(() => {
-      const enteredOtp = otp.join('');
-      if (enteredOtp.length === 4 && enteredOtp === '1234') { 
-        alert('OTP verified successfully! Redirecting to password reset...');
-      } else {
-        setError('Invalid OTP. Please try again.');
-      }
-      setIsLoading(false);
-    }, 1000);
-  };
+    try {
+        const enteredOtp = otp.join('');
+        console.log("Entered OTP:", enteredOtp);
+
+        if (enteredOtp.length === 4) {
+            const res = await fetch("http://localhost:8888/api/checkingOTP", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ otp: enteredOtp }) 
+            });
+
+            if (!res.ok) {
+                const errorData = await res.json();
+                throw new Error(errorData.message || "Something went wrong");
+            }
+            alert('OTP verified successfully! Redirecting to password reset...');
+        } else {
+            setError('Invalid OTP length. Please enter a 4-digit OTP.');
+        }
+
+    } catch (e) {
+        console.error("Error while verifying OTP:", e);
+        setError(e.message || 'An error occurred while verifying the OTP. Please try again.');
+    } finally {
+        setIsLoading(false); 
+    }
+}
 
   const handleResendOtp = () => {
     alert('New OTP has been sent to your email/phone');
@@ -77,7 +95,7 @@ const OTPPage = () => {
               <button
                 type="submit"
                 disabled={isLoading || otp.join('').length !== 4}
-                className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#ff8633]  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+                className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
                   (isLoading || otp.join('').length !== 4) ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >
@@ -99,7 +117,7 @@ const OTPPage = () => {
               Didn't receive the OTP?{' '}
               <button
                 onClick={handleResendOtp}
-                className="font-medium text-[#ff8633]focus:outline-none"
+                className="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none"
               >
                 Resend OTP
               </button>
