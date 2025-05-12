@@ -18,48 +18,48 @@ const Login = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await fetch("http://localhost:8888/api/logIn", {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      });
-  
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || 'Login failed');
-      }
-  
-      const data = await res.json();
-      console.log(data);
-  
-      if (data.token) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('loggedIn', true);
-        localStorage.setItem('userType', data.userType); // Assuming userType is returned from the server
-      }
-  
-      // Redirect based on user type
-      if (data.userType === 'admin') {
-        navigate('/dashboard'); // Redirect admin to dashboard
-      } else {
-        navigate('/userProfile'); // Redirect regular user to user profile
-      }
-    } catch (e) {
-      console.error("Error while logging in:", e);
-      alert(e.message);
+  e.preventDefault();
+  try {
+    const res = await fetch("http://localhost:8888/api/logIn", {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        email: formData.email,
+        username: formData.username, 
+        password: formData.password
+      })
+    });
+
+    const data = await res.json();
+    
+    if (!res.ok) {
+      throw new Error(data.message || 'Login failed');
     }
-  };
-  
+
+    console.log("Login success:", data);
+    
+    if (data.token) {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('loggedIn', true);
+      const userType = data.userType || data.user?.role;
+      localStorage.setItem('userType', userType);
+      
+      if (userType === 'admin') {
+        navigate('/dashboard'); 
+      } else {
+        navigate('/userProfile');
+      }
+    }
+  } catch (error) {
+    console.error("Login error:", error);
+    alert(error.message || "Login failed. Please check your credentials.");
+  }
+};
 
   return (
-<<<<<<< HEAD
     <>
-=======
->>>>>>> newriyabranch
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100 p-5 rounded-lg shadow-md">
     <h2 className="mb-5 text-2xl text-gray-800">Login</h2>
     <form onSubmit={handleSubmit} className="flex flex-col w-72">
@@ -102,15 +102,9 @@ const Login = () => {
       </button>
     </form>
   </div>
-<<<<<<< HEAD
   </>
   );
 };
 
 
-=======
-  );
-};
-
->>>>>>> newriyabranch
 export default Login;

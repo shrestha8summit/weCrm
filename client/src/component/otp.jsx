@@ -1,4 +1,3 @@
-// OTPPage.jsx
 import { useState } from 'react';
 
 const OTPPage = () => {
@@ -12,7 +11,6 @@ const OTPPage = () => {
       newOtp[index] = value;
       setOtp(newOtp);
 
-      // Auto focus to next input
       if (value && index < 3) {
         document.getElementById(`otp-${index + 1}`).focus();
       }
@@ -24,12 +22,10 @@ const OTPPage = () => {
     setIsLoading(true);
     setError('');
 
-    // Simulate API call
     setTimeout(() => {
       const enteredOtp = otp.join('');
-      if (enteredOtp.length === 4 && enteredOtp === '1234') { // Example valid OTP
+      if (enteredOtp.length === 4 && enteredOtp === '1234') { 
         alert('OTP verified successfully! Redirecting to password reset...');
-        // Here you would typically redirect to password reset page
       } else {
         setError('Invalid OTP. Please try again.');
       }
@@ -38,7 +34,6 @@ const OTPPage = () => {
   };
 
   const handleResendOtp = () => {
-    // Simulate resend OTP
     alert('New OTP has been sent to your email/phone');
   };
 
