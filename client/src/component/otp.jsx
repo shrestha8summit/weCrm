@@ -77,7 +77,7 @@ const OTPPage = () => {
               <button
                 type="submit"
                 disabled={isLoading || otp.join('').length !== 4}
-                className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
+                className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#ff8633]  focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
                   (isLoading || otp.join('').length !== 4) ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >
@@ -99,7 +99,7 @@ const OTPPage = () => {
               Didn't receive the OTP?{' '}
               <button
                 onClick={handleResendOtp}
-                className="font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none"
+                className="font-medium text-[#ff8633]focus:outline-none"
               >
                 Resend OTP
               </button>
