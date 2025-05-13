@@ -6,7 +6,7 @@ const Dashboard = ({ onLogout }) => {
       const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate('/register'); // Navigates to the sign.jsx route
+    navigate('/sign'); // Navigates to the sign.jsx route
   };
 
    const showAllUsers = () => {
