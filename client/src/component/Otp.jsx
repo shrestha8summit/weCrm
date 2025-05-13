@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 const OTPPage = () => {
-  const [otp, setOtp] = useState(['', '', '', '']);
+  const [otp, setOtp] = useState(['', '', '', '','','']);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -10,7 +10,7 @@ const OTPPage = () => {
       const newOtp = [...otp];
       newOtp[index] = value;
       setOtp(newOtp);
-      if (value && index < 3) {
+      if (value && index < 5) {
         document.getElementById(`otp-${index + 1}`).focus();
       }
     }
@@ -40,7 +40,7 @@ const handleSubmit = async (e) => {
             }
             alert('OTP verified successfully! Redirecting to password reset...');
         } else {
-            setError('Invalid OTP length. Please enter a 4-digit OTP.');
+            setError('Invalid OTP length. Please enter a 6-digit OTP.');
         }
 
     } catch (e) {
@@ -62,7 +62,7 @@ const handleSubmit = async (e) => {
           Verify Your Identity
         </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
-          We've sent a 4-digit OTP to your registered email/phone
+          We've sent a 6-digit OTP to your registered email/phone
         </p>
       </div>
 
@@ -94,9 +94,9 @@ const handleSubmit = async (e) => {
             <div>
               <button
                 type="submit"
-                disabled={isLoading || otp.join('').length !== 4}
+                disabled={isLoading || otp.join('').length !== 6}
                 className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 ${
-                  (isLoading || otp.join('').length !== 4) ? 'opacity-50 cursor-not-allowed' : ''
+                  (isLoading || otp.join('').length !== 6) ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >
                 {isLoading ? (

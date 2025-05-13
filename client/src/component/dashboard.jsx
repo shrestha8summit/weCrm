@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 const Dashboard = ({ onLogout }) => {
 
-      const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleClick = () => {
     navigate('/register'); // Navigates to the sign.jsx route
