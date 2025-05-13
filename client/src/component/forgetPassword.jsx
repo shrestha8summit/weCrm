@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 const ForgetPassword = () => {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+ const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,6 +35,8 @@ const ForgetPassword = () => {
     } catch (err) {
       setError("An error occurred. Please try again later.");
     }
+
+    navigate('/otp');
   };
 
   return (
