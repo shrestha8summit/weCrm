@@ -5,6 +5,7 @@ import signUp from "./api/signUp.api.js"
 import logIn from "./api/logIn.api.js"
 import checkingOTP from "./api/checkingOTP.js"
 import connectDB from "./prisma/dbConnect.js"
+import { upload } from "./utilis/fileUpload.js";  
 
 const app = express()
 app.use(express.json())

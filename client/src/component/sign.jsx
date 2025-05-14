@@ -33,7 +33,7 @@ const Sign = () => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file && file.size > 2 * 1024 * 1024) { // 2MB limit
+    if (file && file.size > 2 * 1024 * 1024) { 
       toast.warning('Image size should be less than 2MB');
       return;
     }
@@ -41,7 +41,6 @@ const Sign = () => {
     if (file) {
       setFormData(prev => ({ ...prev, profilePhoto: file }));
       
-      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewImage(reader.result);
@@ -50,58 +49,47 @@ const Sign = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    
-    try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsSubmitting(true);
 
-      const formDataToSend = new FormData();
-      for (const key in formData) {
-        if (formData[key] !== null) {
-          formDataToSend.append(key, formData[key]);
-        }
+  try {
+    const formDataToSend = new FormData();
+
+    // Append all non-file fields
+    Object.entries(formData).forEach(([key, value]) => {
+      if (key !== 'profilePhoto' && value !== null && value !== undefined) {
+        formDataToSend.append(key, value);
       }
+    });
 
-      const res = await fetch("http://localhost:8888/api/signUp", {
-        method: 'POST',
-        body: formDataToSend,
-        signal: controller.signal
-      });
-
-      clearTimeout(timeoutId);
-
-      if (res.ok) {
-        toast.success('Account created successfully!', {
-          position: "top-center",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
-        
-        setTimeout(() => {
-          navigate('/dashboard', { replace: true });
-        }, 2000);
-      } else {
-        const errorData = await res.json();
-        throw new Error(errorData.message || 'Registration failed');
-      }
-    } catch (e) {
-      console.error("Error in sending data", e);
-      toast.error(e.name === 'AbortError' 
-        ? 'Request timed out. Please try again.' 
-        : e.message || 'An error occurred. Please try again.', {
-        position: "top-center"
-      });
-    } finally {
-      setIsSubmitting(false);
+    // Append the file once
+    if (formData.profilePhoto) {
+      formDataToSend.append('profilePhoto', formData.profilePhoto);
     }
-  };
+
+    const res = await fetch("http://localhost:8888/api/signUp", {
+      method: 'POST',
+      body: formDataToSend,
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data.message || "Registration failed.");
+    }
+
+    toast.success("Account created successfully!");
+    setTimeout(() => navigate("/dashboard"), 2000);
+
+  } catch (e) {
+    console.error("Registration error:", e);
+    toast.error(e.message || "Registration failed. Please try again.");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   return (
     <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-gray-50 to-gray-100">
@@ -110,7 +98,6 @@ const Sign = () => {
           <div className="animate-pulse">
             <div className="h-8 bg-gray-200 rounded w-3/4 mb-6 mx-auto"></div>
             <div className="h-4 bg-gray-200 rounded w-1/2 mb-8 mx-auto"></div>
-            {/* More skeleton loaders */}
           </div>
         </div>
       }>

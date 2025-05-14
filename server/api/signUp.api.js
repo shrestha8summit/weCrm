@@ -1,25 +1,24 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import prisma from "../prisma/prismaClient.js";
+import { upload } from "../utilis/fileUpload.js";
+import path from 'path';
 
 const router = express.Router();
-router.use(express.json());
 
-router.post("/", async (req, res) => {
+router.post("/", upload.single('profilePhoto'), async (req, res) => {
   try {
-    const data = req.body;
-    console.log(data)
-    const { firstName, lastName, username, email, password, role } = req.body;
+    const { firstName, lastName, username, email, password, phone, role } = req.body;
 
-    if (!firstName || !lastName || !username || !email || !password || !role) {
+    if (!firstName || !lastName || !username || !email || !password || !phone || !role) {
       return res.status(400).json({ 
         message: "All fields are required.",
-        requiredFields: ["firstName", "lastName", "username", "email", "password", "role"]
+        requiredFields: ["firstName", "lastName", "username", "email", "password", "phone", "role"]
       });
     }
 
-   if (!email.includes('@') || !email.includes('.')) {
-        return res.status(400).json({ message: "Invalid email format." });
+    if (!email.includes('@') || !email.includes('.')) {
+      return res.status(400).json({ message: "Invalid email format." });
     }
     if (password.length < 8) {
       return res.status(400).json({ message: "Password must be at least 8 characters long." });
@@ -37,22 +36,31 @@ router.post("/", async (req, res) => {
     if (existingUser) {
       return res.status(409).json({ 
         message: "User already exists",
-        conflict: existingUser.username === username ? "username" : "email"
+        conflict: existingUser.username === username ? "username" 
+                 : existingUser.email === email ? "email" 
+                 : "phone"
       });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-   const user = await prisma.user.create({
-    data: {
-        firstName,
-        lastName,
-        username,
-        email,
-        hashedPassword,
-        role,
-        userType: req.body.userType || undefined 
+    const userData = {
+      firstName,
+      lastName,
+      username,
+      email,
+      hashedPassword,
+      phoneNumber: phone,
+      role
+    };
+
+    if (req.file) {
+      const relativePath = path.join('uploads/profile', path.basename(req.file.path));
+      userData.photo = relativePath;
     }
+
+    const user = await prisma.user.create({
+      data: userData
     });
 
     return res.status(201).json({
@@ -62,6 +70,7 @@ router.post("/", async (req, res) => {
         username: user.username,
         email: user.email,
         role: user.role,
+        photo: user.photo, 
         createdAt: user.createdAt
       }
     });
