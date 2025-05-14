@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 const AllUsers = () => {
   const navigate = useNavigate();
 
-  // Dummy user data
   const users = [
     {
       id: 1,
@@ -72,7 +71,7 @@ const AllUsers = () => {
   ];
 
   const handleAddUser = () => {
-    navigate('/register');
+    navigate('/sign');
   };
 
   const handleEditUser = (userId) => {
