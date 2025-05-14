@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 
 const Login = () => {
+    const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     username: '',
@@ -47,9 +49,11 @@ const Login = () => {
       localStorage.setItem('userType', userType);
       
       if (userType === 'admin') {
-        navigate('/dashboard'); 
+        navigate('/dashboard');
+        window.location.reload(); 
       } else {
         navigate('/userProfile');
+        window.location.reload(); 
       }
     }
   } catch (error) {
@@ -79,24 +83,40 @@ const Login = () => {
         required
         className="mb-4 p-2.5 rounded border border-gray-300 text-base"
       />
-      <input
-        type="password"
-        name="password"
-        placeholder="Password"
-        onChange={handleChange}
-        required
-        className="mb-4 p-2.5 rounded border border-gray-300 text-base"
-      />
+      <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  placeholder="••••••••"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all pr-12"
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
+              </div>
+           
 
-      <p className="mb-4">
-        <a href="/forgetPassword" className="text-blue-600 hover:text-blue-800">
+      <p className="mb-4 mt-4">
+        <a href="/forgetPassword" className="text-[#ff8633] hover:text-blue-800">
           Forget password
         </a>
       </p>
 
       <button
         type="submit"
-        className="p-2.5 rounded bg-blue-600 text-white text-base cursor-pointer hover:bg-blue-700 transition-colors"
+        className="p-2.5 rounded-xl bg-[#ff8633] text-white text-base cursor-pointer hover:bg-blue-700 transition-colors"
       >
         Login
       </button>
