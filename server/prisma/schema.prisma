@@ -20,8 +20,10 @@ model User {
   username       String   @unique
   email          String   @unique
   hashedPassword String
+  phoneNumber    String?
   role           String
   userType       String?
+  photo          String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
