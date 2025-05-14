@@ -1,5 +1,8 @@
-import { useState } from 'react';
-import { Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { useState, lazy, Suspense } from 'react';
+const Eye = lazy(() => import('lucide-react').then(module => ({ default: module.Eye })));
+const EyeOff = lazy(() => import('lucide-react').then(module => ({ default: module.EyeOff })));
+const Loader2 = lazy(() => import('lucide-react').then(module => ({ default: module.Loader2 })));
+const Lock = lazy(() => import('lucide-react').then(module => ({ default: module.Lock })));
 
 const UpdatePassword = () => {
   const [currentPassword, setCurrentPassword] = useState('');
@@ -45,7 +48,9 @@ const UpdatePassword = () => {
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
           <div className="w-12 h-12 rounded-full bg-[#ff8633] flex items-center justify-center">
-            <Lock className="h-6 w-6 text-white" />
+            <Suspense fallback={<div className="h-6 w-6" />}>
+              <Lock className="h-6 w-6 text-white" />
+            </Suspense>
           </div>
         </div>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
@@ -82,14 +87,14 @@ const UpdatePassword = () => {
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                   <button
                     type="button"
+                    aria-label={showCurrentPassword ? "Hide password" : "Show password"}
                     className="text-gray-400 hover:text-gray-500 focus:outline-none"
                     onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    tabIndex="-1"
                   >
-                    {showCurrentPassword ? (
-                      <EyeOff className="h-5 w-5" />
-                    ) : (
-                      <Eye className="h-5 w-5" />
-                    )}
+                    <Suspense fallback={<div className="h-5 w-5" />}>
+                      {showCurrentPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </Suspense>
                   </button>
                 </div>
               </div>
@@ -115,14 +120,14 @@ const UpdatePassword = () => {
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                   <button
                     type="button"
+                    aria-label={showNewPassword ? "Hide password" : "Show password"}
                     className="text-gray-400 hover:text-gray-500 focus:outline-none"
                     onClick={() => setShowNewPassword(!showNewPassword)}
+                    tabIndex="-1"
                   >
-                    {showNewPassword ? (
-                      <EyeOff className="h-5 w-5" />
-                    ) : (
-                      <Eye className="h-5 w-5" />
-                    )}
+                    <Suspense fallback={<div className="h-5 w-5" />}>
+                      {showNewPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </Suspense>
                   </button>
                 </div>
               </div>
@@ -151,14 +156,14 @@ const UpdatePassword = () => {
                 <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                   <button
                     type="button"
+                    aria-label={showConfirmPassword ? "Hide password" : "Show password"}
                     className="text-gray-400 hover:text-gray-500 focus:outline-none"
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    tabIndex="-1"
                   >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-5 w-5" />
-                    ) : (
-                      <Eye className="h-5 w-5" />
-                    )}
+                    <Suspense fallback={<div className="h-5 w-5" />}>
+                      {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    </Suspense>
                   </button>
                 </div>
               </div>
@@ -175,7 +180,9 @@ const UpdatePassword = () => {
               >
                 {isSubmitting ? (
                   <>
-                    <Loader2 className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
+                    <Suspense fallback={<div className="h-5 w-5" />}>
+                      <Loader2 className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" />
+                    </Suspense>
                     Updating...
                   </>
                 ) : 'Update Password'}
