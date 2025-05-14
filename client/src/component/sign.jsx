@@ -6,7 +6,7 @@ import { Eye, EyeOff } from 'lucide-react';
 
 const Sign = () => {
   const navigate = useNavigate();
-      const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -69,7 +69,7 @@ const Sign = () => {
         
         // Navigate to admin dashboard after a delay
         setTimeout(() => {
-          navigate('/admin/dashboard');
+          navigate('/dashboard');
         }, 2000);
       } else {
         const errorData = await res.json();
@@ -237,6 +237,9 @@ const Sign = () => {
         </div>
 
       <div className="relative mb-4">
+          <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
+            Password
+          </label>
                       <input
                         type={showPassword ? "text" : "password"}
                         id="password"
