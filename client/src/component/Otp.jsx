@@ -25,7 +25,7 @@ const handleSubmit = async (e) => {
         const enteredOtp = otp.join('');
         console.log("Entered OTP:", enteredOtp);
 
-        if (enteredOtp.length === 4) {
+        if (enteredOtp.length === 6) {
             const res = await fetch("http://localhost:8888/api/checkingOTP", {
                 method: "POST",
                 headers: {
