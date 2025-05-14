@@ -215,8 +215,13 @@ const Login = () => {
         const userType = data.userType || data.user?.role;
         localStorage.setItem('userType', userType);
         
-        // Use replace instead of navigate to prevent adding to history
-        navigate(userType === 'admin' ? '/dashboard' : '/userProfile', { replace: true });
+  if (userType === 'admin') {
+  navigate('/dashboard', { replace: true });
+  window.location.reload();
+} else {
+  navigate('/userProfile', { replace: true });
+  window.location.reload();
+}
       }
     } catch (error) {
       console.error("Login error:", error);
