@@ -39,7 +39,7 @@ const ForgetPassword = () => {
       if (response.ok) {
         const data = await response.json();
         setMessage(data.message || "Password reset instructions sent to your email.");
-        // Navigate after a small delay to show success message
+        localStorage.setItem("resetingPass", email);
         setTimeout(() => navigate('/otp'), 1500);
       } else {
         const errorData = await response.json();
