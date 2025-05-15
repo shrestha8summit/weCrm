@@ -1,4 +1,6 @@
 import { useState, lazy, Suspense } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 
 const Eye = lazy(() => import('lucide-react').then(module => ({ default: module.Eye })));
 const EyeOff = lazy(() => import('lucide-react').then(module => ({ default: module.EyeOff })));
@@ -6,6 +8,8 @@ const Loader2 = lazy(() => import('lucide-react').then(module => ({ default: mod
 const Lock = lazy(() => import('lucide-react').then(module => ({ default: module.Lock })));
 
 const UpdatePassword = () => {
+  const navigate = useNavigate();
+  const email = localStorage.getItem("resetingPass")
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -27,6 +31,7 @@ const UpdatePassword = () => {
   };
 
   const handleSubmit = async (e) => {
+    console.log("restting emails password:",email)
     e.preventDefault();
     
     if (validateForm()) {
@@ -39,6 +44,7 @@ const UpdatePassword = () => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
+            email,
             newPassword: newPassword,
             confirmPassword: confirmPassword,
           }),
@@ -52,6 +58,7 @@ const UpdatePassword = () => {
         setSuccessMessage('Password updated successfully!');
         setNewPassword('');
         setConfirmPassword('');
+        navigate("/login")
       } catch (err) {
         setErrorMessage(err.message);
       } finally {
