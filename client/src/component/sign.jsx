@@ -56,15 +56,13 @@ const handleSubmit = async (e) => {
   try {
     const formDataToSend = new FormData();
 
-    // Append all non-file fields
-    Object.entries(formData).forEach(([key, value]) => {
-      if (key !== 'profilePhoto' && value !== null && value !== undefined) {
+    for (const [key, value] of Object.entries(formData)) {
+      if (key !== 'profilePhoto' && value != null) {
         formDataToSend.append(key, value);
       }
-    });
+    }
 
-    // Append the file once
-    if (formData.profilePhoto) {
+    if (formData.profilePhoto instanceof File) {
       formDataToSend.append('profilePhoto', formData.profilePhoto);
     }
 
@@ -73,12 +71,18 @@ const handleSubmit = async (e) => {
       body: formDataToSend,
     });
 
-    const data = await res.json();
-
     if (!res.ok) {
-      throw new Error(data.message || "Registration failed.");
+      const errorText = await res.text();
+      let errorData;
+      try {
+        errorData = JSON.parse(errorText);
+      } catch {
+        throw new Error(errorText || "Registration failed");
+      }
+      throw new Error(errorData.message || "Registration failed");
     }
 
+    const data = await res.json();
     toast.success("Account created successfully!");
     setTimeout(() => navigate("/dashboard"), 2000);
 
@@ -89,7 +93,6 @@ const handleSubmit = async (e) => {
     setIsSubmitting(false);
   }
 };
-
 
   return (
     <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-gray-50 to-gray-100">

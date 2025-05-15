@@ -1,12 +1,12 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import prisma from "../prisma/prismaClient.js";
-import { upload } from "../utilis/fileUpload.js";
+import { upload, uploadToCloudinary } from "../utilis/fileUpload.js";
 import path from 'path';
 
 const router = express.Router();
 
-router.post("/", upload.single('profilePhoto'), async (req, res) => {
+router.post("/", upload.single('profilePhoto'),  uploadToCloudinary, async (req, res) => {
   try {
     const { firstName, lastName, username, email, password, phone, role } = req.body;
 
@@ -51,19 +51,15 @@ router.post("/", upload.single('profilePhoto'), async (req, res) => {
       email,
       hashedPassword,
       phoneNumber: phone,
-      role
+      role,
+      photo: req.cloudinaryUrl || null
     };
-
-    if (req.file) {
-      const relativePath = path.join('uploads/profile', path.basename(req.file.path));
-      userData.photo = relativePath;
-    }
 
     const user = await prisma.user.create({
       data: userData
     });
 
-    return res.status(201).json({
+     return res.status(201).json({
       message: "User created successfully",
       user: {
         id: user.id,
@@ -83,5 +79,4 @@ router.post("/", upload.single('profilePhoto'), async (req, res) => {
     });
   }
 });
-
 export default router;

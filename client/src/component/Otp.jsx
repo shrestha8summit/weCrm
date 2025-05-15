@@ -1,9 +1,11 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const OTPPage = () => {
   const [otp, setOtp] = useState(['', '', '', '','','']);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleChange = (index, value) => {
     if (/^\d*$/.test(value) && value.length <= 1) {
@@ -16,40 +18,44 @@ const OTPPage = () => {
     }
   };
 
-const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError('');
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+        setError('');
 
-    try {
-        const enteredOtp = otp.join('');
-        console.log("Entered OTP:", enteredOtp);
+        try {
+            const enteredOtp = otp.join('');
+            console.log("Entered OTP:", enteredOtp);
 
-        if (enteredOtp.length === 6) {
-            const res = await fetch("http://localhost:8888/api/checkingOTP", {
-                method: "POST",
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ otp: enteredOtp }) 
-            });
+            if (enteredOtp.length === 6) {
+                const res = await fetch("http://localhost:8888/api/checkingOTP", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ otp: enteredOtp }) 
+                });
 
-            if (!res.ok) {
-                const errorData = await res.json();
-                throw new Error(errorData.message || "Something went wrong");
+                if (!res.ok) {
+                    const errorData = await res.json();
+                    throw new Error(errorData.message || "Something went wrong");
+                }
+
+                alert('OTP verified successfully! Redirecting to password reset...');
+                navigate('/UpdatePass'); 
+            } else {
+                setError('Invalid OTP length. Please enter a 6-digit OTP.');
             }
-            alert('OTP verified successfully! Redirecting to password reset...');
-        } else {
-            setError('Invalid OTP length. Please enter a 6-digit OTP.');
+        } catch (e) {
+            console.error("Error while verifying OTP:", e);
+            setError(e.message || 'An error occurred while verifying the OTP. Please try again.');
+        } finally {
+            setIsLoading(false); 
         }
-
-    } catch (e) {
-        console.error("Error while verifying OTP:", e);
-        setError(e.message || 'An error occurred while verifying the OTP. Please try again.');
-    } finally {
-        setIsLoading(false); 
     }
-}
+
+  
+
 
   const handleResendOtp = () => {
     alert('New OTP has been sent to your email/phone');

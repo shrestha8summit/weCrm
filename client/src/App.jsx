@@ -9,6 +9,7 @@ import './App.css';
 import ProtectedRoute from './component/protectedRoute.js';
 import ForgetPassword from './component/forgetPassword.jsx';
 import OTPPage from './component/Otp.jsx';
+import  UpdatePassword from "./component/UpdatePassword.jsx"
 import AllUsers from './component/AllUsers.jsx';
 
 function App() {
@@ -55,9 +56,10 @@ function App() {
         {!isLoggedIn && ( 
           <>
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Sign />} />
+            <Route path="/register" element={<Register />} />
             <Route path="/forgetPassword" element={ <ForgetPassword/>} />
             <Route path="/otp" element={ <OTPPage/>} />
+            <Route path="/updatePass" element= {<UpdatePassword/>} />
           </>
         )}
 
