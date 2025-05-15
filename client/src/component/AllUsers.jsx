@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 
 const AllUsers = () => {
   const navigate = useNavigate();
-
+  //   -> use localhots:8888/api/allUsers to get data from backend and then create the frontend all users
   const users = [
     {
       id: 1,

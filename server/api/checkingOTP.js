@@ -1,5 +1,5 @@
 import express from "express";
-import { mailer } from "../middleware/authenication.middleware.js";
+import { sendVerificationMail } from "../middleware/authenication.middleware.js";
 
 const router = express.Router();
 router.use(express.json());
@@ -12,9 +12,9 @@ router.post("/send", async (req, res) => {
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     ogOTP = otp; 
-    console.log("Generated OTP:", otp);
+    //console.log("Generated OTP:", otp);
 
-    await mailer(email, otp); 
+    await sendVerificationMail(email, otp); 
     return res.status(200).json({ message: "OTP sent to email." });
 });
 

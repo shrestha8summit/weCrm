@@ -1,24 +1,23 @@
 import { useState, lazy, Suspense } from 'react';
+
 const Eye = lazy(() => import('lucide-react').then(module => ({ default: module.Eye })));
 const EyeOff = lazy(() => import('lucide-react').then(module => ({ default: module.EyeOff })));
 const Loader2 = lazy(() => import('lucide-react').then(module => ({ default: module.Loader2 })));
 const Lock = lazy(() => import('lucide-react').then(module => ({ default: module.Lock })));
 
 const UpdatePassword = () => {
-  const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const validateForm = () => {
     const newErrors = {};
     
-    if (!currentPassword) newErrors.currentPassword = 'Current password is required';
     if (!newPassword) newErrors.newPassword = 'New password is required';
     else if (newPassword.length < 8) newErrors.newPassword = 'Password must be at least 8 characters';
     if (newPassword !== confirmPassword) newErrors.confirmPassword = 'Passwords do not match';
@@ -27,19 +26,37 @@ const UpdatePassword = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (validateForm()) {
       setIsSubmitting(true);
-      // Simulate API call
-      setTimeout(() => {
-        setIsSubmitting(false);
+      setErrorMessage('');
+      try {
+        const response = await fetch('http://localhost:8888/updatePassword', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            newPassword: newPassword,
+            confirmPassword: confirmPassword,
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to update password');
+        }
+
         setSuccessMessage('Password updated successfully!');
-        setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('');
-      }, 1500);
+      } catch (err) {
+        setErrorMessage(err.message);
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -68,40 +85,13 @@ const UpdatePassword = () => {
               {successMessage}
             </div>
           )}
-          
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            <div>
-              <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700">
-                Current Password
-              </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
-                <input
-                  id="currentPassword"
-                  name="currentPassword"
-                  type={showCurrentPassword ? "text" : "password"}
-                  autoComplete="current-password"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  className={`block w-full p-4 h-[40px] pr-10 ${errors.currentPassword ? 'border-red-300 text-red-900 placeholder-red-300 focus:outline-none focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'} rounded-md shadow-sm`}
-                />
-                <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
-                  <button
-                    type="button"
-                    aria-label={showCurrentPassword ? "Hide password" : "Show password"}
-                    className="text-gray-400 hover:text-gray-500 focus:outline-none"
-                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                    tabIndex="-1"
-                  >
-                    <Suspense fallback={<div className="h-5 w-5" />}>
-                      {showCurrentPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-                    </Suspense>
-                  </button>
-                </div>
-              </div>
-              {errors.currentPassword && (
-                <p className="mt-2 text-sm text-red-600">{errors.currentPassword}</p>
-              )}
+          {errorMessage && (
+            <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+              {errorMessage}
             </div>
+          )}
+          
+          <form className="space-y-6" onSubmit={handleSubmit}>    
 
             <div>
               <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
