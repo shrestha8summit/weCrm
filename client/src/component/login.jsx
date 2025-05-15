@@ -181,7 +181,7 @@ const Login = () => {
   }, []);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    // e.preventDefault();
     setIsLoading(true);
     
     try {
@@ -217,10 +217,10 @@ const Login = () => {
         
   if (userType === 'admin') {
   navigate('/dashboard', { replace: true });
-  window.location.reload();
+  // window.location.reload();
 } else {
   navigate('/userProfile', { replace: true });
-  window.location.reload();
+  // window.location.reload();
 }
       }
     } catch (error) {
