@@ -34,7 +34,7 @@ const Login = () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
-      const res = await fetch("http://localhost:8888/api/logIn", {
+      const res = await fetch("http://localhost:3333/api/logIn", {
         method: "POST",
         headers: {
           'Content-Type': 'application/json'
