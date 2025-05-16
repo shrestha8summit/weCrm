@@ -60,7 +60,6 @@ const Login = () => {
         localStorage.setItem('loggedIn', 'true'); // Store as string
         const userType = data.userType || data.user?.role;
         localStorage.setItem('userType', userType);
-        
   if (userType === 'admin') {
   navigate('/dashboard', { replace: true });
   window.location.reload();
