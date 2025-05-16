@@ -367,7 +367,7 @@ const Register = () => {
   const [selectedTimezone, setSelectedTimezone] = useState('Asia/Kolkata'); 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+ const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({
     firstName: '',
     lastName: '',
@@ -472,23 +472,68 @@ const Register = () => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      // Form is valid, proceed with submission
-      console.log('Form submitted:', formData);
-      // Add your submission logic here (API call, etc.)
-    } else {
-      // Form is invalid, scroll to first error
-      const firstErrorField = Object.keys(errors).find(key => errors[key]);
-      if (firstErrorField) {
-        document.querySelector(`[name="${firstErrorField}"]`)?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        });
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  if (!validateForm()) {
+    // Form is invalid, scroll to first error
+    const firstErrorField = Object.keys(errors).find(key => errors[key]);
+    if (firstErrorField) {
+      document.querySelector(`[name="${firstErrorField}"]`)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
+    return;
+  }
+
+  setIsSubmitting(true);
+
+  try {
+    const formDataToSend = new FormData();
+
+    // Append all form data except profilePhoto (if you had one)
+    for (const [key, value] of Object.entries(formData)) {
+      if (value != null) {
+        formDataToSend.append(key, value);
       }
     }
-  };
+
+    // Append timezone
+    formDataToSend.append('timezone', selectedTimezone);
+
+    // Append coupon code if provided
+    if (couponCode) {
+      formDataToSend.append('couponCode', couponCode);
+    }
+
+    const res = await fetch("http://localhost:8888/api/register", {
+      method: 'POST',
+      body: formDataToSend,
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      let errorData;
+      try {
+        errorData = JSON.parse(errorText);
+      } catch {
+        throw new Error(errorText || "Registration failed");
+      }
+      throw new Error(errorData.message || "Registration failed");
+    }
+
+    const data = await res.json();
+    toast.success("Account created successfully!");
+    setTimeout(() => navigate("/dashboard"), 2000);
+
+  } catch (e) {
+    console.error("Registration error:", e);
+    toast.error(e.message || "Registration failed. Please try again.");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const plans = [
     { name: 'Basic', price: '$0.00', users: '1', trial: '7 Days Trial' },
@@ -524,7 +569,7 @@ const Register = () => {
         <div className="w-full lg:w-1/2 p-8 md:p-12 overflow-y-auto">
           <h1 className="text-2xl font-bold text-gray-800 mb-6">Register Your Company!</h1>
           
-          <form className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* first name */}
               <div>
