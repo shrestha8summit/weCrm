@@ -334,6 +334,8 @@
 
 
 // scrollable form with a image
+import { toast } from "react-toastify";
+import { useNavigate } from 'react-router-dom';
 import React, { useState, lazy, Suspense } from 'react';
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
@@ -367,7 +369,9 @@ const Register = () => {
   const [selectedTimezone, setSelectedTimezone] = useState('Asia/Kolkata'); 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
+  
   const [errors, setErrors] = useState({
     firstName: '',
     lastName: '',
@@ -463,7 +467,6 @@ const Register = () => {
       [name]: type === 'checkbox' ? checked : value
     }));
     
-    // Clear error when user starts typing
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -472,23 +475,69 @@ const Register = () => {
     }
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      // Form is valid, proceed with submission
-      console.log('Form submitted:', formData);
-      // Add your submission logic here (API call, etc.)
-    } else {
-      // Form is invalid, scroll to first error
-      const firstErrorField = Object.keys(errors).find(key => errors[key]);
-      if (firstErrorField) {
-        document.querySelector(`[name="${firstErrorField}"]`)?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'center'
-        });
-      }
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  
+  if (!validateForm()) {
+    const firstErrorField = Object.keys(errors).find(key => errors[key]);
+    if (firstErrorField) {
+      document.querySelector([name="${firstErrorField}"])?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
     }
+    return;
+  }
+
+  const formDataToLog = {
+    firstName: formData.firstName,
+    lastName: formData.lastName,
+    email: formData.email,
+    phone: formData.phone,
+    password: formData.password,
+    customPassword: formData.customPassword, 
+    companyName: formData.companyName,
+    gstNumber: formData.gstNumber,
+    plan: formData.plan,
+    agreeToTerms: formData.agreeToTerms,
+    timezone: selectedTimezone,
+    couponCode: couponCode,
   };
+  console.log("Form submitted:", formDataToLog);
+
+  setIsSubmitting(true);
+
+  try {
+    const res = await fetch("http://localhost:8888/api/addCustomer", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json', // Set content type to JSON
+      },
+      body: JSON.stringify(formDataToLog), // Convert the object to JSON
+    });
+
+    if (!res.ok) {
+      const errorText = await res.text();
+      let errorData;
+      try {
+        errorData = JSON.parse(errorText);
+      } catch {
+        throw new Error(errorText || "Registration failed");
+      }
+      throw new Error(errorData.message || "Registration failed");
+    }
+
+    const data = await res.json();
+    toast.success("Account created successfully!");
+    setTimeout(() => navigate("/dashboard"), 2000);
+
+  } catch (e) {
+    console.error("Registration error:", e);
+    toast.error(e.message || "Registration failed. Please try again.");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const plans = [
     { name: 'Basic', price: '$0.00', users: '1', trial: '7 Days Trial' },
@@ -524,7 +573,7 @@ const Register = () => {
         <div className="w-full lg:w-1/2 p-8 md:p-12 overflow-y-auto">
           <h1 className="text-2xl font-bold text-gray-800 mb-6">Register Your Company!</h1>
           
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* first name */}
               <div>

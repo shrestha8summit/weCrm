@@ -12,8 +12,6 @@ const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 router.post("/", async (req, res) => {
   try {
     const { email, username, password } = req.body;
-    console.log("Login attempt:", { email, username, password });
-
     if ((!email && !username) || !password) {
       return res.status(400).json({
         message: "Email/username and password are required"

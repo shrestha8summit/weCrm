@@ -7,6 +7,7 @@ import checkingOTP from "./api/checkingOTP.js"
 import connectDB from "./prisma/dbConnect.js"
 import userProfile from "./api/userProfile.api.js"
 import updatePassword from "./middleware/updatePassword.middleware.js"
+import addCustomer from "./api/addCustomer.api.js"
 
 const app = express()
 app.use(express.json())
@@ -23,7 +24,7 @@ app.use("/api/logIn",logIn);
 app.use("/api/checkingOTP",checkingOTP);
 app.use("/api/allUser",userProfile);
 app.use("/updatePassword",updatePassword);
-
+app.use("/api/addCustomer",addCustomer)
 
 app.get("/",(req,res)=>{
     res.send("Welcome to index page")
