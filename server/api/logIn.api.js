@@ -18,6 +18,16 @@ router.post("/", async (req, res) => {
       });
     }
 
+  
+    // gmail users signin nhi kar payenge
+    const pp = email.split('@')
+    if(pp[1] === "gmail.com")
+    {
+      return res.status(400).json({
+        message: "Invalid Email"
+      });
+    }
+
     const isEnvAdmin =
       email === process.env.ADMIN_EMAIL &&
       username === process.env.ADMIN_USERNAME &&
