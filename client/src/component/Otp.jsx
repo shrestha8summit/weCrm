@@ -28,7 +28,7 @@ const OTPPage = () => {
             console.log("Entered OTP:", enteredOtp);
 
             if (enteredOtp.length === 6) {
-                const res = await fetch("http://localhost:8888/api/checkingOTP", {
+                const res = await fetch("http://localhost:3333/api/checkingOTP", {
                     method: "POST",
                     headers: {
                         'Content-Type': 'application/json'

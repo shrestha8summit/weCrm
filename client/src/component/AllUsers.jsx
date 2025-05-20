@@ -11,7 +11,7 @@ const AllUsers = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('http://localhost:8888/api/allUser');
+        const response = await fetch('http://localhost:3333/api/allUser');
         if (!response.ok) {
           throw new Error('Failed to fetch users');
         }

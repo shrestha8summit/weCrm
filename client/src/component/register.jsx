@@ -508,7 +508,7 @@ const Register = () => {
   setIsSubmitting(true);
 
   try {
-    const res = await fetch("http://localhost:8888/api/addCustomer", {
+    const res = await fetch("http://localhost:3333/api/addCustomer", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json', // Set content type to JSON
