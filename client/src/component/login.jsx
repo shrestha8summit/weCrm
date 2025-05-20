@@ -34,6 +34,7 @@ const Login = () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
+      // change the port address asper your env file (if you have)
       const res = await fetch("http://localhost:3333/api/logIn", {
         method: "POST",
         headers: {
