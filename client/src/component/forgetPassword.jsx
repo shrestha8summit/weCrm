@@ -40,6 +40,7 @@ const ForgetPassword = () => {
         const data = await response.json();
         setMessage(data.message || "Password reset instructions sent to your email.");
         localStorage.setItem("resetingPass", email);
+        localStorage.setItem("emailSent", "true"); // local storage me ek flag set kiya
         setTimeout(() => navigate('/otp'), 1500);
       } else {
         const errorData = await response.json();

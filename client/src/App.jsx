@@ -58,7 +58,10 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgetPassword" element={ <ForgetPassword/>} />
-            <Route path="/otp" element={ <OTPPage/>} />
+
+            {/* OTP page tabhi navigate hoga , when otp  is sent */}
+
+            <Route path="/otp" element={  localStorage.getItem("emailSent") === "true" ? <OTPPage />: <Navigate to="/forgetPassword" replace /> } />
             <Route path="/updatePass" element= {<UpdatePassword/>} />
           </>
         )}

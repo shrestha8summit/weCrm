@@ -40,8 +40,9 @@ const OTPPage = () => {
                     const errorData = await res.json();
                     throw new Error(errorData.message || "Something went wrong");
                 }
-
+                  localStorage.removeItem("emailSent"); //  email flag ko unset kiya
                 alert('OTP verified successfully! Redirecting to password reset...');
+                
                 navigate('/UpdatePass'); 
             } else {
                 setError('Invalid OTP length. Please enter a 6-digit OTP.');
