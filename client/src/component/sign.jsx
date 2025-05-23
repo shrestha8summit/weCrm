@@ -66,7 +66,7 @@ const handleSubmit = async (e) => {
       formDataToSend.append('profilePhoto', formData.profilePhoto);
     }
 
-    const res = await fetch("http://localhost:8888/api/signUp", {
+    const res = await fetch("http://localhost:3333/api/signUp", {
       method: 'POST',
       body: formDataToSend,
     });

@@ -15,7 +15,7 @@ app.use(cors({
     origin : "http://localhost:5173"
 }))
 
-const port = process.env.PORT || 3333;
+const port =   process.env.PORT || 3333;
 
 connectDB()
 

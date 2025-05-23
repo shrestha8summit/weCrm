@@ -36,6 +36,7 @@ const Login = () => {
 
       // change the port address asper your env file (if you have)
       const res = await fetch("http://localhost:3333/api/logIn", {
+
         method: "POST",
         headers: {
           'Content-Type': 'application/json'

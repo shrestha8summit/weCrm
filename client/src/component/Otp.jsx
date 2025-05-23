@@ -28,7 +28,7 @@ const OTPPage = () => {
             console.log("Entered OTP:", enteredOtp);
 
             if (enteredOtp.length === 6) {
-                const res = await fetch("http://localhost:8888/api/checkingOTP", {
+                const res = await fetch("http://localhost:3333/api/checkingOTP", {
                     method: "POST",
                     headers: {
                         'Content-Type': 'application/json'
@@ -40,8 +40,9 @@ const OTPPage = () => {
                     const errorData = await res.json();
                     throw new Error(errorData.message || "Something went wrong");
                 }
-
+                  localStorage.removeItem("emailSent"); //  email flag ko unset kiya
                 alert('OTP verified successfully! Redirecting to password reset...');
+                
                 navigate('/UpdatePass'); 
             } else {
                 setError('Invalid OTP length. Please enter a 6-digit OTP.');
