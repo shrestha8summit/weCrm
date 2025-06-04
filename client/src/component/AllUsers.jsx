@@ -33,8 +33,6 @@ const AllUsers = () => {
     navigate(`/edit-user/${userId}`);
   };
 
- 
-
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -123,23 +121,19 @@ const AllUsers = () => {
                 </div>
 
                 <div className="text-gray-700 mt-2">
-                  <span className="font-medium">Task:</span> {user.assignedTask || 'No task assigned'}
+                  <span className="font-medium">Task:</span> {user.assignedWork || 'No task assigned'}
                 </div>
 
                 <div className="mt-2">
-                  <label htmlFor={`status-${user.id}`} className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     Status:
                   </label>
-                  <select
-                    id={`status-${user.id}`}
-                    value={user.taskStatus || 'pending'}
-                   
-                    className="w-full border-gray-300 rounded-md shadow-sm focus:border-orange-500 focus:ring-orange-500"
-                  >
-                    <option value="pending">Pending</option>
-                    <option value="in-progress">In Progress</option>
-                    <option value="completed">Completed</option>
-                  </select>
+                  <input
+                    type="text"
+                    value={user.statusOfWork || ''}
+                    readOnly
+                    className="w-full border-gray-300 rounded-md shadow-sm bg-gray-100 cursor-not-allowed"
+                  />
                 </div>
               </div>
             </div>
