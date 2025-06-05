@@ -27,7 +27,7 @@ const ForgetPassword = () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
-      const response = await fetch("http://localhost:8888/api/checkingOTP/send", {
+      const response = await fetch("http://localhost:3333/api/checkingOTP/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -40,6 +40,7 @@ const ForgetPassword = () => {
         const data = await response.json();
         setMessage(data.message || "Password reset instructions sent to your email.");
         localStorage.setItem("resetingPass", email);
+        localStorage.setItem("emailSent", "true"); // local storage me ek flag set kiya
         setTimeout(() => navigate('/otp'), 1500);
       } else {
         const errorData = await response.json();

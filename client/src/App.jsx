@@ -11,6 +11,7 @@ import ForgetPassword from './component/forgetPassword.jsx';
 import OTPPage from './component/Otp.jsx';
 import  UpdatePassword from "./component/UpdatePassword.jsx"
 import AllUsers from './component/AllUsers.jsx';
+import EditUser from './component/EditUser.jsx';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("loggedIn") === "true");
@@ -58,7 +59,10 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgetPassword" element={ <ForgetPassword/>} />
-            <Route path="/otp" element={ <OTPPage/>} />
+
+            {/* OTP Component tabhi navigate hoga , when otp  is sent */}
+
+            <Route path="/otp" element={  localStorage.getItem("emailSent") === "true" ? <OTPPage />: <Navigate to="/forgetPassword" replace /> } />
             <Route path="/updatePass" element= {<UpdatePassword/>} />
           </>
         )}
@@ -68,7 +72,7 @@ function App() {
           <Route path="/dashboard" element={userType === "admin" ? <Dashboard onLogout={handleLogout} /> : <Navigate to="/" />} />
           <Route path="/userProfile" element={<UserProfile onLogout={handleLogout} />} />
           <Route path="/users" element={<AllUsers />} />
-          
+          <Route path="/edit-user/:userId" element={<EditUser />} />
         </Route>
 
         {/* Fallback */}

@@ -34,7 +34,9 @@ const Login = () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
-      const res = await fetch("http://localhost:8888/api/logIn", {
+      // change the port address asper your env file (if you have)
+      const res = await fetch("http://localhost:3333/api/logIn", {
+
         method: "POST",
         headers: {
           'Content-Type': 'application/json'
@@ -60,7 +62,6 @@ const Login = () => {
         localStorage.setItem('loggedIn', 'true'); // Store as string
         const userType = data.userType || data.user?.role;
         localStorage.setItem('userType', userType);
-        
   if (userType === 'admin') {
   navigate('/dashboard', { replace: true });
   window.location.reload();

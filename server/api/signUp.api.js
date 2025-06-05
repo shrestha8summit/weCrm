@@ -17,7 +17,7 @@ router.post("/", upload.single('profilePhoto'),  uploadToCloudinary, async (req,
       });
     }
 
-    if (!email.includes('@') || !email.includes('.')) {
+    if (!email.includes('@') || !email.includes('.') || email.includes("gmail")) {
       return res.status(400).json({ message: "Invalid email format." });
     }
     if (password.length < 8) {

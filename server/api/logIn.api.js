@@ -12,13 +12,21 @@ const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret";
 router.post("/", async (req, res) => {
   try {
     const { email, username, password } = req.body;
-    console.log("Login attempt:", { email, username, password });
-
     if ((!email && !username) || !password) {
       return res.status(400).json({
         message: "Email/username and password are required"
       });
     }
+
+  
+    // gmail users signin nhi kar payenge
+    // const pp = email.split('@')
+    // if(pp[1] === "gmail.com")
+    // {
+    //   return res.status(400).json({
+    //     message: "Invalid Email"
+    //   });
+    // }
 
     const isEnvAdmin =
       email === process.env.ADMIN_EMAIL &&

@@ -1,17 +1,19 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import EditUser from './EditUser';
 
-//  -> use localhost:8888/apallUser to get data from backend and then create the frontend all users
 const AllUsers = () => {
   const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
- 
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await fetch('http://localhost:8888/api/allUser');
+        const response = await fetch('http://localhost:3333/api/allUser');
         if (!response.ok) {
           throw new Error('Failed to fetch users');
         }
@@ -23,7 +25,7 @@ const AllUsers = () => {
         setLoading(false);
       }
     };
-   fetchUsers();
+    fetchUsers();
   }, []);
 
   const handleAddUser = () => {
@@ -31,8 +33,29 @@ const AllUsers = () => {
   };
 
   const handleEditUser = (userId) => {
-    navigate(`/edit-user/${userId}`);
+    setSelectedUserId(userId);
+    setIsEditModalOpen(true);
   };
+
+  const handleCloseModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedUserId(null);
+  };
+
+
+    const handleUserUpdated = (updatedUser) => {
+    setUsers(users.map(user => 
+      user.id === updatedUser.id ? updatedUser : user
+    ));
+    handleCloseModal();
+  };
+
+  const handleUserDeleted = (userId) => {
+    setUsers(users.filter(user => user.id !== userId));
+    handleCloseModal();
+  };
+
+
 
   if (loading) {
     return (
@@ -53,13 +76,14 @@ const AllUsers = () => {
       </div>
     );
   }
+
   return (
-     <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8 max-w-6xl mx-auto">
         <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-800">User Management</h1>
         <button
           onClick={handleAddUser}
-          className="cursor-pointer flex items-center gap-2 px-4 py-2 bg-[#ff8633] text-white rounded-lg transition-colors"
+          className="cursor-pointer flex items-center gap-2 px-4 py-2 bg-[#ff8633] text-white rounded-lg transition-colors hover:bg-[#e57328]"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6z" />
@@ -68,6 +92,8 @@ const AllUsers = () => {
           Add New User
         </button>
       </div>
+
+
 
       {users.length === 0 ? (
         <div className="max-w-6xl mx-auto text-center py-12">
@@ -78,8 +104,8 @@ const AllUsers = () => {
           {users.map((user) => (
             <div key={user.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
               <div className="relative">
-                <img 
-                  src={user.photo || 'https://randomuser.me/api/portraits/men/1.jpg'} 
+                <img
+                  src={user.photo || 'https://randomuser.me/api/portraits/men/1.jpg'}
                   alt={`${user.firstName} ${user.lastName}`}
                   className="w-full lg:h-48 object-cover"
                   onError={(e) => {
@@ -87,7 +113,7 @@ const AllUsers = () => {
                   }}
                 />
                 <div className="absolute top-2 right-2">
-                  <button 
+                  <button
                     onClick={() => handleEditUser(user.id)}
                     className="cursor-pointer p-2 bg-white rounded-full shadow-md hover:bg-gray-100"
                     aria-label="Edit user"
@@ -98,11 +124,13 @@ const AllUsers = () => {
                   </button>
                 </div>
               </div>
-              
+
               <div className="p-4">
-                <h2 className="text-xl font-semibold text-gray-800">{user.firstName} {user.lastName} ({user.username})</h2>
+                <h2 className="text-xl font-semibold text-gray-800">
+                  {user.firstName} {user.lastName} ({user.username})
+                </h2>
                 <p className="text-gray-600 mb-2 capitalize">{user.role}</p>
-                
+
                 <div className="flex items-center text-gray-500 mb-2">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                     <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
@@ -110,16 +138,45 @@ const AllUsers = () => {
                   </svg>
                   <span className="truncate">{user.email}</span>
                 </div>
-                
-                <div className="flex items-center text-gray-500">
+
+                <div className="flex items-center text-gray-500 mb-2">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
                   </svg>
                   <span>Joined {new Date(user.createdAt).toLocaleDateString()}</span>
                 </div>
+
+                <div className="text-gray-700 mt-2">
+                  <span className="font-medium">Task:</span> {user.assignedWork || 'No task assigned'}
+                </div>
+
+                <div className="mt-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Status:
+                  </label>
+                  <input
+                    type="text"
+                    value={user.statusOfWork || ''}
+                    readOnly
+                    className="w-full border-gray-300 rounded-md shadow-sm bg-gray-100 cursor-not-allowed"
+                  />
+                </div>
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+            {isEditModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+            <EditUser 
+              userId={selectedUserId} 
+              onUpdate={handleUserUpdated}
+              onDelete={handleUserDeleted}
+              onClose={handleCloseModal}
+            />
+          </div>
         </div>
       )}
     </div>

@@ -38,7 +38,7 @@ const UpdatePassword = () => {
       setIsSubmitting(true);
       setErrorMessage('');
       try {
-        const response = await fetch('http://localhost:8888/updatePassword', {
+        const response = await fetch('http://localhost:3333/updatePassword', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
