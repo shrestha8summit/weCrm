@@ -13,7 +13,7 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model User {
+model User { //status like block/unblock,, loggedIn time  ..
   id             String   @id @default(auto()) @map("_id") @db.ObjectId
   firstName      String
   lastName       String
@@ -28,9 +28,11 @@ model User {
   updatedAt      DateTime @updatedAt
   assignedWork   String?
   statusOfWork   String?
+  statusOfAccount         String?    
+  loggedInTime   DateTime?
 }
 
-model company {  //no of users baki hey  :)
+model company {  
   id             String   @id @default(auto()) @map("_id") @db.ObjectId
   firstName      String  
   lastName       String 
@@ -46,6 +48,36 @@ model company {  //no of users baki hey  :)
   remainingDays   Int
   paidStatus    Boolean
   role           String
+  noOfUsers      Int?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 }
+
+// leads,otp
+//leads schema shall contain {uid,cid,title,customerName,,mobileNumber,email,topicOfWork,ClosingDate}
+//otp schema shall contain {uid, genOTp,GivenOTP,attempts,created date and time, expreyd Data and time}
+model Lead {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  uid           String   
+  cid           String   
+  title         String
+  customerName  String
+  mobileNumber  String
+  email         String
+  topicOfWork   String
+  closingDate   DateTime
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model OTP {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  uid          String   
+  genOTP       String   
+  givenOTP     String?  
+  attempts     Int      
+  createdAt    DateTime @default(now())
+  expiresAt    DateTime                      
+}
+
