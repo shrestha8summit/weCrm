@@ -17,9 +17,9 @@ router.post("/", upload.single('profilePhoto'),  uploadToCloudinary, async (req,
       });
     }
 
-    if (!email.includes('@') || !email.includes('.') || email.includes("gmail")) {
-      return res.status(400).json({ message: "Invalid email format." });
-    }
+    // if (!email.includes('@') || !email.includes('.') || email.includes("gmail")) {
+    //   return res.status(400).json({ message: "Invalid email format." });
+    // }
     if (password.length < 8) {
       return res.status(400).json({ message: "Password must be at least 8 characters long." });
     }
@@ -54,6 +54,7 @@ router.post("/", upload.single('profilePhoto'),  uploadToCloudinary, async (req,
       role,
       photo: req.cloudinaryUrl || null
     };
+    console.log(userData)
 
     const user = await prisma.user.create({
       data: userData
