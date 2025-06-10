@@ -12,6 +12,7 @@ import OTPPage from './component/Otp.jsx';
 import  UpdatePassword from "./component/UpdatePassword.jsx"
 import AllUsers from './component/AllUsers.jsx';
 import EditUser from './component/EditUser.jsx';
+import AddLeadsForm from './component/AddLeadsForm.jsx';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("loggedIn") === "true");
@@ -73,6 +74,7 @@ function App() {
           <Route path="/userProfile" element={<UserProfile onLogout={handleLogout} />} />
           <Route path="/users" element={<AllUsers />} />
           <Route path="/edit-user/:userId" element={<EditUser />} />
+          <Route path="/add-leads-as-admin" element={<AddLeadsForm />} />
         </Route>
 
         {/* Fallback */}
