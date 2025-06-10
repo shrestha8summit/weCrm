@@ -34,8 +34,17 @@ const handleSubmit = async (e) => {
 
   try {
     const formDataToSend = new FormData();
+    
+    Object.entries(formData).forEach(([key, value]) => {
+      formDataToSend.append(key, value);
+    });
 
-    const res = await fetch("http://localhost:3333/api/signUp", {
+    const formDataObject = {};
+    for (let [key, value] of formDataToSend.entries()) {
+      formDataObject[key] = value;
+    }
+    console.log("Form data being sent:", formDataObject);
+    const res = await fetch("http://localhost:3333/api/leads", {
       method: 'POST',
       body: formDataToSend,
     });

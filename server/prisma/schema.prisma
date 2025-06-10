@@ -61,12 +61,14 @@ model Lead {
   uid           String   
   cid           String   
   title         String
-  customerName  String
-  mobileNumber  String
-  email         String
+  customerFirstName  String
+  customerLastName String
+  emailAddress String
+  phoneNumber  String
   topicOfWork   String
   closingDate   DateTime
-
+  notes         String
+  status        String @default("On progress")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
@@ -77,6 +79,7 @@ model OTP {
   genOTP       String   
   givenOTP     String?  
   attempts     Int      
+  statusOfAccount         String?    
   createdAt    DateTime @default(now())
   expiresAt    DateTime                      
 }

@@ -11,7 +11,7 @@ import addCustomer from "./api/addCustomer.api.js";
 import updateUserRoutes from "./api/updateUser.js"; // <-- Use import, not require
 import recentActivities from "./api/recentActivities.api.js";
 import loggedData from "./api/loggedData.api.js"
-import leadshanlder from "./api/leads.api.js"
+import addLeads from "./api/addLeads.api.js"
 
 const app = express();
 app.use(express.json());
@@ -32,7 +32,7 @@ app.use("/api/addCustomer", addCustomer);
 app.use("/api", updateUserRoutes); // <-- Use imported router
 app.use("/api/recent",recentActivities);
 app.use("/api/loggedData",loggedData);
-app.use("/api/leads",leadshanlder);
+app.use("/api/leads",addLeads);
 app.get("/", (req, res) => {
     res.send("Welcome to index page");
 });
