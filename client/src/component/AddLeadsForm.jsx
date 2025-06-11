@@ -33,6 +33,8 @@ const handleSubmit = async (e) => {
   setIsSubmitting(true);
 
   try {
+    
+    const token = localStorage.getItem('token');
     const formDataToSend = new FormData();
     
     Object.entries(formData).forEach(([key, value]) => {
@@ -46,6 +48,10 @@ const handleSubmit = async (e) => {
     console.log("Form data being sent:", formDataObject);
     const res = await fetch("http://localhost:3333/api/leads", {
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
       body: formDataToSend,
     });
 
