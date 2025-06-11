@@ -36,7 +36,7 @@ router.post("/", async (req, res) => {
     if (isEnvAdmin) {
       const token = jwt.sign(
         {
-          userId: "env-admin",
+          uid: "env-admin",
           username: process.env.ADMIN_USERNAME,
           email: process.env.ADMIN_EMAIL,
           role: "admin"
@@ -80,7 +80,7 @@ router.post("/", async (req, res) => {
 
     const token = jwt.sign(
       {
-        userId: user.id,
+        uid: user.id,
         username: user.username,
         email: user.email,
         role: user.role

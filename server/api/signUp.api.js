@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 import prisma from "../prisma/prismaClient.js";
 import { upload, uploadToCloudinary } from "../utilis/fileUpload.js";
 import path from 'path';
+import jwtTokenMiddleware from "../middleware/jwtoken.middleware.js";
 
 const router = express.Router();
 

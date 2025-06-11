@@ -1,10 +1,11 @@
 import express from "express";
 import prisma from "../prisma/prismaClient.js";
+import jwtTokenMiddleware from "../middleware/jwtoken.middleware.js";
 
 const router = express.Router();
 router.use(express.json());
 
-router.get("/",async(req,res)=>{
+router.get("/", jwtTokenMiddleware, async(req,res)=>{
     try {
 
         const passId = "6845bab292704dd59774cd9c" // localtsorage ma  id pass huncha teta bata tane ho ;
