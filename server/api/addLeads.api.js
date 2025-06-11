@@ -1,5 +1,6 @@
 import express from "express";
 import prisma from "../prisma/prismaClient.js";
+import jwtTokenMiddleware from "../middleware/jwtoken.middleware.js"
 
 const router = express.Router();
 
@@ -31,11 +32,10 @@ function convertStringToISODateString(dateString) {
 }
 
 
-router.post('/', async (req, res) => {
+router.post('/',jwtTokenMiddleware, async (req, res) => {
   try {
+    const {uid} = req.user;
     const {
-      uid,
-      cid,
       title,
       customerFirstName,
       customerLastName,
@@ -55,7 +55,7 @@ router.post('/', async (req, res) => {
     const newLead = await prisma.Lead.create({
       data: {
         uid,
-        cid,
+        cid:"0",
         title,
         customerFirstName,
         customerLastName,

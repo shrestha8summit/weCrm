@@ -2,9 +2,10 @@
 2> In admin side :
         "All users,Add users, Add leads... everything from nav-bar" should be brought to right empty space in the website 
         get few thinsg from "http://localhost:3333/api/recent" to get no of leads, no of users .. will upload more
+        lead activiy is missing in admin, which is required if s/he wamts to chnage in leads.
 
 Backened side :  (done)
    i. total users, recent activity will be all retrived from recentActivities.api.js
    ii. Add leads shall function properly then 
-
+   iii. cookie for sessions and tokens      
 
