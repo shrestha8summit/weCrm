@@ -1,5 +1,6 @@
 import express from 'express';
 import prisma from '../prisma/prismaClient.js';
+import jwtTokenMiddleware from '../middleware/jwtoken.middleware.js';
 
 const router = express.Router();
 
@@ -7,7 +8,7 @@ function isValidObjectId(id) {
   return /^[a-f\d]{24}$/i.test(id);
 }
 
-router.get('/user/:id', async (req, res) => {
+router.get('/user/:id',  async (req, res) => {
   if (!isValidObjectId(req.params.id)) {
     return res.status(400).json({ error: 'Invalid user ID format' });
   }

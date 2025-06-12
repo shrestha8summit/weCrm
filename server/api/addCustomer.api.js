@@ -3,11 +3,12 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import prisma from "../prisma/prismaClient.js";
 import dotenv from "dotenv";
+import jwtTokenMiddleware from "../middleware/jwtoken.middleware.js";
 
 const router = express.Router();
 router.use(express.json());
 
-router.post("/", async (req, res) => {
+router.post("/", jwtTokenMiddleware , async (req, res) => {
     const {
         firstName,
         lastName,
