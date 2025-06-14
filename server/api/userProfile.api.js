@@ -5,7 +5,8 @@ import jwtTokenMiddleware from "../middleware/jwtoken.middleware.js";
 const router = express.Router();
 router.use(express.json());
 
-router.get("/",   async (req, res) => {
+router.get("/", jwtTokenMiddleware, async (req, res) => {
+    console.log("i am working ")
     try {
         
         const users = await prisma.user.findMany(); 

@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 const UserProfile = ({ onLogout }) => {
-  // Sample user data
   const [user, setUser] = useState({
     name: 'Alex Johnson',
     email: 'alex.johnson@example.com',
@@ -21,14 +20,12 @@ const UserProfile = ({ onLogout }) => {
     ]
   });
 
-  // addleadsform variables
    const navigate = useNavigate();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [formData, setFormData] = useState({
       leadtitle:'',
       firstName: '',
       lastName: '',
-      username: '',
       email: '',
       phone: '',
       topicofwork:'',

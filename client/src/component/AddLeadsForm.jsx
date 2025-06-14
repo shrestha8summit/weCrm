@@ -11,7 +11,6 @@ const AddLeadsForm = () => {
     leadtitle:'',
     firstName: '',
     lastName: '',
-    username: '',
     email: '',
     phone: '',
     topicofwork:'',
@@ -33,40 +32,37 @@ const handleSubmit = async (e) => {
   setIsSubmitting(true);
 
   try {
-    
     const token = localStorage.getItem('token');
-    const formDataToSend = new FormData();
-    
-    Object.entries(formData).forEach(([key, value]) => {
-      formDataToSend.append(key, value);
-    });
-
-    const formDataObject = {};
-    for (let [key, value] of formDataToSend.entries()) {
-      formDataObject[key] = value;
+    if (!token) {
+      throw new Error('No authentication token found');
     }
-    console.log("Form data being sent:", formDataObject);
+    
+    const body = {
+      title: formData.leadtitle,
+      customerFirstName: formData.firstName,
+      customerLastName: formData.lastName,
+      emailAddress: formData.email,
+      phoneNumber: formData.phone,
+      topicOfWork: formData.topicofwork,
+      closingDate: formData.expectedtoclose,  
+      notes: formData.notesforfuture,
+    };
+
     const res = await fetch("http://localhost:3333/api/leads", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
       },
-      body: formDataToSend,
+      body: JSON.stringify(body),
     });
 
+    const responseData = await res.json();
+    
     if (!res.ok) {
-      const errorText = await res.text();
-      let errorData;
-      try {
-        errorData = JSON.parse(errorText);
-      } catch {
-        throw new Error(errorText || "Lead Creation Failed");
-      }
-      throw new Error(errorData.message || "Lead Creation Failed");
+      throw new Error(responseData.message || responseData.error || "Lead Creation Failed");
     }
 
-    const data = await res.json();
     toast.success("Lead Created Successfully!");
     setTimeout(() => navigate("/dashboard"), 2000);
 
@@ -216,6 +212,7 @@ const handleSubmit = async (e) => {
               className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
               autoComplete="expectedtoclose"
             />
+
     </div>
 
 

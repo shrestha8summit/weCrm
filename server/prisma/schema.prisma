@@ -59,7 +59,7 @@ model company {
 model Lead {
   id                String   @id @default(auto()) @map("_id") @db.ObjectId
   uid               String   
-  cid               String   
+  cid               String   ?
   title             String
   customerFirstName  String?   
   customerLastName   String?
@@ -67,6 +67,7 @@ model Lead {
   topicOfWork       String?
   closingDate       DateTime
   notes             String?
+  phoneNumber String?
   status            String    @default("On progress")
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
