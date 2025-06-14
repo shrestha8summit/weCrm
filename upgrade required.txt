@@ -4,7 +4,7 @@
         get few thinsg from "http://localhost:3333/api/recent" to get no of leads, no of users .. will upload more
         lead activiy is missing in admin, which is required if s/he wamts to chnage in leads.
 
-Backened side :  (done)
+Backened side : 
    i. total users, recent activity will be all retrived from recentActivities.api.js
    ii. Add leads shall function properly then 
    iii. cookie for sessions and tokens      
