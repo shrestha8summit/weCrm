@@ -19,10 +19,10 @@ import updatePassword from "./middleware/updatePassword.middleware.js";
 import jwtTokenMiddleware from "./middleware/jwtoken.middleware.js"; 
 
 const app = express();
-app.use(express.json());
 app.use(cors({
     origin: "http://localhost:5173"
 }));
+app.use(express.json()); 
 
 const port =  3333;
 
@@ -34,7 +34,7 @@ app.use("/api/checkingOTP", checkingOTP);
 app.use("/api/allUser", userProfile);
 app.use("/updatePassword", updatePassword);
 app.use("/api/addCustomer", addCustomer);
-app.use("/api", updateUserRoutes); // <-- Use imported router
+app.use("/api", updateUserRoutes); 
 app.use("/api/recent",recentActivities);
 app.use("/api/loggedData",loggedData);
 app.use("/api/leads",addLeads);

@@ -6,6 +6,7 @@ const router = express.Router();
 router.use(express.json());
 
 router.get("/", jwtTokenMiddleware, async (req, res) => {
+    console.log("i am working ")
     try {
         const users = await prisma.user.findMany(); 
         console.log(users);

@@ -5,32 +5,20 @@ import jwtTokenMiddleware from "../middleware/jwtoken.middleware.js"
 const router = express.Router();
 
 function convertStringToISODateString(dateString) {
-  if (!dateString) return null; 
-  const dateParts = dateString.split('-');
-  if (dateParts.length !== 3) {
-    console.error("Invalid date format. Expected DD_MM_YYYY.");
+  if (!dateString) return null;
+  
+  try {
+    const dateObject = new Date(dateString);
+    if (isNaN(dateObject.getTime())) {
+      console.error("Invalid date.");
+      return null;
+    }
+    return dateObject.toISOString();
+  } catch (error) {
+    console.error("Date conversion error:", error);
     return null;
   }
-
-  const day = parseInt(dateParts[0], 10);
-  const month = parseInt(dateParts[1], 10) - 1;
-  const year = parseInt(dateParts[2], 10);
-
-  if (isNaN(day) || isNaN(month) || isNaN(year)) {
-    console.error("Invalid date components.");
-    return null;
-  }
-
-  const dateObject = new Date(year, month, day);
-
-  if (isNaN(dateObject.getTime())) {
-    console.error("Invalid date.");
-    return null;
-  }
-
-  return dateObject.toISOString();
 }
-
 
 router.post('/',jwtTokenMiddleware, async (req, res) => {
   try {
@@ -67,7 +55,7 @@ router.post('/',jwtTokenMiddleware, async (req, res) => {
       },
     });
 
-    console.log(uid, cid, title, customerFirstName, customerLastName, emailAddress, phoneNumber,
+    console.log(uid,"0", title, customerFirstName, customerLastName, emailAddress, phoneNumber,
       topicOfWork, closingDate, notes);
 
     res.status(201).json(newLead);

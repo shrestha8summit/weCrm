@@ -1,12 +1,13 @@
 import express from "express";
 import { sendVerificationMail } from "../middleware/authenication.middleware.js";
+import jwtTokenMiddleware from "../middleware/jwtoken.middleware.js"
 
 const router = express.Router();
 router.use(express.json());
 
 let ogOTP = null;
 
-router.post("/send", async (req, res) => {
+router.post("/send", jwtTokenMiddleware ,async (req, res) => {
     const { email } = req.body;
     if (!email) return res.status(400).json({ message: "Email is required." });
 

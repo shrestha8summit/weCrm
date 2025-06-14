@@ -11,20 +11,38 @@ const AllUsers = () => {
   const [selectedUserId, setSelectedUserId] = useState(null);
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch('http://localhost:3333/api/allUser');
-        if (!response.ok) {
-          throw new Error('Failed to fetch users');
-        }
-        const data = await response.json();
-        setUsers(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+   const fetchUsers = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Please login to view users');
+    }
+
+    const response = await fetch('http://localhost:3333/api/allUser', {
+      headers: {
+        'Authorization': `Bearer ${token}`
       }
-    };
+    });
+
+    if (response.status === 401) {
+      localStorage.removeItem('token');
+      throw new Error('Session expired. Please login again.');
+    }
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch users');
+    }
+
+    const data = await response.json();
+    setUsers(data);
+  } catch (err) {
+    setError(err.message);
+    if (err.message.includes('Session expired')) {
+    }
+  } finally {
+    setLoading(false);
+  }
+};
     fetchUsers();
   }, []);
 
