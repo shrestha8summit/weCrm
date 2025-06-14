@@ -42,55 +42,53 @@ const UserProfile = ({ onLogout }) => {
       }, []);
     
     
-   const handleSubmit = async (e) => {
-     e.preventDefault();
-     setIsSubmitting(true);
-   
-     try {
-       
-       const token = localStorage.getItem('token');
-       const formDataToSend = new FormData();
-       
-       Object.entries(formData).forEach(([key, value]) => {
-         formDataToSend.append(key, value);
-       });
-   
-       const formDataObject = {};
-       for (let [key, value] of formDataToSend.entries()) {
-         formDataObject[key] = value;
-       }
-       console.log("Form data being sent:", formDataObject);
-       const res = await fetch("http://localhost:3333/api/leads", {
-         method: 'POST',
-         headers: {
-           'Content-Type': 'application/json',
-           'Authorization': `Bearer ${token}`
-         },
-         body: formDataToSend,
-       });
-   
-       if (!res.ok) {
-         const errorText = await res.text();
-         let errorData;
-         try {
-           errorData = JSON.parse(errorText);
-         } catch {
-           throw new Error(errorText || "Lead Creation Failed");
-         }
-         throw new Error(errorData.message || "Lead Creation Failed");
-       }
-   
-       const data = await res.json();
-       toast.success("Lead Created Successfully!");
-       setTimeout(() => navigate("/dashboard"), 2000);
-   
-     } catch (e) {
-       console.error("Lead Creation Failed:", e);
-       toast.error(e.message || "Lead Creation Failed. Please try again.");
-     } finally {
-       setIsSubmitting(false);
-     }
-   };
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsSubmitting(true);
+
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error("Please log in to create leads");
+      navigate('/login');
+      return;
+    }
+
+    // Transform data to match backend expectations
+    const backendData = {
+      title: formData.leadtitle,
+      customerFirstName: formData.firstName,
+      customerLastName: formData.lastName,
+      emailAddress: formData.email,
+      phoneNumber: formData.phone,
+      topicOfWork: formData.topicofwork,
+      closingDate: formData.expectedtoclose,
+      notes: formData.notesforfuture
+    };
+
+    const res = await fetch("http://localhost:3333/api/leads", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(backendData),
+    });
+
+    if (!res.ok) {
+      const error = await res.json().catch(() => ({}));
+      throw new Error(error.message || "Lead creation failed");
+    }
+
+    toast.success("Lead created successfully!");
+    setTimeout(() => navigate("/dashboard"), 2000);
+  } catch (err) {
+    console.error("Lead creation error:", err);
+    toast.error(err.message || "Failed to create lead");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
   const [activeTab, setActiveTab] = useState('profile');
 
   return (
