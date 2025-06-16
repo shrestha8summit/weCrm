@@ -2,6 +2,7 @@ import React, { useState, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
+
 // Lazy load components and icons
 const Eye = lazy(() => import('lucide-react').then(module => ({ default: module.Eye })));
 const EyeOff = lazy(() => import('lucide-react').then(module => ({ default: module.EyeOff })));
@@ -47,6 +48,11 @@ const Sign = () => {
       };
       reader.readAsDataURL(file);
     }
+  };
+
+
+  const handlegobacktodashboard = () => {
+    navigate('/dashboard');
   };
 
 const handleSubmit = async (e) => {
@@ -96,6 +102,9 @@ const handleSubmit = async (e) => {
 
   return (
     <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-gray-50 to-gray-100">
+      
+
+
       <Suspense fallback={
         <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
           <div className="animate-pulse">
@@ -108,6 +117,19 @@ const handleSubmit = async (e) => {
           onSubmit={handleSubmit}
           className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 transition-all hover:shadow-2xl"
         >
+<div className="flex justify-center mb-6">
+  <button
+    type="button"
+    onClick={handlegobacktodashboard}
+    className="flex items-center space-x-2 text-gray-600 hover:text-[#ff8633] transition-colors group"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 group-hover:transform group-hover:-translate-x-1 transition-transform" viewBox="0 0 20 20" fill="currentColor">
+      <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+    </svg>
+    <span>Back to Dashboard</span>
+  </button>
+</div>
+
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-gray-800 mb-2">Create Account</h2>
             <p className="text-gray-500">Join our community today</p>
@@ -299,6 +321,7 @@ const handleSubmit = async (e) => {
           >
             {isSubmitting ? 'Creating Account...' : 'Sign Up'}
           </button>
+          
         </form>
       </Suspense>
     </div>
