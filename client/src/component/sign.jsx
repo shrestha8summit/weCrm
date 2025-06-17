@@ -101,7 +101,7 @@ const handleSubmit = async (e) => {
 };
 
   return (
-    <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="flex items-center justify-center min-h-screen p-4">
       
 
 
@@ -117,7 +117,7 @@ const handleSubmit = async (e) => {
           onSubmit={handleSubmit}
           className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 transition-all hover:shadow-2xl"
         >
-<div className="flex justify-center mb-6">
+<div className="absolute top-4 right-4">
   <button
     type="button"
     onClick={handlegobacktodashboard}
