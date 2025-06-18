@@ -13,6 +13,11 @@ const AddLeadsForm = () => {
     lastName: '',
     email: '',
     phone: '',
+    companyname:'',
+    jobtitle:'',
+    industry:'',
+    new:'',
+    serviceinterestedin:'',
     topicofwork:'',
     expectedtoclose:'',
     notesforfuture:'',
@@ -46,6 +51,11 @@ const handleSubmit = async (e) => {
       customerLastName: formData.lastName,
       emailAddress: formData.email,
       phoneNumber: formData.phone,
+      companyName:formData.companyname,
+      jobTitle:formData.jobtitle,
+      Industry:formData.industry,
+      New:formData.new,
+      serviceInterestedin:formData.serviceinterestedin,
       topicOfWork: formData.topicofwork,
       closingDate: formData.expectedtoclose,  
       notes: formData.notesforfuture,
@@ -194,6 +204,113 @@ const handleSubmit = async (e) => {
             />
           </div>
 
+
+<div className="mb-4">
+            <label htmlFor="companyname" className="block text-sm font-medium text-gray-700 mb-1">
+              Company Name
+            </label>
+            <input
+              type="text"
+              id="companyname"
+              name="companyname"
+              value={formData.companyname}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+              placeholder="Eg. quore/tcs"
+              autoComplete="companyname"
+            />
+    </div>
+
+    <div className="mb-4">
+            <label htmlFor="jobtitle" className="block text-sm font-medium text-gray-700 mb-1">
+              Job Title
+            </label>
+            <input
+              type="text"
+              id="jobtitle"
+              name="jobtitle"
+              value={formData.jobtitle}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+              placeholder="Eg. lead/manager"
+              autoComplete="jobtitle"
+            />
+    </div>
+
+
+<div className="mb-4">
+  <label htmlFor="industry" className="block text-sm font-medium text-gray-700 mb-1">
+    Select Industry
+  </label>
+  <select
+    id="industry"
+    name="industry"
+    value={formData.industry}
+    onChange={handleChange}
+    required
+    className="w-full px-4 py-3 cursor-pointer rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+  >
+    <option value="">Select an industry</option>
+    <option value="Technology">Technology</option>
+    <option value="SaaS">SaaS</option>
+    <option value="Media">Media</option>
+    <option value="Healthcare">Healthcare</option>
+    <option value="Finance">Finance</option>
+    <option value="Manufacturing">Manufacturing</option>
+    <option value="Other">Other</option>
+  </select>
+</div>
+
+
+<div className="mb-4">
+  <label htmlFor="new" className="block text-sm font-medium text-gray-700 mb-1">
+    New
+  </label>
+  <select
+    id="new"
+    name="new"
+    value={formData.new}
+    onChange={handleChange}
+    required
+    className="w-full px-4 py-3 cursor-pointer rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+  >
+    <option value="">New</option>
+    <option value="Contacted">Contacted</option>
+    <option value="Engaged">Engaged</option>
+    <option value="Qualified">Qualified</option>
+    <option value="Demo Scheduled">Demo Scheduled</option>
+    <option value="Proposal sent">Proposal Sent</option>
+    <option value="Negotiation">Negotiation</option>
+    <option value="Cloaed Won">Closed Won</option>
+    <option value="Closed Lost">Closed Lost</option>
+    <option value="On Hold">On Hold</option>
+    <option value="Nurturing">Nurturing</option>
+    <option value="Disqualified">Disqualified</option>
+    <option value="Do Not Contact">Do Not Contact</option>
+  </select>
+</div>
+
+
+<div className="mb-4">
+  <label htmlFor="serviceinterestedin" className="block text-sm font-medium text-gray-700 mb-1">
+    Service Interested In
+  </label>
+  <select
+    id="serviceinterestedin"
+    name="serviceinterestedin"
+    value={formData.serviceinterestedin}
+    onChange={handleChange}
+    required
+    className="w-full px-4 py-3 cursor-pointer rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+  >
+    <option value="">Service Interested In</option>
+    <option value="Email Marketing">Email Marketing</option>
+    <option value="Lead Generation">Lead Generation</option>
+    <option value="Content Syndication">Content Syndication</option>
+  </select>
+</div>
 
            <div className="mb-4">
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">

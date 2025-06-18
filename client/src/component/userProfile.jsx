@@ -28,6 +28,11 @@ const UserProfile = ({ onLogout }) => {
       lastName: '',
       email: '',
       phone: '',
+      companyname:'',
+      jobtitle:'',
+      industry:'',
+      new:'',
+      serviceinterestedin:'',
       topicofwork:'',
       expectedtoclose:'',
       notesforfuture:'',
@@ -56,14 +61,19 @@ const UserProfile = ({ onLogout }) => {
 
     // Transform data to match backend expectations
     const backendData = {
-      title: formData.leadtitle,
+            title: formData.leadtitle,
       customerFirstName: formData.firstName,
       customerLastName: formData.lastName,
       emailAddress: formData.email,
       phoneNumber: formData.phone,
+      companyName:formData.companyname,
+      jobTitle:formData.jobtitle,
+      Industry:formData.industry,
+      New:formData.new,
+      serviceInterestedin:formData.serviceinterestedin,
       topicOfWork: formData.topicofwork,
-      closingDate: formData.expectedtoclose,
-      notes: formData.notesforfuture
+      closingDate: formData.expectedtoclose,  
+      notes: formData.notesforfuture,
     };
 
     const res = await fetch("http://localhost:3333/api/leads", {
@@ -346,166 +356,274 @@ const UserProfile = ({ onLogout }) => {
                           </div>
                         </div>
                       }>
-                        <form
-                          onSubmit={handleSubmit}
-                          className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 transition-all hover:shadow-2xl"
-                        >
-                          <div className="text-center mb-8">
-                            <h2 className="text-3xl font-bold text-gray-800 mb-2">Add the Leads</h2>
-                          </div>
-                
-                      <div className="mb-4">
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                              Lead Title 
-                            </label>
-                            <input
-                              type="text"
-                              id="leadtitle"
-                              name="leadtitle"
-                              value={formData.leadtitle}
-                              onChange={handleChange}
-                              required
-                              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                              placeholder="Eg. New Lead"
-                              autoComplete="leadtitle"
-                            />
-                    </div>
-                
-                
-                
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                            <div>
-                              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
-                                First Name
-                              </label>
-                              <input
-                                type="text"
-                                id="firstName"
-                                name="firstName"
-                                value={formData.firstName}
-                                onChange={handleChange}
-                                required
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                                placeholder="John"
-                                autoComplete="given-name"
-                              />
-                            </div>
-                            <div>
-                              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
-                                Last Name
-                              </label>
-                              <input
-                                type="text"
-                                id="lastName"
-                                name="lastName"
-                                value={formData.lastName}
-                                onChange={handleChange}
-                                required
-                                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                                placeholder="Doe"
-                                autoComplete="family-name"
-                              />
-                            </div>
-                          </div>
-                
-                          <div className="mb-4">
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                              Email
-                            </label>
-                            <input
-                              type="email"
-                              id="email"
-                              name="email"
-                              value={formData.email}
-                              onChange={handleChange}
-                              required
-                              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                              placeholder="your@email.com"
-                              autoComplete="email"
-                            />
-                          </div>
-                
-                          <div className="mb-4">
-                            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                              Phone Number
-                            </label>
-                            <input
-                              type="tel"
-                              id="phone"
-                              name="phone"
-                              value={formData.phone}
-                              onChange={handleChange}
-                              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                              placeholder="+1 (123) 456-7890"
-                              autoComplete="tel"
-                            />
-                          </div>
-                
-                
-                           <div className="mb-4">
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                              Topic Of Work 
-                            </label>
-                            <input
-                              type="text"
-                              id="topicofwork"
-                              name="topicofwork"
-                              value={formData.topicofwork}
-                              onChange={handleChange}
-                              required
-                              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                              placeholder="Eg. Sales / Marketing "
-                              autoComplete="topicofwork"
-                            />
-                    </div>
-                
-                
-                     <div className="mb-4">
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                              Expected To Close
-                            </label>
-                            <input
-                              type="date"
-                              id="expectedtoclose"
-                              name="expectedtoclose"
-                              value={formData.expectedtoclose}
-                              onChange={handleChange}
-                              required
-                              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                              autoComplete="expectedtoclose"
-                            />
-                    </div>
-                
-                
-                       <div className="mb-4">
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                              Notes For Future
-                            </label>
-                            <input
-                              type="text"
-                              id="notesforfuture"
-                              name="notesforfuture"
-                              value={formData.notesforfuture}
-                              onChange={handleChange}
-                              required
-                              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                              placeholder='Eg. Need to maintain it in future'
-                              autoComplete="notesforfuture"
-                            />
-                    </div>
-                
-                
-                
-                          <button
-                            type="submit"
-                            disabled={isSubmitting}
-                            className={`w-full cursor-pointer bg-gradient-to-r from-[#ff8633] to-[#ff9a52] text-white py-3 rounded-lg font-medium hover:from-[#e6732b] hover:to-[#e6732b] transition-all shadow-md hover:shadow-lg active:scale-95 transform ${
-                              isSubmitting ? 'opacity-75 cursor-not-allowed' : ''
-                            }`}
-                          >
-                            {isSubmitting ? 'Adding the lead...' : 'Add Lead'}
-                          </button>
-                        </form>
+                       <form
+          onSubmit={handleSubmit}
+          className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 transition-all hover:shadow-2xl"
+        >
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold text-gray-800 mb-2">Add the Leads</h2>
+          </div>
+
+      <div className="mb-4">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              Lead Title 
+            </label>
+            <input
+              type="text"
+              id="leadtitle"
+              name="leadtitle"
+              value={formData.leadtitle}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+              placeholder="Eg. New Lead"
+              autoComplete="leadtitle"
+            />
+    </div>
+
+
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
+                First Name
+              </label>
+              <input
+                type="text"
+                id="firstName"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                placeholder="John"
+                autoComplete="given-name"
+              />
+            </div>
+            <div>
+              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
+                Last Name
+              </label>
+              <input
+                type="text"
+                id="lastName"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleChange}
+                required
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                placeholder="Doe"
+                autoComplete="family-name"
+              />
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+              placeholder="your@email.com"
+              autoComplete="email"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+              Phone Number
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+              placeholder="+1 (123) 456-7890"
+              autoComplete="tel"
+            />
+          </div>
+
+
+<div className="mb-4">
+            <label htmlFor="companyname" className="block text-sm font-medium text-gray-700 mb-1">
+              Company Name
+            </label>
+            <input
+              type="text"
+              id="companyname"
+              name="companyname"
+              value={formData.companyname}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+              placeholder="Eg. quore/tcs"
+              autoComplete="companyname"
+            />
+    </div>
+
+    <div className="mb-4">
+            <label htmlFor="jobtitle" className="block text-sm font-medium text-gray-700 mb-1">
+              Job Title
+            </label>
+            <input
+              type="text"
+              id="jobtitle"
+              name="jobtitle"
+              value={formData.jobtitle}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+              placeholder="Eg. lead/manager"
+              autoComplete="jobtitle"
+            />
+    </div>
+
+
+<div className="mb-4">
+  <label htmlFor="industry" className="block text-sm font-medium text-gray-700 mb-1">
+    Select Industry
+  </label>
+  <select
+    id="industry"
+    name="industry"
+    value={formData.industry}
+    onChange={handleChange}
+    required
+    className="w-full px-4 py-3 cursor-pointer rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+  >
+    <option value="">Select an industry</option>
+    <option value="Technology">Technology</option>
+    <option value="SaaS">SaaS</option>
+    <option value="Media">Media</option>
+    <option value="Healthcare">Healthcare</option>
+    <option value="Finance">Finance</option>
+    <option value="Manufacturing">Manufacturing</option>
+    <option value="Other">Other</option>
+  </select>
+</div>
+
+
+<div className="mb-4">
+  <label htmlFor="new" className="block text-sm font-medium text-gray-700 mb-1">
+    New
+  </label>
+  <select
+    id="new"
+    name="new"
+    value={formData.new}
+    onChange={handleChange}
+    required
+    className="w-full px-4 py-3 cursor-pointer rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+  >
+    <option value="">New</option>
+    <option value="Contacted">Contacted</option>
+    <option value="Engaged">Engaged</option>
+    <option value="Qualified">Qualified</option>
+    <option value="Demo Scheduled">Demo Scheduled</option>
+    <option value="Proposal sent">Proposal Sent</option>
+    <option value="Negotiation">Negotiation</option>
+    <option value="Cloaed Won">Closed Won</option>
+    <option value="Closed Lost">Closed Lost</option>
+    <option value="On Hold">On Hold</option>
+    <option value="Nurturing">Nurturing</option>
+    <option value="Disqualified">Disqualified</option>
+    <option value="Do Not Contact">Do Not Contact</option>
+  </select>
+</div>
+
+
+<div className="mb-4">
+  <label htmlFor="serviceinterestedin" className="block text-sm font-medium text-gray-700 mb-1">
+    Service Interested In
+  </label>
+  <select
+    id="serviceinterestedin"
+    name="serviceinterestedin"
+    value={formData.serviceinterestedin}
+    onChange={handleChange}
+    required
+    className="w-full px-4 py-3 cursor-pointer rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+  >
+    <option value="">Service Interested In</option>
+    <option value="Email Marketing">Email Marketing</option>
+    <option value="Lead Generation">Lead Generation</option>
+    <option value="Content Syndication">Content Syndication</option>
+  </select>
+</div>
+
+           <div className="mb-4">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              Topic Of Work 
+            </label>
+            <input
+              type="text"
+              id="topicofwork"
+              name="topicofwork"
+              value={formData.topicofwork}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+              placeholder="Eg. Sales / Marketing "
+              autoComplete="topicofwork"
+            />
+    </div>
+
+
+     <div className="mb-4">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              Expected To Close
+            </label>
+            <input
+              type="date"
+              id="expectedtoclose"
+              name="expectedtoclose"
+              value={formData.expectedtoclose}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+              autoComplete="expectedtoclose"
+            />
+
+    </div>
+
+
+       <div className="mb-4">
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+              Notes For Future
+            </label>
+            <input
+              type="text"
+              id="notesforfuture"
+              name="notesforfuture"
+              value={formData.notesforfuture}
+              onChange={handleChange}
+              required
+              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+              placeholder='Eg. Need to maintain it in future'
+              autoComplete="notesforfuture"
+            />
+    </div>
+
+
+
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className={`w-full cursor-pointer bg-gradient-to-r from-[#ff8633] to-[#ff9a52] text-white py-3 rounded-lg font-medium hover:from-[#e6732b] hover:to-[#e6732b] transition-all shadow-md hover:shadow-lg active:scale-95 transform ${
+              isSubmitting ? 'opacity-75 cursor-not-allowed' : ''
+            }`}
+          >
+            {isSubmitting ? 'Adding the lead...' : 'Add Lead'}
+          </button>
+        </form>
                       </Suspense>
                     </div>
             )}
