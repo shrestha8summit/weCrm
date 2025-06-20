@@ -901,10 +901,10 @@ const user = currentUser ? {
 
               <div className="mt-6">
                 <button
-                  onClick={() => setActiveTab('profile')}
-                  className={`cursor-pointer w-full text-left px-4 py-2 rounded-lg ${activeTab === 'profile' ? 'bg-blue-50 text-[#ff8633]' : 'text-gray-600 hover:bg-gray-100'}`}
+                  onClick={() => setActiveTab('dashboard')}
+                  className={`cursor-pointer w-full text-left px-4 py-2 rounded-lg ${activeTab === 'dashboard' ? 'bg-blue-50 text-[#ff8633]' : 'text-gray-600 hover:bg-gray-100'}`}
                 >
-                  Profile Information
+                  Dashboard
                 </button>
                 
                 <button
@@ -914,12 +914,6 @@ const user = currentUser ? {
                   Leads Activity
                 </button>
 
-                <button
-                  onClick={() => setActiveTab('dashboard')}
-                  className={`cursor-pointer w-full text-left px-4 py-2 rounded-lg ${activeTab === 'dashboard' ? 'bg-blue-50 text-[#ff8633]' : 'text-gray-600 hover:bg-gray-100'}`}
-                >
-                  Dashboard
-                </button>
 
                 <button
                   onClick={() => setActiveTab('addleads')}
@@ -961,9 +955,9 @@ const user = currentUser ? {
 
           {/* Main Profile Content */}
           <div className="w-full md:w-3/4">
-            {activeTab === 'profile' && (
+            {activeTab === 'dashboard' && (
               <div className="bg-white rounded-lg justify-left text-center lg:text-left shadow p-6">
-                <h2 className="text-xl font-bold text-gray-800 mb-6">Profile Information</h2>
+                <h2 className="text-xl font-bold text-gray-800 mb-6">Dashboard</h2>
                 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
