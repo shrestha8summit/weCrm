@@ -18,50 +18,67 @@ const [currentLead, setCurrentLead] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 const [selectedLead, setSelectedLead] = useState(null);
+
   const handlegobacktodashboard = useCallback(() => {
     navigate("/dashboard");
   }, [navigate]);
 
   // editing lead
-    const handleSaveLead = async (updatedLead) => {
-    try {
-      // Add your API call to save the updated lead
-      console.log("Saving lead:", updatedLead);
+  const handleSaveLead = async (updatedLead) => {
+   
+     
+      
+      const token = localStorage.getItem('token');
+      const response = await fetch(
+        `http://localhost:3333/api/udleads/update-lead/${updatedLead.id}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedLead),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update lead');
+      }
+
       setEditPopupOpen(false);
-      // Refresh your leads data after saving
       fetchData();
-    } catch (error) {
-      console.error("Error saving lead:", error);
-    }
+    
   };
 
   // deleting lead
-  const handleDeleteLead = async (leadId) => {
-    try {
-      // Add your API call to delete the lead
-      console.log("Deleting lead with ID:", leadId);
+    const handleDeleteLead = async (leadId) => {
+   
       
-      // Example API call:
       const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:3333/api/leads/${leadId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      const response = await fetch(
+        `http://localhost:3333/api/udleads/delete-lead/${leadId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
       if (!response.ok) {
-        throw new Error('Failed to delete lead');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to delete lead');
       }
 
       setDeletePopupOpen(false);
-      // Refresh your leads data after deletion
       fetchData();
-    } catch (error) {
-      console.error("Error deleting lead:", error);
-    }
+   
   };
 
+
+ 
 
   const fetchData = useCallback(async () => {
     try {
