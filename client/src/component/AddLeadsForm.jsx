@@ -16,7 +16,7 @@ const AddLeadsForm = () => {
     companyname:'',
     jobtitle:'',
     industry:'',
-    new:'',
+    status:'',
     serviceinterestedin:'',
     topicofwork:'',
     expectedtoclose:'',
@@ -38,52 +38,60 @@ const AddLeadsForm = () => {
 const handleSubmit = async (e) => {
   e.preventDefault();
   setIsSubmitting(true);
-
   try {
     const token = localStorage.getItem('token');
-    if (!token) {
-      throw new Error('No authentication token found');
+    if (!token) throw new Error('No authentication token found');
+
+    if (!formData.industry || !formData.serviceinterestedin || !formData.status) {
+      toast.error("Please select all dropdown fields.");
+      setIsSubmitting(false);
+      return;
     }
-    
+
     const body = {
       title: formData.leadtitle,
       customerFirstName: formData.firstName,
       customerLastName: formData.lastName,
       emailAddress: formData.email,
       phoneNumber: formData.phone,
-      companyName:formData.companyname,
-      jobTitle:formData.jobtitle,
-      Industry:formData.industry,
-      New:formData.new,
-      serviceInterestedin:formData.serviceinterestedin,
+      companyName: formData.companyname,
+      jobTitle: formData.jobtitle,
+      industry: formData.industry,
+      status: formData.status,
+      serviceInterestedIn: formData.serviceinterestedin,
       topicOfWork: formData.topicofwork,
-      closingDate: formData.expectedtoclose,  
+      closingDate: formData.expectedtoclose,
       notes: formData.notesforfuture,
     };
 
-    console.log(body)
-    console.log(formData)
+    console.log("body data",body)
+    // const res = await fetch("http://localhost:3333/api/leads", {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'Authorization': `Bearer ${token}`,
+    //   },
+    //   body: JSON.stringify(body),
+    // });
 
-    const res = await fetch("http://localhost:3333/api/leads", {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
-      },
-      body: JSON.stringify(body),
-    });
+    // const responseData = await res.json();
 
-    const responseData = await res.json();
-    
-    if (!res.ok) {
-      throw new Error(responseData.message || responseData.error || "Lead Creation Failed");
-    }
+    // // Debug: Log the backend response
+    // console.log("Backend response:", responseData);
+
+    // if (!res.ok) {
+    //   throw new Error(responseData.message || responseData.error || "Lead Creation Failed");
+    // }
 
     toast.success("Lead Created Successfully!");
     setTimeout(() => navigate("/dashboard"), 2000);
 
   } catch (e) {
-    console.error("Lead Creation Failed:", e);
+    console.error("Lead Creation Failed - Full Error:", e);
+    console.error("Error details:", {
+      message: e.message,
+      stack: e.stack,
+    });
     toast.error(e.message || "Lead Creation Failed. Please try again.");
   } finally {
     setIsSubmitting(false);
@@ -272,9 +280,9 @@ const handleSubmit = async (e) => {
     New
   </label>
   <select
-    id="new"
-    name="new"
-    value={formData.new}
+    id="status"
+    name="status"
+    value={formData.status}
     onChange={handleChange}
     required
     className="w-full px-4 py-3 cursor-pointer rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"

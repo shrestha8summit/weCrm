@@ -20,52 +20,76 @@ function convertStringToISODateString(dateString) {
   }
 }
 
-router.post('/',jwtTokenMiddleware, async (req, res) => {
+router.post('/', jwtTokenMiddleware, async (req, res) => {
   try {
-    const {uid} = req.user;
+    const { uid } = req.user;
     const {
       title,
       customerFirstName,
       customerLastName,
       emailAddress,
       phoneNumber,
+      companyName,
+      jobTitle,
       topicOfWork,
+      industry,              
+      status,                 
+      serviceInterestedIn,    
       closingDate,
       notes
     } = req.body;
 
-    const closingDateISO = convertStringToISODateString(closingDate);
 
+    const closingDateISO = convertStringToISODateString(closingDate);
     if (closingDateISO === null) {
       return res.status(400).json({ error: "Invalid closingDate provided." });
     }
 
-    const newLead = await prisma.Lead.create({
+    const newLead = await prisma.lead.create({
       data: {
         uid,
-        cid:"0",
+        cid: "0",
         title,
         customerFirstName,
         customerLastName,
         emailAddress,
         phoneNumber,
+        companyName,
+        jobTitle,
         topicOfWork,
+        industry,
+        status,
+        serviceInterestedIn,
         closingDate: closingDateISO,
         notes
       },
     });
 
-    console.log(uid,"0", title, customerFirstName, customerLastName, emailAddress, phoneNumber,
-      topicOfWork, closingDate, notes);
+    console.log("Lead created with data:", {
+      uid,
+      cid: "0",
+      title,
+      customerFirstName,
+      customerLastName,
+      emailAddress,
+      phoneNumber,
+      companyName,
+      jobTitle,
+      topicOfWork,
+      industry,
+      status,
+      serviceInterestedIn,
+      closingDate: closingDateISO,
+      notes
+    });
 
     res.status(201).json(newLead);
 
   } catch (error) {
-    console.log("error that you are searching : ", error);
-    console.error('Error creating lead:', error);
+    console.error("Error creating lead:", error);
     res.status(500).json({ error: 'Failed to create lead' });
   }
-  console.log("leads");
+  console.log("POSTexecuted");
 });
 
 export default router;

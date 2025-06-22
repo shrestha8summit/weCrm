@@ -731,7 +731,7 @@ useEffect(() => {
 
 
 // Additional debug log when rendering
-console.log('[UserProfile] Rendering with currentUser:', currentUser);
+// console.log('[UserProfile] Rendering with currentUser:', currentUser);
 
   // Find the matching user from allUsers - prioritize ID match
   const matchedUser = allUsers.find(user => 

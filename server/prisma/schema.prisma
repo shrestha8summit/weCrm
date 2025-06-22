@@ -39,7 +39,7 @@ model company {
   email          String   @unique
   phone          String   @unique
   hashedPassword       String  
-  companyName    String   @unique
+  companyName    String?   @unique
   GSTNumber      String   @unique
   plan           String
   agreeToterms   Boolean 
@@ -53,24 +53,25 @@ model company {
   updatedAt      DateTime @updatedAt
 }
 
-// leads,otp
-//leads schema shall contain {uid,cid,title,customerName,,mobileNumber,email,topicOfWork,ClosingDate}
-//otp schema shall contain {uid, genOTp,GivenOTP,attempts,created date and time, expreyd Data and time}
 model Lead {
-  id                String   @id @default(auto()) @map("_id") @db.ObjectId
-  uid               String   
-  cid               String   ?
-  title             String
-  customerFirstName  String?   
-  customerLastName   String?
-  emailAddress      String?
-  topicOfWork       String?
-  closingDate       DateTime
-  notes             String?
-  phoneNumber String?
-  status            String    @default("On progress")
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
+  id                  String   @id @default(auto()) @map("_id") @db.ObjectId
+  uid                 String
+  cid                 String   @default("0")
+  title               String
+  customerFirstName   String
+  customerLastName    String
+  emailAddress        String
+  phoneNumber         String
+  companyName         String?
+  jobTitle            String?
+  topicOfWork         String?
+  industry            String?  
+  status              String?   @default("New") 
+  serviceInterestedIn String? 
+  closingDate         DateTime
+  notes               String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 }
 
 model OTP {
