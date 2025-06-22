@@ -110,7 +110,7 @@ const handleSubmit = async (e) => {
       }>
         <form
           onSubmit={handleSubmit}
-          className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 transition-all hover:shadow-2xl"
+          className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-2xl border border-gray-100 transition-all hover:shadow-2xl"
         >
           <div className="absolute top-4 right-4">
   <button
@@ -291,14 +291,11 @@ const handleSubmit = async (e) => {
     <option value="Contacted">Contacted</option>
     <option value="Engaged">Engaged</option>
     <option value="Qualified">Qualified</option>
-    <option value="Demo Scheduled">Demo Scheduled</option>
     <option value="Proposal sent">Proposal Sent</option>
     <option value="Negotiation">Negotiation</option>
     <option value="Cloaed Won">Closed Won</option>
     <option value="Closed Lost">Closed Lost</option>
     <option value="On Hold">On Hold</option>
-    <option value="Nurturing">Nurturing</option>
-    <option value="Disqualified">Disqualified</option>
     <option value="Do Not Contact">Do Not Contact</option>
   </select>
 </div>
