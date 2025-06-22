@@ -65,24 +65,6 @@ router.post('/', jwtTokenMiddleware, async (req, res) => {
       },
     });
 
-    console.log("Lead created with data:", {
-      uid,
-      cid: "0",
-      title,
-      customerFirstName,
-      customerLastName,
-      emailAddress,
-      phoneNumber,
-      companyName,
-      jobTitle,
-      topicOfWork,
-      industry,
-      status,
-      serviceInterestedIn,
-      closingDate: closingDateISO,
-      notes
-    });
-
     res.status(201).json(newLead);
 
   } catch (error) {
