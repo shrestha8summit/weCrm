@@ -61,6 +61,9 @@ const handleSubmit = async (e) => {
       notes: formData.notesforfuture,
     };
 
+    console.log(body)
+    console.log(formData)
+
     const res = await fetch("http://localhost:3333/api/leads", {
       method: 'POST',
       headers: {
