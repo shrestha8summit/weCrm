@@ -65,23 +65,16 @@ const handleSubmit = async (e) => {
     };
 
     console.log("body data",body)
-    // const res = await fetch("http://localhost:3333/api/leads", {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Authorization': `Bearer ${token}`,
-    //   },
-    //   body: JSON.stringify(body),
-    // });
+    const res = await fetch("http://localhost:3333/api/leads", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify(body),
+    });
 
-    // const responseData = await res.json();
-
-    // // Debug: Log the backend response
-    // console.log("Backend response:", responseData);
-
-    // if (!res.ok) {
-    //   throw new Error(responseData.message || responseData.error || "Lead Creation Failed");
-    // }
+    const responseData = await res.json();
 
     toast.success("Lead Created Successfully!");
     setTimeout(() => navigate("/dashboard"), 2000);

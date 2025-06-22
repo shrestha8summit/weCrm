@@ -816,14 +816,14 @@ const user = currentUser ? {
         phoneNumber: formData.phone,
         companyName: formData.companyname,
         jobTitle: formData.jobtitle,
-        Industry: formData.industry,
-        New: formData.new,
-        serviceInterestedin: formData.serviceinterestedin,
+        industry: formData.industry,
+        status: formData.status,
+        serviceInterestedIn: formData.serviceinterestedin,
         topicOfWork: formData.topicofwork,
         closingDate: formData.expectedtoclose,
         notes: formData.notesforfuture,
       };
-
+      console.log(backendData)
       const res = await fetch("http://localhost:3333/api/leads", {
         method: 'POST',
         headers: {
@@ -1261,8 +1261,6 @@ const user = currentUser ? {
     <option value="">Select an industry</option>
     <option value="Technology">Technology</option>
     <option value="SaaS">SaaS</option>
-    <option value="Media">Media</option>
-    <option value="Healthcare">Healthcare</option>
     <option value="Finance">Finance</option>
     <option value="Manufacturing">Manufacturing</option>
     <option value="Other">Other</option>
@@ -1271,13 +1269,13 @@ const user = currentUser ? {
 
 
 <div className="mb-4">
-  <label htmlFor="new" className="block text-sm font-medium text-gray-700 mb-1">
+  <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
     New
   </label>
   <select
-    id="new"
-    name="new"
-    value={formData.new}
+    id="status"
+    name="status"
+    value={formData.status}
     onChange={handleChange}
     required
     className="w-full px-4 py-3 cursor-pointer rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
@@ -1286,14 +1284,11 @@ const user = currentUser ? {
     <option value="Contacted">Contacted</option>
     <option value="Engaged">Engaged</option>
     <option value="Qualified">Qualified</option>
-    <option value="Demo Scheduled">Demo Scheduled</option>
     <option value="Proposal sent">Proposal Sent</option>
     <option value="Negotiation">Negotiation</option>
     <option value="Cloaed Won">Closed Won</option>
     <option value="Closed Lost">Closed Lost</option>
     <option value="On Hold">On Hold</option>
-    <option value="Nurturing">Nurturing</option>
-    <option value="Disqualified">Disqualified</option>
     <option value="Do Not Contact">Do Not Contact</option>
   </select>
 </div>

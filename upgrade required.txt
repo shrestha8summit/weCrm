@@ -1,12 +1,13 @@
 1> less margin or no margin in both site(user and admin);
-2> In admin side :
-        "All users,Add users, Add leads... everything from nav-bar" should be brought to right empty space in the website 
-        get few thinsg from "http://localhost:3333/api/recent" to get no of leads, no of users .. will upload more
-        lead activiy is missing in admin, which is required if s/he wamts to chnage in leads.
+2> After lead is created the toast shall be on right top corner sidein abit big size . and shall navigate to lead activity ..
+3> the menu on the rightside of dahsboard ( Home,lead activity, seetings ) can either be remove or be functional..
+4> "Not specified" loop handling  along with border radius 
+5> make all buttons samilar, (color ... )
 
 Backened side : 
-   i. users lead api ..
-   ii. change the schema
+   i. CRUD  lead activity
+   ii.way to chain the new edited leads..
+   iii.    
 
 
 

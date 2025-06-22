@@ -6,13 +6,9 @@ const router = express.Router();
 router.use(express.json());
 
 router.get("/", jwtTokenMiddleware, async (req, res) => {
-    console.log("i am working ")
     try {
         
         const users = await prisma.user.findMany(); 
-       
-        console.log(users);
-
         if (!users || users.length === 0) { 
             return res.status(404).json({
                 message: "No users found."
