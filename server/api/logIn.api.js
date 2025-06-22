@@ -88,7 +88,6 @@ router.post("/", async (req, res) => {
       JWT_SECRET,
       { expiresIn: "1h" }
     );
-
     return res.status(200).json({
       message: "Login successful (DB)",
       user: {
