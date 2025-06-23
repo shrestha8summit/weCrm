@@ -232,7 +232,7 @@ const BackButton = ({ onClick }) => (
   <button
     type="button"
     onClick={onClick}
-    className="flex items-center space-x-2 text-gray-600 hover:text-[#ff8633] transition-colors group ml-auto"
+    className="cursor-pointer flex items-center gap-2 px-4 py-2 bg-[#ff8633] text-white rounded-lg transition-colors hover:bg-[#e57328] ml-auto"
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"
