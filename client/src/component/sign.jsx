@@ -106,7 +106,7 @@ const handleSubmit = async (e) => {
 
 
       <Suspense fallback={
-        <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
+        <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-2xl border border-gray-100">
           <div className="animate-pulse">
             <div className="h-8 bg-gray-200 rounded w-3/4 mb-6 mx-auto"></div>
             <div className="h-4 bg-gray-200 rounded w-1/2 mb-8 mx-auto"></div>
@@ -115,7 +115,7 @@ const handleSubmit = async (e) => {
       }>
         <form
           onSubmit={handleSubmit}
-          className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 transition-all hover:shadow-2xl"
+          className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-2xl border border-gray-100 transition-all hover:shadow-2xl"
         >
 <div className="absolute top-4 right-4">
   <button
@@ -132,7 +132,7 @@ const handleSubmit = async (e) => {
 
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-gray-800 mb-2">Create Account</h2>
-            <p className="text-gray-500">Join our community today</p>
+            <p className="text-gray-500">Add Employees</p>
           </div>
 
           {/* Profile Photo Upload */}
@@ -201,7 +201,9 @@ const handleSubmit = async (e) => {
             </div>
           </div>
 
-          <div className="mb-4">
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+ <div className="mb-4">
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
               Email
             </label>
@@ -233,6 +235,8 @@ const handleSubmit = async (e) => {
               autoComplete="tel"
             />
           </div>
+</div>
+         
 
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-3 text-center">Account Type</label>
@@ -268,7 +272,9 @@ const handleSubmit = async (e) => {
             </div>
           </div>
 
-          <div className="mb-4">
+
+<div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-4'>
+ <div className="mb-4">
             <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
               Username
             </label>
@@ -311,6 +317,8 @@ const handleSubmit = async (e) => {
               </button>
             </Suspense>
           </div>
+</div>
+         
 
           <button
             type="submit"
