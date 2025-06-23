@@ -8,6 +8,8 @@ const LeadsActivity = () => {
 const [editPopupOpen, setEditPopupOpen] = useState(false);
 const [deletePopupOpen, setDeletePopupOpen] = useState(false);
 const [currentLead, setCurrentLead] = useState(null);
+  const [isSaving, setIsSaving] = useState(false); // Add this line
+  const [apiError, setApiError] = useState(null);
 
 
   const [stats, setStats] = useState({
@@ -24,32 +26,44 @@ const [selectedLead, setSelectedLead] = useState(null);
   }, [navigate]);
 
   // editing lead
-  const handleSaveLead = async (updatedLead) => {
-   
-     
-      
-      const token = localStorage.getItem('token');
-      const response = await fetch(
-        `http://localhost:3333/api/udleads/update-lead/${updatedLead.id}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(updatedLead),
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update lead');
-      }
-
-      setEditPopupOpen(false);
-      fetchData();
+ const handleSaveLead = async (updatedLead) => {
+  try {
+    setIsSaving(true);
+    setApiError(null);
     
-  };
+    const token = localStorage.getItem('token');
+    console.log('Token:', token); // Debug token
+    console.log('Updating lead:', updatedLead); // Debug payload
+
+    const response = await fetch(
+      `http://localhost:3333/api/udleads/update-lead/${updatedLead.id}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedLead),
+      }
+    );
+
+    console.log('Response status:', response.status); // Debug status
+    const responseData = await response.json();
+    console.log('Response data:', responseData); // Debug response
+
+    if (!response.ok) {
+      throw new Error(responseData.error || 'Failed to update lead');
+    }
+
+    setEditPopupOpen(false);
+    fetchData();
+  } catch (error) {
+    console.error("Error saving lead:", error);
+    setApiError(error.message);
+  } finally {
+    setIsSaving(false);
+  }
+};
 
   // deleting lead
     const handleDeleteLead = async (leadId) => {
