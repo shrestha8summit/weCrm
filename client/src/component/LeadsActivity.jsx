@@ -35,8 +35,6 @@ const [selectedLead, setSelectedLead] = useState(null);
       throw new Error('Lead ID is missing. Cannot update lead.');
     }
 
-    // Debug log to confirm id is present
-    console.log('Updating lead with id:', updatedLead.id);
 
     // Only send fields that exist in the Lead schema
     const payload = {
@@ -70,11 +68,9 @@ const [selectedLead, setSelectedLead] = useState(null);
         },
         body: JSON.stringify(payload),
       }
-    );
-
-    console.log('Response status:', response.status); // Debug status
+    );   
     const responseData = await response.json();
-    console.log('Response data:', responseData); // Debug response
+    console.log('Response data:', responseData); 
 
     if (!response.ok) {
       setApiError(responseData.error || 'Failed to update lead');
@@ -82,7 +78,7 @@ const [selectedLead, setSelectedLead] = useState(null);
     }
 
     setEditPopupOpen(false);
-    await fetchData(); // Ensure data is refreshed after update
+    await fetchData(); 
   } catch (error) {
     console.error('Error saving lead:', error);
     setApiError(error.message);
