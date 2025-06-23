@@ -781,6 +781,7 @@ const UserProfile = ({ onLogout }) => {
   const [allUsers, setAllUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
+
   const [leadsData, setLeadsData] = useState({
   allLeads: 0,
   allNewLeads:[],
@@ -804,6 +805,22 @@ const UserProfile = ({ onLogout }) => {
   allDoNotContact: [],
   doNotContactCount: 0,
 });
+
+// Combine all leads from all status categories
+const allCombinedLeads = [
+  ...leadsData.allNewLeads,
+  ...leadsData.allContacted,
+  ...leadsData.allEngaged,
+  ...leadsData.allQualified,
+  ...leadsData.allProposalSent,
+  ...leadsData.allNegotiation,
+  ...leadsData.allClosedWon,
+  ...leadsData.allClosedLost,
+  ...leadsData.allOnHold,
+  ...leadsData.allDoNotContact
+];
+
+
 const [leadsLoading, setLeadsLoading] = useState(false);
 
   // UserProfile.jsx
@@ -1198,7 +1215,7 @@ const [leadsLoading, setLeadsLoading] = useState(false);
               </div>
             )}
 
-            {activeTab === 'leads' && (
+        {activeTab === 'leads' && (
   <div className="bg-white rounded-lg shadow p-6">
     <h2 className="text-xl lg:text-3xl font-bold text-gray-800 mb-6">Leads Activity</h2>
     
@@ -1208,47 +1225,60 @@ const [leadsLoading, setLeadsLoading] = useState(false);
       </div>
     ) : (
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200 text-left">
-            {leadsData.allProposalSent.map((lead) => (
-              <tr key={lead.id}>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">
-                    {lead.customerFirstName} {lead.customerLastName}
-                  </div>
-                  <div className="text-sm text-gray-500">{lead.emailAddress}</div>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {lead.companyName}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                    lead.status === 'Proposal Sent' ? 'bg-purple-100 text-purple-800' :
-                    'bg-gray-100 text-gray-800'
-                  }`}>
-                    {lead.status}
-                  </span>
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {lead.serviceInterestedIn}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <button className="text-[#ff8633] mr-3">View</button>
-                  <button className="text-gray-600 hover:text-gray-900">Edit</button>
-                </td>
+        {/* Combine all leads from all status categories */}
+        {allCombinedLeads.length === 0 ? (
+          <p className="text-gray-500 text-center py-4">No leads found</p>
+        ) : (
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200 text-left">
+              {allCombinedLeads.map((lead) => (
+                <tr key={lead.id}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900">
+                      {lead.customerFirstName} {lead.customerLastName}
+                    </div>
+                    <div className="text-sm text-gray-500">{lead.emailAddress}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {lead.companyName}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                      lead.status === 'New' ? 'bg-blue-100 text-blue-800' :
+                      lead.status === 'Contacted' ? 'bg-yellow-100 text-yellow-800' :
+                      lead.status === 'Engaged' ? 'bg-green-100 text-green-800' :
+                      lead.status === 'Qualified' ? 'bg-purple-100 text-purple-800' :
+                      lead.status === 'Proposal Sent' ? 'bg-indigo-100 text-indigo-800' :
+                      lead.status === 'Negotiation' ? 'bg-pink-100 text-pink-800' :
+                      lead.status === 'Closed Won' ? 'bg-teal-100 text-teal-800' :
+                      lead.status === 'Closed Lost' ? 'bg-red-100 text-red-800' :
+                      lead.status === 'On Hold' ? 'bg-gray-100 text-gray-800' :
+                      'bg-orange-100 text-orange-800'
+                    }`}>
+                      {lead.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {lead.serviceInterestedIn}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <button className="text-[#ff8633] mr-3">View</button>
+                    <button className="text-gray-600 hover:text-gray-900">Edit</button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     )}
   </div>
