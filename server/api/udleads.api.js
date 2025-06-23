@@ -1,5 +1,3 @@
-//  delete and update Apis for leads 
-
 import express from "express";
 import prisma from "../prisma/prismaClient.js";
 const router = express.Router();
