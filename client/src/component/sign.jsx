@@ -106,7 +106,7 @@ const handleSubmit = async (e) => {
 
 
       <Suspense fallback={
-        <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
+        <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-2xl border border-gray-100">
           <div className="animate-pulse">
             <div className="h-8 bg-gray-200 rounded w-3/4 mb-6 mx-auto"></div>
             <div className="h-4 bg-gray-200 rounded w-1/2 mb-8 mx-auto"></div>
@@ -115,13 +115,13 @@ const handleSubmit = async (e) => {
       }>
         <form
           onSubmit={handleSubmit}
-          className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 transition-all hover:shadow-2xl"
+          className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-2xl border border-gray-100 transition-all hover:shadow-2xl"
         >
 <div className="absolute top-4 right-4">
   <button
     type="button"
     onClick={handlegobacktodashboard}
-    className="flex items-center space-x-2 text-gray-600 hover:text-[#ff8633] transition-colors group"
+    className="cursor-pointer flex items-center gap-2 px-4 py-2 bg-[#ff8633] text-white rounded-lg transition-colors hover:bg-[#e57328]"
   >
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 group-hover:transform group-hover:-translate-x-1 transition-transform" viewBox="0 0 20 20" fill="currentColor">
       <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
@@ -132,7 +132,7 @@ const handleSubmit = async (e) => {
 
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold text-gray-800 mb-2">Create Account</h2>
-            <p className="text-gray-500">Join our community today</p>
+            <p className="text-gray-500">Add Employees</p>
           </div>
 
           {/* Profile Photo Upload */}
@@ -178,7 +178,7 @@ const handleSubmit = async (e) => {
                 value={formData.firstName}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                className="w-full text-center px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
                 placeholder="John"
                 autoComplete="given-name"
               />
@@ -194,14 +194,16 @@ const handleSubmit = async (e) => {
                 value={formData.lastName}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                className="w-full px-4 text-center py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
                 placeholder="Doe"
                 autoComplete="family-name"
               />
             </div>
           </div>
 
-          <div className="mb-4">
+
+<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+ <div className="mb-4">
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
               Email
             </label>
@@ -212,7 +214,7 @@ const handleSubmit = async (e) => {
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+              className="w-full px-4  text-center py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
               placeholder="your@email.com"
               autoComplete="email"
             />
@@ -228,11 +230,13 @@ const handleSubmit = async (e) => {
               name="phone"
               value={formData.phone}
               onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+              className="w-full px-4  text-center py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
               placeholder="+1 (123) 456-7890"
               autoComplete="tel"
             />
           </div>
+</div>
+         
 
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-3 text-center">Account Type</label>
@@ -268,7 +272,9 @@ const handleSubmit = async (e) => {
             </div>
           </div>
 
-          <div className="mb-4">
+
+<div className='grid grid-cols-1 md:grid-cols-2 gap-4 mb-4'>
+ <div className="mb-4">
             <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-1">
               Username
             </label>
@@ -279,7 +285,7 @@ const handleSubmit = async (e) => {
               value={formData.username}
               onChange={handleChange}
               required
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+              className="w-full text-center px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
               placeholder="john_doe"
               autoComplete="username"
             />
@@ -303,7 +309,7 @@ const handleSubmit = async (e) => {
             <Suspense fallback={<div className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 bg-gray-300 rounded-full"></div>}>
               <button
                 type="button"
-                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                className="absolute right-3 top-3/4 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
                 onClick={() => setShowPassword(!showPassword)}
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
@@ -311,6 +317,8 @@ const handleSubmit = async (e) => {
               </button>
             </Suspense>
           </div>
+</div>
+         
 
           <button
             type="submit"

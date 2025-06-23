@@ -25,11 +25,35 @@ const [selectedLead, setSelectedLead] = useState(null);
     navigate("/dashboard");
   }, [navigate]);
 
-  // editing lead
+  
  const handleSaveLead = async (updatedLead) => {
   try {
     setIsSaving(true);
     setApiError(null);
+
+  const handleSaveLead = async (updatedLead) => {
+   
+      const token = localStorage.getItem('token');
+      const response = await fetch(
+        `http://localhost:3333/api/udleads/update-lead/${updatedLead.id}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedLead),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to update lead');
+      }
+
+      setEditPopupOpen(false);
+      fetchData();
+
     
     const token = localStorage.getItem('token');
     console.log('Token:', token); // Debug token
@@ -171,12 +195,20 @@ const [selectedLead, setSelectedLead] = useState(null);
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <header className="mb-8">
-        <div className="flex flex-row justify-between items-center mb-6 relative">
-          <h1 className="text-3xl font-bold text-gray-800 absolute left-1/2 transform -translate-x-1/2">
-            Leads Activity
-          </h1>
-          <BackButton onClick={handlegobacktodashboard} />
-        </div>
+    <div className="flex flex-row justify-between items-center mb-6 relative">
+  <BackButton onClick={handlegobacktodashboard} />
+  <div className="flex items-center absolute left-1/2 transform -translate-x-1/2">
+    <h1 className="text-3xl font-bold text-gray-800 mr-2">
+      Leads Activity
+    </h1>
+    <button className="text-gray-600 hover:text-[#ff8633] transition-colors">
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none"  viewBox="0 0 24 24"  stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"  />
+      </svg>
+    </button>
+  </div>
+  <div className="w-10"></div>
+</div>
         <div className="flex flex-wrap gap-4 mt-4">
           <StatCard title="Total Users" value={stats.userNumber} icon="👥" />
           <StatCard title="Total Leads" value={stats.leadsNumber} icon="📊" />
@@ -246,7 +278,7 @@ const BackButton = ({ onClick }) => (
   <button
     type="button"
     onClick={onClick}
-    className="flex items-center space-x-2 text-gray-600 hover:text-[#ff8633] transition-colors group ml-auto"
+    className="cursor-pointer flex items-center gap-2 px-4 py-2 bg-[#ff8633] text-white rounded-lg transition-colors hover:bg-[#e57328] ml-auto"
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -285,9 +317,17 @@ const LeadsTable = React.memo(({ leadsData,setSelectedLead,setCurrentLead,setVie
 
   return (
     <div className="bg-white rounded-lg shadow p-6 lg:col-span-2">
-      <h2 className="text-xl font-semibold mb-4 text-gray-700 border-b pb-2">
-        Leads ({leadsData.length})
-      </h2>
+      <div className="flex justify-center gap-10 items-center mb-4 border-b pb-2">
+  <h2 className="text-xl font-semibold text-center text-gray-700">
+    Leads ({leadsData.length})
+  </h2>
+  <button className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors" >
+    Download Leads
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+    <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+    </svg>
+  </button>
+</div>
       <div className="overflow-x-auto w-full">
         <table className="min-w-full divide-y divide-gray-200 table-fixed">
           <thead className="bg-gray-50">
@@ -319,7 +359,7 @@ const TableHeader = ({ children, className }) => (
 const StatusHistoryPopup = ({ lead, onClose }) => {
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white shadow-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4 relative">
           <h2 className="text-xl font-bold text-center  mx-auto text-[#ff8633]">
             Status History
@@ -336,7 +376,7 @@ const StatusHistoryPopup = ({ lead, onClose }) => {
         
         <div className="mb-6">
           <h3 className="text-lg font-semibold">{lead.customerFirstName} {lead.customerLastName}</h3>
-          <p className="text-gray-600">{lead.company || "TechCorp Solutions"}</p>
+          <p className="text-gray-600">{lead.companyName || "TechCorp Solutions"}</p>
           <p className="text-sm mt-1">
             Current Status: <span className="font-medium">{lead.status}</span>
           </p>
@@ -345,11 +385,11 @@ const StatusHistoryPopup = ({ lead, onClose }) => {
         <div className="mb-6">
           <h4 className="font-medium text-gray-700 mb-2">Status Timeline</h4>
           <ul className="space-y-8 relative">
-            <StatusItem completed={true} title="New" changedBy="System" description="Lead created from LinkedIn" />
-            <StatusItem completed={true} title="Contacted" changedBy="John Smith" description="Initial outreach call completed" />
-            <StatusItem completed={false} title="Engaged" changedBy="John Smith" description="Responded positively, showed interest" />
-            <StatusItem completed={false} title="Qualified" changedBy="John Smith" description="Budget confirmed, decision maker identified" />
-            <StatusItem completed={false} title="Demo Scheduled" changedBy="John Smith" description="Demo scheduled for next week" />
+            <StatusItem completed={false} title="New" changedBy="System" description="Lead created from LinkedIn" date="22-5-2025" />
+            <StatusItem completed={false} title="Contacted" changedBy="John Smith" description="Initial outreach call completed" date="30-5-2025" />
+            <StatusItem completed={false} title="Engaged" changedBy="John Smith" description="Responded positively, showed interest" date="2-6-2025" />
+            <StatusItem completed={false} title="Qualified" changedBy="John Smith" description="Budget confirmed, decision maker identified" date="10-6-2025"/>
+            <StatusItem completed={true} title="Demo Scheduled" changedBy="John Smith" description="Demo scheduled for next week" date="15-6-2025"/>
           </ul>
         </div>
 
@@ -366,7 +406,7 @@ const StatusHistoryPopup = ({ lead, onClose }) => {
 // View Lead Popup
 const ViewLeadPopup = React.memo (({ lead, onClose }) => (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-    <div className="bg-white rounded-lg shadow-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+    <div className="bg-white rounded-lg shadow-xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold text-gray-800">Lead Details</h2>
         <button 
@@ -391,23 +431,39 @@ const ViewLeadPopup = React.memo (({ lead, onClose }) => (
         <div className="text-left">
           <h3 className="font-semibold mb-2">Company Information</h3>
           <p><strong>Company Name:</strong>  {lead.companyName || 'Not Specified'}</p>
-          <p><strong>Industry:</strong>  {lead.Industry || 'Not Specified'}</p>
-           <p><strong>Website:</strong>  {lead.Website || 'Not Specified'}</p>
-            <p><strong>Location:</strong>  {lead.Location || 'Not Specified'}</p>
+          <p><strong>Industry:</strong>  {lead.industry || 'Not Specified'}</p>
         </div>
 
 
         <div className="text-left">
           <h3 className="font-semibold mb-2">Lead Details</h3>
-          <p><strong>Status:</strong>  {lead.new || 'On Progress'}</p>
-          <p><strong>Stage:</strong> {lead.Stage || 'Not specified'}</p>
-          <p><strong>Source:</strong> {lead.Source || 'Not specified'}</p>
-          <p><strong>Score:</strong> {lead.Score || 'Not specified'}</p>
+          <p><strong>Title:</strong>  {lead.title || 'On Progress'}</p>
+          <p><strong>Status:</strong>  {lead.status || 'On Progress'}</p>
+          
+          <p><strong>Created At:</strong> {lead.createdAt ? new Date(lead.createdAt).toLocaleString('en-US', {
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: true
+}) : 'Not specified'}</p>
+
+
+
+ <p><strong>Deadline:</strong> {lead.closingDate ? new Date(lead.createdAt).toLocaleString('en-US', {
+  month: 'long',
+  day: 'numeric',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: true
+}) : 'Not specified'}</p>
         </div>
 
         <div className="text-left">
           <h3 className="font-semibold mb-2">Tracking</h3>
-          <p><strong>Status:</strong>  {lead.new || 'On Progress'}</p>
+          <p><strong>Status:</strong>  {lead.status || 'On Progress'}</p>
           <p><strong>Email:</strong> {lead.emailAddress}</p>
           <p><strong>Phone:</strong> {lead.phoneNumber}</p>
           <p><strong>Job Title:</strong> {lead.jobTitle || 'Not specified'}</p>
@@ -434,7 +490,7 @@ const EditLeadPopup = ({ lead, onClose, onSave }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white shadow-xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-gray-800">Edit Lead</h2>
           <button 
@@ -502,7 +558,7 @@ const EditLeadPopup = ({ lead, onClose, onSave }) => {
                 <input
                   type="text"
                   name="jobTitle"
-                  value={editedLead.jobTitle || 'Not Specified'}
+                  value={editedLead.jobTitle || ''}
                   onChange={handleChange}
                   className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
                 />
@@ -518,7 +574,7 @@ const EditLeadPopup = ({ lead, onClose, onSave }) => {
                 <input
                   type="text"
                   name="companyName"
-                  value={editedLead.companyName || 'Not Specified'}
+                  value={editedLead.companyName || ''}
                   onChange={handleChange}
                   className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
                 />
@@ -529,7 +585,7 @@ const EditLeadPopup = ({ lead, onClose, onSave }) => {
                 <input
                   type="text"
                   name="Industry"
-                  value={editedLead.Industry || 'Not Specified'}
+                  value={editedLead.industry || ''}
                   onChange={handleChange}
                   className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
                 />
@@ -541,7 +597,7 @@ const EditLeadPopup = ({ lead, onClose, onSave }) => {
                 <input
                   type="text"
                   name="Website"
-                  value={editedLead.Website || 'Not Specified'}
+                  value={editedLead.Website || ''}
                   onChange={handleChange}
                   className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
                 />
@@ -552,7 +608,7 @@ const EditLeadPopup = ({ lead, onClose, onSave }) => {
                 <input
                   type="text"
                   name="Location"
-                  value={editedLead.Location|| 'Not Specified'}
+                  value={editedLead.Location|| ''}
                   onChange={handleChange}
                   className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
                 />
@@ -657,7 +713,7 @@ const DeleteConfirmationPopup = React.memo(({ lead, onClose, onConfirm }) => (
 
 
 
-const StatusItem = ({ completed, title, changedBy, description }) => {
+const StatusItem = ({ completed, title, changedBy, description,date }) => {
   return (
     <li className="relative pl-8">  {/* Added relative and padding */}
       {/* Connecting line - add this */}
@@ -667,11 +723,17 @@ const StatusItem = ({ completed, title, changedBy, description }) => {
       <div className={`absolute left-0 top-1/2 h-6 w-6 rounded-full border-4 ${completed ? 'border-green-500' : 'bg-white border-gray-300'} transform -translate-y-1/2`}></div>
       
       {/* Content */}
-      <div className="text-left p-4">
-        <h4 className="font-medium">{title}</h4>
-        <p className="text-sm text-gray-500">Changed by: {changedBy}</p>
-        <p className="text-sm mt-1">{description}</p>
-      </div>
+     <div className="flex-0.5 text-left p-4">
+  <div className="flex flex-row justify-between items-center">
+    <h4 className="font-medium">{title}</h4>
+    <h4 className="font-medium">{date}</h4>
+  </div>
+  
+  <p className="text-sm text-gray-500">Changed by: {changedBy}</p>
+  <p className="text-sm mt-1">{description}</p>
+</div>
+    
+
     </li>
   );
 }

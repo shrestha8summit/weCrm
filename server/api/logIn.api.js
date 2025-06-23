@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 dotenv.config();
 const router = express.Router();
 
-const JWT_SECRET = process.env.JWT_SECRET || "your_jwt_secret"; 
+const JWT_SECRET = process.env.JWT_SECRET; 
 
 router.post("/", async (req, res) => {
   try {
@@ -88,7 +88,6 @@ router.post("/", async (req, res) => {
       JWT_SECRET,
       { expiresIn: "1h" }
     );
-
     return res.status(200).json({
       message: "Login successful (DB)",
       user: {

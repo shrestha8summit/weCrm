@@ -14,7 +14,7 @@ router.get("/", jwtTokenMiddleware , async(req,res)=>{
         const leadsCount = await prisma.Lead.count();
         const companyCount = await prisma.company.count();
 
-        console.log(user,company,leads,"usercount: ",userCount,"leadsCount: ",leadsCount,"company count: ",companyCount);
+        //console.log(user,company,leads,"usercount: ",userCount,"leadsCount: ",leadsCount,"company count: ",companyCount);
 
         res.status(200).json({
            msg :" got data from mongodb",

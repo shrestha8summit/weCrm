@@ -16,6 +16,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AddLeadsForm from './component/AddLeadsForm.jsx';
 import LeadsActivity from './component/LeadsActivity.jsx';
+import AlertsandReminderForm from './component/AlertsandReminderForm.jsx';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("loggedIn") === "true");
@@ -89,6 +90,7 @@ function App() {
           <Route path="/users" element={<AllUsers />} />
           <Route path="/edit-user/:userId" element={<EditUser />} />
           <Route path="/add-leads-as-admin" element={<AddLeadsForm />} />
+          <Route path="/alerts-and-reminder-admin" element={<AlertsandReminderForm />} />
           <Route path="/leadsactivity" element={<LeadsActivity />} />
           
         </Route>

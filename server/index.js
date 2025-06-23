@@ -10,7 +10,7 @@ import logIn from "./api/logIn.api.js";
 import checkingOTP from "./api/checkingOTP.js";
 import userProfile from "./api/userProfile.api.js";
 import addCustomer from "./api/addCustomer.api.js";
-import updateUserRoutes from "./api/updateUser.js"; // <-- Use import, not require
+import updateUserRoutes from "./api/updateUser.js"; 
 import recentActivities from "./api/recentActivities.api.js";
 import loggedData from "./api/loggedData.api.js"
 import addLeads from "./api/addLeads.api.js"
