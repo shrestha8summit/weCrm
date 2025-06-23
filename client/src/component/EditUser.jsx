@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import {  useNavigate } from 'react-router-dom';
 
 const EditUser = ({ userId, onUpdate, onDelete, onClose }) => {
   // const { userId } = useParams();
@@ -28,6 +28,7 @@ const EditUser = ({ userId, onUpdate, onDelete, onClose }) => {
 
   const handleChange = e => {
     setUser({ ...user, [e.target.name]: e.target.value });
+    
   };
 
   const handleSubmit = async e => {

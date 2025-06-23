@@ -14,6 +14,7 @@ import updateUserRoutes from "./api/updateUser.js";
 import recentActivities from "./api/recentActivities.api.js";
 import loggedData from "./api/loggedData.api.js"
 import addLeads from "./api/addLeads.api.js"
+import udleads from "./api/udleads.api.js"
 
 import updatePassword from "./middleware/updatePassword.middleware.js";
 import jwtTokenMiddleware from "./middleware/jwtoken.middleware.js"; 
@@ -38,12 +39,14 @@ app.use("/api", updateUserRoutes);
 app.use("/api/recent",recentActivities);
 app.use("/api/loggedData",loggedData);
 app.use("/api/leads",addLeads);
+app.use("/api/udleads",udleads);
 app.get("/api/protected-route", jwtTokenMiddleware, (req, res) => {
   res.json({
     message: 'Protected route accessed!',
     user: req.user
   });
 });
+
 
 app.get("/", (req, res) => {
     res.send("Welcome to index page");
