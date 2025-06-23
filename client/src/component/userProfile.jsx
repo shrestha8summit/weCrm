@@ -46,8 +46,8 @@
 //           [name]: value,
 //         }));
 //       }, []);
-    
-    
+
+
 //   const handleSubmit = async (e) => {
 //   e.preventDefault();
 //   setIsSubmitting(true);
@@ -150,7 +150,7 @@
 //                 >
 //                   Profile Information
 //                 </button>
-                
+
 //                 <button
 //                   onClick={() => setActiveTab('leads')}
 //                   className={`cursor-pointer w-full text-left px-4 py-2 rounded-lg ${activeTab === 'leads' ? 'bg-blue-50 text-[#ff8633]' : 'text-gray-600 hover:bg-gray-100'}`}
@@ -215,7 +215,7 @@
 //             {activeTab === 'profile' && (
 //               <div className="bg-white rounded-lg shadow p-6">
 //                 <h2 className="text-xl font-bold text-gray-800 mb-6">Profile Information</h2>
-                
+
 //                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 //                   <div>
 //                     <h3 className="text-lg font-semibold text-gray-700 mb-4">Personal Details</h3>
@@ -238,7 +238,7 @@
 //                   <div>
 //                     <h3 className="text-lg font-semibold text-gray-700 mb-4">About</h3>
 //                     <p className="text-gray-600 mb-6">{user.bio}</p>
-                    
+
 //                     <h3 className="text-lg font-semibold text-gray-700 mb-4">Skills</h3>
 //                     <div className="flex flex-wrap gap-2">
 //                       {user.skills.map((skill, index) => (
@@ -265,7 +265,7 @@
 //             {activeTab === 'leads' && (
 //               <div className="bg-white rounded-lg shadow p-6">
 //                 <h2 className="text-xl font-bold text-gray-800 mb-6">Leads Activity</h2>
-                
+
 //                 <div className="overflow-x-auto">
 //                   <table className="min-w-full divide-y divide-gray-200">
 //                     <thead className="bg-gray-50">
@@ -306,7 +306,7 @@
 //               <div className="bg-white rounded-lg shadow p-6">
 //                 <h2 className="text-xl font-bold text-gray-800 mb-6">Account Settings</h2>
 //                 <p className="text-gray-600 mb-4">Last login: {user.lastLogin}</p>
-                
+
 //                 <div className="space-y-6">
 //                   <div>
 //                     <h3 className="text-lg font-semibold text-gray-700 mb-2">Change Password</h3>
@@ -664,111 +664,110 @@ const UserProfile = ({ onLogout }) => {
   const [userData, setUserData] = useState(null);
   const [allUsers, setAllUsers] = useState([]);
   const [loading, setLoading] = useState(true);
- const [currentUser, setCurrentUser] = useState(null);
+  const [currentUser, setCurrentUser] = useState(null);
 
- 
-// UserProfile.jsx
-useEffect(() => {
-  const loadUserProfile = async () => {
-    try {
-      console.group('[UserProfile] Loading User Data');
-      
-      // 1. Get stored credentials
-      const token = localStorage.getItem('token');
-      const storedUserId = localStorage.getItem('userId');
-      const storedUsername = localStorage.getItem('username');
-      
-      console.log('Stored credentials:', {
-        token: token ? 'exists' : 'missing',
-        userId: storedUserId,
-        username: storedUsername
-      });
 
-      if (!token || !storedUserId) {
-        throw new Error('Missing authentication data');
+  // UserProfile.jsx
+  useEffect(() => {
+    const loadUserProfile = async () => {
+      try {
+        console.group('[UserProfile] Loading User Data');
+
+        // 1. Get stored credentials
+        const token = localStorage.getItem('token');
+        const storedUserId = localStorage.getItem('userId');
+        const storedUsername = localStorage.getItem('username');
+
+        console.log('Stored credentials:', {
+          token: token ? 'exists' : 'missing',
+          userId: storedUserId,
+          username: storedUsername
+        });
+
+        if (!token || !storedUserId) {
+          throw new Error('Missing authentication data');
+        }
+
+        console.log('Fetching user data...');
+        const usersResponse = await fetch("http://localhost:3333/api/allUser", {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!usersResponse.ok) {
+          throw new Error('Failed to fetch user data');
+        }
+
+        const allUsers = await usersResponse.json();
+        console.log('Received users:', allUsers);
+
+        // 3. Find matching user
+        const matchedUser = allUsers.find(user =>
+          user.id === storedUserId &&
+          user.username === storedUsername
+        );
+
+        if (!matchedUser) {
+          console.error('No matching user found. Available users:',
+            allUsers.map(u => ({ id: u.id, username: u.username })));
+          throw new Error('User data mismatch');
+        }
+
+        console.log('Matched user:', matchedUser);
+        setCurrentUser(matchedUser);
+        setLoading(false);
+
+        console.groupEnd();
+      } catch (error) {
+        console.error('Profile loading error:', error);
+        toast.error("Failed to load profile data");
+        setLoading(false);
+        onLogout();
       }
+    };
 
-      // 2. Fetch all users (or current user if you have that endpoint)
-      console.log('Fetching user data...');
-      const usersResponse = await fetch("http://localhost:3333/api/allUser", {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-
-      if (!usersResponse.ok) {
-        throw new Error('Failed to fetch user data');
-      }
-
-      const allUsers = await usersResponse.json();
-      console.log('Received users:', allUsers);
-
-      // 3. Find matching user
-      const matchedUser = allUsers.find(user => 
-        user.id === storedUserId && 
-        user.username === storedUsername
-      );
-
-      if (!matchedUser) {
-        console.error('No matching user found. Available users:', 
-          allUsers.map(u => ({ id: u.id, username: u.username })));
-        throw new Error('User data mismatch');
-      }
-
-      console.log('Matched user:', matchedUser);
-      setCurrentUser(matchedUser);
-      setLoading(false);
-      
-      console.groupEnd();
-    } catch (error) {
-      console.error('Profile loading error:', error);
-      toast.error("Failed to load profile data");
-      setLoading(false);
-      onLogout();
-    }
-  };
-
-  loadUserProfile();
-}, [onLogout]);
+    loadUserProfile();
+  }, [onLogout]);
 
 
-// Additional debug log when rendering
-// console.log('[UserProfile] Rendering with currentUser:', currentUser);
+  // Additional debug log when rendering
+  // console.log('[UserProfile] Rendering with currentUser:', currentUser);
 
   // Find the matching user from allUsers - prioritize ID match
-  const matchedUser = allUsers.find(user => 
+  const matchedUser = allUsers.find(user =>
     user.id === (userData?.userId || '')
-  ) || allUsers.find(user => 
+  ) || allUsers.find(user =>
     user.username === (userData?.username || '')
   );
 
-const user = currentUser ? {
-  name: `${currentUser.firstName} ${currentUser.lastName}`,
-  email: currentUser.email,
-  role: currentUser.role,
-  joinDate: new Date(currentUser.createdAt).toLocaleDateString(),
-  lastLogin: 'Recently',
-  avatar: currentUser.photo || 'https://randomuser.me/api/portraits/men/32.jpg',
-  bio: `User with username ${currentUser.username}`,
-  skills: ['User Management', 'Profile Editing'],
-  leadsActivity: [
-    { id: 1, project: 'User Profile', status: 'In Progress', lastUpdate: 'Recently' }
-  ],
-  assignedWork: currentUser.assignedWork || 'No assigned work',
-  statusOfWork: currentUser.statusOfWork || 'Unknown',
-  phoneNumber: currentUser.phoneNumber || 'Not provided'
-} : {
-  name: 'User',
-  email: 'No email',
-  role: 'user',
-  joinDate: 'Unknown',
-  lastLogin: 'Unknown',
-  avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
-  bio: 'User information not available',
-  skills: [],
-  leadsActivity: [],
-  assignedWork: 'No data',
-  statusOfWork: 'Unknown',
-  phoneNumber: 'Not provided'
-};
+  const user = currentUser ? {
+    name: `${currentUser.firstName} ${currentUser.lastName}`,
+    email: currentUser.email,
+    role: currentUser.role,
+    joinDate: new Date(currentUser.createdAt).toLocaleDateString(),
+    lastLogin: 'Recently',
+    avatar: currentUser.photo || 'https://randomuser.me/api/portraits/men/32.jpg',
+    bio: `User with username ${currentUser.username}`,
+    skills: ['User Management', 'Profile Editing'],
+    leadsActivity: [
+      { id: 1, project: 'User Profile', status: 'In Progress', lastUpdate: 'Recently' }
+    ],
+    assignedWork: currentUser.assignedWork || 'No assigned work',
+    statusOfWork: currentUser.statusOfWork || 'Unknown',
+    phoneNumber: currentUser.phoneNumber || 'Not provided'
+  } : {
+    name: 'User',
+    email: 'No email',
+    role: 'user',
+    joinDate: 'Unknown',
+    lastLogin: 'Unknown',
+    avatar: 'https://randomuser.me/api/portraits/men/32.jpg',
+    bio: 'User information not available',
+    skills: [],
+    leadsActivity: [],
+    assignedWork: 'No data',
+    statusOfWork: 'Unknown',
+    phoneNumber: 'Not provided'
+  };
 
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -889,9 +888,9 @@ const user = currentUser ? {
           <div className="w-full md:w-1/4">
             <div className="bg-white rounded-lg shadow p-6">
               <div className="flex flex-col items-center">
-                <img 
-                  src={user.avatar} 
-                  alt="Profile" 
+                <img
+                  src={user.avatar}
+                  alt="Profile"
                   className="w-32 h-32 rounded-full object-cover border-4 border-blue-100"
                 />
                 <h2 className="mt-4 text-xl font-bold text-gray-800">{user.name}</h2>
@@ -906,7 +905,7 @@ const user = currentUser ? {
                 >
                   Dashboard
                 </button>
-                
+
                 <button
                   onClick={() => setActiveTab('leads')}
                   className={`cursor-pointer w-full text-left px-4 py-2 rounded-lg ${activeTab === 'leads' ? 'bg-blue-50 text-[#ff8633]' : 'text-gray-600 hover:bg-gray-100'}`}
@@ -958,7 +957,7 @@ const user = currentUser ? {
             {activeTab === 'dashboard' && (
               <div className="bg-white rounded-lg justify-left text-center lg:text-left shadow p-6">
                 <h2 className="text-xl font-bold text-gray-800 mb-6">Dashboard</h2>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <h3 className="text-lg font-semibold text-gray-700 mb-4">Personal Details</h3>
@@ -993,7 +992,7 @@ const user = currentUser ? {
                   <div>
                     <h3 className="text-lg font-semibold text-gray-700 mb-4">About</h3>
                     <p className="text-gray-600 mb-6">{user.bio}</p>
-                    
+
                     <h3 className="text-lg font-semibold text-gray-700 mb-4">Skills</h3>
                     <div className="flex flex-wrap gap-2">
                       {user.skills.map((skill, index) => (
@@ -1019,11 +1018,11 @@ const user = currentUser ? {
 
 
 
-            
+
             {activeTab === 'leads' && (
               <div className="bg-white rounded-lg shadow p-6">
                 <h2 className="text-xl font-bold text-gray-800 mb-6">Leads Activity</h2>
-                
+
                 <div className="overflow-x-auto">
                   <table className="min-w-full divide-y divide-gray-200">
                     <thead className="bg-gray-50">
@@ -1039,11 +1038,10 @@ const user = currentUser ? {
                         <tr key={lead.id}>
                           <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{lead.project}</td>
                           <td className="px-6 py-4 whitespace-nowrap">
-                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                              lead.status === 'Completed' ? 'bg-green-100 text-green-800' :
+                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${lead.status === 'Completed' ? 'bg-green-100 text-green-800' :
                               lead.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
-                              'bg-yellow-100 text-yellow-800'
-                            }`}>
+                                'bg-yellow-100 text-yellow-800'
+                              }`}>
                               {lead.status}
                             </span>
                           </td>
@@ -1064,7 +1062,7 @@ const user = currentUser ? {
               <div className="bg-white rounded-lg shadow p-6">
                 <h2 className="text-xl font-bold text-gray-800 mb-6">Account Settings</h2>
                 <p className="text-gray-600 mb-4">Last login: {user.lastLogin}</p>
-                
+
                 <div className="space-y-6">
                   <div>
                     <h3 className="text-lg font-semibold text-gray-700 mb-2">Change Password</h3>
@@ -1105,281 +1103,281 @@ const user = currentUser ? {
             )}
 
 
-              {activeTab === 'addleads' && (
-                 <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-gray-50 to-gray-100">
-                      <Suspense fallback={
-                        <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
-                          <div className="animate-pulse">
-                            <div className="h-8 bg-gray-200 rounded w-3/4 mb-6 mx-auto"></div>
-                            <div className="h-4 bg-gray-200 rounded w-1/2 mb-8 mx-auto"></div>
-                          </div>
-                        </div>
-                      }>
-                       <form
-          onSubmit={handleSubmit}
-          className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 transition-all hover:shadow-2xl"
-        >
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-800 mb-2">Add the Leads</h2>
-          </div>
-
-      <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Lead Title 
-            </label>
-            <input
-              type="text"
-              id="leadtitle"
-              name="leadtitle"
-              value={formData.leadtitle}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-              placeholder="Eg. New Lead"
-              autoComplete="leadtitle"
-            />
-    </div>
-
-
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div>
-              <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
-                First Name
-              </label>
-              <input
-                type="text"
-                id="firstName"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                placeholder="John"
-                autoComplete="given-name"
-              />
-            </div>
-            <div>
-              <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
-                Last Name
-              </label>
-              <input
-                type="text"
-                id="lastName"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleChange}
-                required
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                placeholder="Doe"
-                autoComplete="family-name"
-              />
-            </div>
-          </div>
-
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-              placeholder="your@email.com"
-              autoComplete="email"
-            />
-          </div>
-
-          <div className="mb-4">
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-              Phone Number
-            </label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-              placeholder="+1 (123) 456-7890"
-              autoComplete="tel"
-            />
-          </div>
-
-
-<div className="mb-4">
-            <label htmlFor="companyname" className="block text-sm font-medium text-gray-700 mb-1">
-              Company Name
-            </label>
-            <input
-              type="text"
-              id="companyname"
-              name="companyname"
-              value={formData.companyname}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-              placeholder="Eg. quore/tcs"
-              autoComplete="companyname"
-            />
-    </div>
-
-    <div className="mb-4">
-            <label htmlFor="jobtitle" className="block text-sm font-medium text-gray-700 mb-1">
-              Job Title
-            </label>
-            <input
-              type="text"
-              id="jobtitle"
-              name="jobtitle"
-              value={formData.jobtitle}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-              placeholder="Eg. lead/manager"
-              autoComplete="jobtitle"
-            />
-    </div>
-
-
-<div className="mb-4">
-  <label htmlFor="industry" className="block text-sm font-medium text-gray-700 mb-1">
-    Select Industry
-  </label>
-  <select
-    id="industry"
-    name="industry"
-    value={formData.industry}
-    onChange={handleChange}
-    required
-    className="w-full px-4 py-3 cursor-pointer rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-  >
-    <option value="">Select an industry</option>
-    <option value="Technology">Technology</option>
-    <option value="SaaS">SaaS</option>
-    <option value="Finance">Finance</option>
-    <option value="Manufacturing">Manufacturing</option>
-    <option value="Other">Other</option>
-  </select>
-</div>
-
-
-<div className="mb-4">
-  <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
-    New
-  </label>
-  <select
-    id="status"
-    name="status"
-    value={formData.status}
-    onChange={handleChange}
-    required
-    className="w-full px-4 py-3 cursor-pointer rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-  >
-    <option value="">New</option>
-    <option value="Contacted">Contacted</option>
-    <option value="Engaged">Engaged</option>
-    <option value="Qualified">Qualified</option>
-    <option value="Proposal sent">Proposal Sent</option>
-    <option value="Negotiation">Negotiation</option>
-    <option value="Cloaed Won">Closed Won</option>
-    <option value="Closed Lost">Closed Lost</option>
-    <option value="On Hold">On Hold</option>
-    <option value="Do Not Contact">Do Not Contact</option>
-  </select>
-</div>
-
-
-<div className="mb-4">
-  <label htmlFor="serviceinterestedin" className="block text-sm font-medium text-gray-700 mb-1">
-    Service Interested In
-  </label>
-  <select
-    id="serviceinterestedin"
-    name="serviceinterestedin"
-    value={formData.serviceinterestedin}
-    onChange={handleChange}
-    required
-    className="w-full px-4 py-3 cursor-pointer rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-  >
-    <option value="">Service Interested In</option>
-    <option value="Email Marketing">Email Marketing</option>
-    <option value="Lead Generation">Lead Generation</option>
-    <option value="Content Syndication">Content Syndication</option>
-  </select>
-</div>
-
-           <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Topic Of Work 
-            </label>
-            <input
-              type="text"
-              id="topicofwork"
-              name="topicofwork"
-              value={formData.topicofwork}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-              placeholder="Eg. Sales / Marketing "
-              autoComplete="topicofwork"
-            />
-    </div>
-
-
-     <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Expected To Close
-            </label>
-            <input
-              type="date"
-              id="expectedtoclose"
-              name="expectedtoclose"
-              value={formData.expectedtoclose}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-              autoComplete="expectedtoclose"
-            />
-
-    </div>
-
-
-       <div className="mb-4">
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Notes For Future
-            </label>
-            <input
-              type="text"
-              id="notesforfuture"
-              name="notesforfuture"
-              value={formData.notesforfuture}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-              placeholder='Eg. Need to maintain it in future'
-              autoComplete="notesforfuture"
-            />
-    </div>
-
-
-
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className={`w-full cursor-pointer bg-gradient-to-r from-[#ff8633] to-[#ff9a52] text-white py-3 rounded-lg font-medium hover:from-[#e6732b] hover:to-[#e6732b] transition-all shadow-md hover:shadow-lg active:scale-95 transform ${
-              isSubmitting ? 'opacity-75 cursor-not-allowed' : ''
-            }`}
-          >
-            {isSubmitting ? 'Adding the lead...' : 'Add Lead'}
-          </button>
-        </form>
-                      </Suspense>
+            {activeTab === 'addleads' && (
+              <div className="flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-gray-50 to-gray-100">
+                <Suspense fallback={
+                  <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
+                    <div className="animate-pulse">
+                      <div className="h-8 bg-gray-200 rounded w-3/4 mb-6 mx-auto"></div>
+                      <div className="h-4 bg-gray-200 rounded w-1/2 mb-8 mx-auto"></div>
                     </div>
+                  </div>
+                }>
+                  <form
+                    onSubmit={handleSubmit}
+                    className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100 transition-all hover:shadow-2xl"
+                  >
+                    <div className="text-center mb-8">
+                      <h2 className="text-3xl font-bold text-gray-800 mb-2">Add the Leads</h2>
+                    </div>
+
+                    <div className="mb-4">
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                        Lead Title
+                      </label>
+                      <input
+                        type="text"
+                        id="leadtitle"
+                        name="leadtitle"
+                        value={formData.leadtitle}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                        placeholder="Eg. New Lead"
+                        autoComplete="leadtitle"
+                      />
+                    </div>
+
+
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
+                          First Name
+                        </label>
+                        <input
+                          type="text"
+                          id="firstName"
+                          name="firstName"
+                          value={formData.firstName}
+                          onChange={handleChange}
+                          required
+                          className="w-full px-4 text-center  py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                          placeholder="John"
+                          autoComplete="given-name"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
+                          Last Name
+                        </label>
+                        <input
+                          type="text"
+                          id="lastName"
+                          name="lastName"
+                          value={formData.lastName}
+                          onChange={handleChange}
+                          required
+                          className="w-full px-4 text-center py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                          placeholder="Doe"
+                          autoComplete="family-name"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                          Email
+                        </label>
+                        <input
+                          type="email"
+                          id="email"
+                          name="email"
+                          value={formData.email}
+                          onChange={handleChange}
+                          required
+                          className="w-full px-4 text-center py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                          placeholder="your@email.com"
+                          autoComplete="email"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                          Phone Number
+                        </label>
+                        <input
+                          type="tel"
+                          id="phone"
+                          name="phone"
+                          value={formData.phone}
+                          onChange={handleChange}
+                          className="w-full px-4 py-3 text-center rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                          placeholder="+1 (123) 456-7890"
+                          autoComplete="tel"
+                        />
+                      </div>
+                    </div>
+
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <label htmlFor="companyname" className="block text-sm font-medium text-gray-700 mb-1">
+                          Company Name
+                        </label>
+                        <input
+                          type="text"
+                          id="companyname"
+                          name="companyname"
+                          value={formData.companyname}
+                          onChange={handleChange}
+                          required
+                          className="w-full px-4 py-3 text-center rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                          placeholder="Eg. quore/tcs"
+                          autoComplete="organization"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="jobtitle" className="block text-sm font-medium text-gray-700 mb-1">
+                          Job Title
+                        </label>
+                        <input
+                          type="text"
+                          id="jobtitle"
+                          name="jobtitle"
+                          value={formData.jobtitle}
+                          onChange={handleChange}
+                          required
+                          className="w-full px-4 py-3 text-center rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                          placeholder="Eg. lead/manager"
+                          autoComplete="organization-title"
+                        />
+                      </div>
+                    </div>
+
+
+                    <div className="mb-4">
+                      <label htmlFor="industry" className="block text-sm font-medium text-gray-700 mb-1">
+                        Select Industry
+                      </label>
+                      <select
+                        id="industry"
+                        name="industry"
+                        value={formData.industry}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-3 cursor-pointer rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                      >
+                        <option value="">Select an industry</option>
+                        <option value="Technology">Technology</option>
+                        <option value="SaaS">SaaS</option>
+                        <option value="Finance">Finance</option>
+                        <option value="Manufacturing">Manufacturing</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+
+
+                    <div className="mb-4">
+                      <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
+                        New
+                      </label>
+                      <select
+                        id="status"
+                        name="status"
+                        value={formData.status}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-3 cursor-pointer rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                      >
+                        <option value="">New</option>
+                        <option value="Contacted">Contacted</option>
+                        <option value="Engaged">Engaged</option>
+                        <option value="Qualified">Qualified</option>
+                        <option value="Proposal sent">Proposal Sent</option>
+                        <option value="Negotiation">Negotiation</option>
+                        <option value="Cloaed Won">Closed Won</option>
+                        <option value="Closed Lost">Closed Lost</option>
+                        <option value="On Hold">On Hold</option>
+                        <option value="Do Not Contact">Do Not Contact</option>
+                      </select>
+                    </div>
+
+
+                    <div className="mb-4">
+                      <label htmlFor="serviceinterestedin" className="block text-sm font-medium text-gray-700 mb-1">
+                        Service Interested In
+                      </label>
+                      <select
+                        id="serviceinterestedin"
+                        name="serviceinterestedin"
+                        value={formData.serviceinterestedin}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-3 cursor-pointer rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                      >
+                        <option value="">Service Interested In</option>
+                        <option value="Email Marketing">Email Marketing</option>
+                        <option value="Lead Generation">Lead Generation</option>
+                        <option value="Content Syndication">Content Syndication</option>
+                      </select>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                      <div>
+                        <label htmlFor="topicofwork" className="block text-sm font-medium text-gray-700 mb-1">
+                          Topic Of Work
+                        </label>
+                        <input
+                          type="text"
+                          id="topicofwork"
+                          name="topicofwork"
+                          value={formData.topicofwork}
+                          onChange={handleChange}
+                          required
+                          className="w-full px-4 py-3 text-center rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                          placeholder="Eg. Sales / Marketing"
+                          autoComplete="off"
+                        />
+                      </div>
+                      <div>
+                        <label htmlFor="expectedtoclose" className="block text-sm font-medium text-gray-700 mb-1">
+                          Expected To Close
+                        </label>
+                        <input
+                          type="date"
+                          id="expectedtoclose"
+                          name="expectedtoclose"
+                          value={formData.expectedtoclose}
+                          onChange={handleChange}
+                          required
+                          className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                          autoComplete="off"
+                        />
+                      </div>
+                    </div>
+
+
+                    <div className="mb-4">
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                        Notes For Future
+                      </label>
+                      <input
+                        type="text"
+                        id="notesforfuture"
+                        name="notesforfuture"
+                        value={formData.notesforfuture}
+                        onChange={handleChange}
+                        required
+                        className="w-full px-4 py-3 text-center rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                        placeholder='Eg. Need to maintain it in future'
+                        autoComplete="notesforfuture"
+                      />
+                    </div>
+
+
+
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className={`w-full cursor-pointer bg-gradient-to-r from-[#ff8633] to-[#ff9a52] text-white py-3 rounded-lg font-medium hover:from-[#e6732b] hover:to-[#e6732b] transition-all shadow-md hover:shadow-lg active:scale-95 transform ${isSubmitting ? 'opacity-75 cursor-not-allowed' : ''
+                        }`}
+                    >
+                      {isSubmitting ? 'Adding the lead...' : 'Add Lead'}
+                    </button>
+                  </form>
+                </Suspense>
+              </div>
             )}
 
             {/* Other tabs (settings, addleads, etc.) remain unchanged */}
@@ -1392,4 +1390,3 @@ const user = currentUser ? {
 };
 
 export default UserProfile;
-
