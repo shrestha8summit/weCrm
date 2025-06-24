@@ -153,67 +153,127 @@ const LeadsActivity = () => {
 
   };
 
+
+
+  // hardcoded
+  // const fetchData = useCallback(async () => {
+  //   try {
+  //     setLoading(true);
+  //     setError(null);
+      
+  //     // Step 1: Login to get token
+  //     const loginResponse = await fetch("http://localhost:3333/api/login", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         email: "admin@gmail.com",
+  //         username: "admin404",
+  //         password: "admin404",
+  //       }),
+  //     });
+
+  //     if (!loginResponse.ok) {
+  //       throw new Error(`Login failed with status: ${loginResponse.status}`);
+  //     }
+
+  //     const loginData = await loginResponse.json();
+  //     const token = loginData.token;
+  //     if (!token) {
+  //       throw new Error("No token received in login response");
+  //     }
+
+  //     // Step 2: Fetch recent data with token
+  //     const recentResponse = await fetch("http://localhost:3333/api/recent", {
+  //       method: "GET",
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
+
+  //     if (!recentResponse.ok) {
+  //       throw new Error(
+  //         `Recent data fetch failed with status: ${recentResponse.status}`
+  //       );
+  //     }
+
+  //     const recentData = await recentResponse.json();
+
+  //     if (!recentData.leads) {
+  //       throw new Error("Incomplete leads data received from API");
+  //     }
+
+  //     setLeadsData(recentData.leads);
+  //     setStats({
+  //       userNumber: recentData.userNumber || 0,
+  //       leadsNumber: recentData.leadsNumber || 0,
+  //       company: recentData.company || 0,
+  //     });
+  //   } catch (err) {
+  //     console.error("Error in data fetching:", err);
+  //     setError(err.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }, []);
+
+
+  // dynamic
   const fetchData = useCallback(async () => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Step 1: Login to get token
-      const loginResponse = await fetch("http://localhost:3333/api/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: "admin@gmail.com",
-          username: "admin404",
-          password: "admin404",
-        }),
-      });
-
-      if (!loginResponse.ok) {
-        throw new Error(`Login failed with status: ${loginResponse.status}`);
-      }
-
-      const loginData = await loginResponse.json();
-      const token = loginData.token;
-      if (!token) {
-        throw new Error("No token received in login response");
-      }
-
-      // Step 2: Fetch recent data with token
-      const recentResponse = await fetch("http://localhost:3333/api/recent", {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!recentResponse.ok) {
-        throw new Error(
-          `Recent data fetch failed with status: ${recentResponse.status}`
-        );
-      }
-
-      const recentData = await recentResponse.json();
-
-      if (!recentData.leads) {
-        throw new Error("Incomplete leads data received from API");
-      }
-
-      setLeadsData(recentData.leads);
-      setStats({
-        userNumber: recentData.userNumber || 0,
-        leadsNumber: recentData.leadsNumber || 0,
-        company: recentData.company || 0,
-      });
-    } catch (err) {
-      console.error("Error in data fetching:", err);
-      setError(err.message);
-    } finally {
-      setLoading(false);
+  try {
+    setLoading(true);
+    setError(null);
+    
+    // 1. Get token from localStorage (instead of hardcoded login)
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error("Please log in to view data");
+      navigate('/login');
+      return;
     }
-  }, []);
+
+    // 2. Fetch recent data with the token
+    const recentResponse = await fetch("http://localhost:3333/api/recent", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    // 3. Handle unauthorized (401) responses
+    if (recentResponse.status === 401) {
+      localStorage.removeItem('token');
+      toast.error("Session expired, please login again");
+      navigate('/login');
+      return;
+    }
+
+    if (!recentResponse.ok) {
+      throw new Error(`Request failed with status: ${recentResponse.status}`);
+    }
+
+    const recentData = await recentResponse.json();
+
+    if (!recentData.leads) {
+      throw new Error("Incomplete leads data received from API");
+    }
+
+    setLeadsData(recentData.leads);
+    setStats({
+      userNumber: recentData.userNumber || 0,
+      leadsNumber: recentData.leadsNumber || 0,
+      company: recentData.company || 0,
+    });
+  } catch (err) {
+    console.error("Error in data fetching:", err);
+    setError(err.message);
+    toast.error(err.message || "Failed to fetch data");
+  } finally {
+    setLoading(false);
+  }
+}, [navigate, toast]); 
+
 
   useEffect(() => {
     fetchData();
