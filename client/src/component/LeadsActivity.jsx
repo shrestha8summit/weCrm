@@ -297,7 +297,7 @@ const LeadsActivity = () => {
             <h1 className="text-3xl font-bold text-gray-800 mr-2">
               Leads Activity
             </h1>
-            <button className="text-gray-600 hover:text-[#ff8633] transition-colors">
+            <button onClick={download} className="text-gray-600 hover:text-[#ff8633] transition-colors">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
               </svg>
@@ -688,35 +688,13 @@ const EditLeadPopup = ({ lead, onClose, onSave }) => {
               </div>
 
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Website</label>
-                <input
-                  type="text"
-                  name="Website"
-                  value={editedLead.Website || ''}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Location</label>
-                <input
-                  type="text"
-                  name="Location"
-                  value={editedLead.Location || ''}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                />
-              </div>
-
             </div>
 
             {/* Lead Details */}
             <div className="space-y-4">
               <h3 className="font-semibold text-[#ff8633]">Lead Details</h3>
               <div>
-                <label className="block text-sm p-4 font-medium text-gray-700">Status</label>
+                <label className="block text-sm font-medium text-gray-700">Status</label>
                 <select
                   name="status"
                   value={editedLead.status || ''}
@@ -727,23 +705,55 @@ const EditLeadPopup = ({ lead, onClose, onSave }) => {
                   <option value="Contacted">Contacted</option>
                   <option value="Engaged">Engaged</option>
                   <option value="Qualified">Qualified</option>
-                  <option value="Demo Scheduled">Demo Scheduled</option>
                   <option value="Proposal sent">Proposal Sent</option>
                   <option value="Negotiation">Negotiation</option>
                   <option value="Cloaed Won">Closed Won</option>
                   <option value="Closed Lost">Closed Lost</option>
                   <option value="On Hold">On Hold</option>
-                  <option value="Nurturing">Nurturing</option>
-                  <option value="Disqualified">Disqualified</option>
                   <option value="Do Not Contact">Do Not Contact</option>
                 </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Topic of Work</label>
+                <input
+                  type="text"
+                  name="topicOfWork"
+                  value={editedLead.topicOfWork || ''}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                />
+              </div>
+
+              
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Expected Closing Date</label>
+                <input
+                  type="date"
+                  name="closingDate"
+                  value={editedLead.closingDate ? editedLead.closingDate.split('T')[0] : ''}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                />
               </div>
             </div>
 
             {/* Tracking */}
-            <div className="space-y-4">
-              <h3 className="font-semibold text-[#ff8633]">Tracking</h3>
-              {/* Add tracking-related fields */}
+             <div className="space-y-4">
+              <h3 className="font-semibold text-[#ff8633]">Additional Details</h3>
+              
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Notes</label>
+                <textarea
+                  name="notes"
+                  value={editedLead.notes || ''}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                  rows="3"
+                />
+              </div>
             </div>
           </div>
 

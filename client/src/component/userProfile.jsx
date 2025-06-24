@@ -782,6 +782,422 @@ const UserProfile = ({ onLogout }) => {
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
 
+  // Add these state declarations near your other state declarations
+const [viewPopupOpen, setViewPopupOpen] = useState(false);
+const [editPopupOpen, setEditPopupOpen] = useState(false);
+const [deletePopupOpen, setDeletePopupOpen] = useState(false);
+const [currentLead, setCurrentLead] = useState(null);
+const [isSaving, setIsSaving] = useState(false);
+const [apiError, setApiError] = useState(null);
+
+// Add these popup components right before your return statement
+const ViewLeadPopup = ({ lead, onClose }) => (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="bg-white rounded-lg shadow-xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold text-gray-800">Lead Details</h2>
+        <button
+          onClick={onClose}
+          className="text-gray-500 hover:text-gray-700"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="text-left">
+          <h3 className="font-semibold mb-2">Contact Information</h3>
+          <p><strong>Name:</strong>  {lead.customerFirstName} {lead.customerLastName}</p>
+          <p><strong>Email:</strong> {lead.emailAddress}</p>
+          <p><strong>Phone:</strong> {lead.phoneNumber}</p>
+          <p><strong>Job Title:</strong> {lead.jobTitle || 'Not specified'}</p>
+        </div>
+
+        <div className="text-left">
+          <h3 className="font-semibold mb-2">Company Information</h3>
+          <p><strong>Company Name:</strong>  {lead.companyName || 'Not Specified'}</p>
+          <p><strong>Industry:</strong>  {lead.industry || 'Not Specified'}</p>
+        </div>
+
+        <div className="text-left">
+          <h3 className="font-semibold mb-2">Lead Details</h3>
+          <p><strong>Title:</strong>  {lead.title || 'On Progress'}</p>
+          <p><strong>Status:</strong>  {lead.status || 'On Progress'}</p>
+          <p><strong>Created At:</strong> {lead.createdAt ? new Date(lead.createdAt).toLocaleString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+          }) : 'Not specified'}</p>
+          <p><strong>Deadline:</strong> {lead.closingDate ? new Date(lead.closingDate).toLocaleString('en-US', {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+          }) : 'Not specified'}</p>
+        </div>
+
+        <div className="text-left">
+          <h3 className="font-semibold mb-2">Tracking</h3>
+          <p><strong>Service Interested:</strong>  {lead.serviceInterestedIn || 'Not specified'}</p>
+          <p><strong>Topic of Work:</strong> {lead.topicOfWork || 'Not specified'}</p>
+          <p><strong>Notes:</strong> {lead.notes || 'Not specified'}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const EditLeadPopup = ({ lead, onClose, onSave }) => {
+  const [editedLead, setEditedLead] = useState(lead);
+
+  const handleChangeEdit = (e) => {
+    const { name, value } = e.target;
+    setEditedLead(prev => ({ ...prev, [name]: value, id: lead.id }));
+  };
+
+  const handleSubmitEdit = (e) => {
+    e.preventDefault();
+    onSave(editedLead);
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white shadow-xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold text-gray-800">Edit Lead</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmitEdit}>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <h3 className="font-semibold text-[#ff8633]">Contact Information</h3>
+              <div className="flex flex-row gap-4">
+                <div>
+                  <label className="block text-base font-medium text-gray-700">First Name</label>
+                  <input
+                    type="text"
+                    name="customerFirstName"
+                    value={editedLead.customerFirstName || ''}
+                    onChange={handleChangeEdit}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                  />
+                </div>
+                <div>
+                  <label className="block text-base font-medium text-gray-700">Last Name</label>
+                  <input
+                    type="text"
+                    name="customerLastName"
+                    value={editedLead.customerLastName || ''}
+                    onChange={handleChangeEdit}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Email</label>
+                <input
+                  type="email"
+                  name="emailAddress"
+                  value={editedLead.emailAddress || ''}
+                  onChange={handleChangeEdit}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Phone</label>
+                <input
+                  type="tel"
+                  name="phoneNumber"
+                  value={editedLead.phoneNumber || ''}
+                  onChange={handleChangeEdit}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Job Title</label>
+                <input
+                  type="text"
+                  name="jobTitle"
+                  value={editedLead.jobTitle || ''}
+                  onChange={handleChangeEdit}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="font-semibold text-[#ff8633]">Company Information</h3>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Company Name</label>
+                <input
+                  type="text"
+                  name="companyName"
+                  value={editedLead.companyName || ''}
+                  onChange={handleChangeEdit}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Industry</label>
+                <select
+                  name="industry"
+                  value={editedLead.industry || ''}
+                  onChange={handleChangeEdit}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                >
+                  <option value="">Select an industry</option>
+                  <option value="Technology">Technology</option>
+                  <option value="SaaS">SaaS</option>
+                  <option value="Finance">Finance</option>
+                  <option value="Manufacturing">Manufacturing</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="font-semibold text-[#ff8633]">Lead Details</h3>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Title</label>
+                <input
+                  type="text"
+                  name="title"
+                  value={editedLead.title || ''}
+                  onChange={handleChangeEdit}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Status</label>
+                <select
+                  name="status"
+                  value={editedLead.status || ''}
+                  onChange={handleChangeEdit}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                >
+                  <option value="">New</option>
+                  <option value="Contacted">Contacted</option>
+                  <option value="Engaged">Engaged</option>
+                  <option value="Qualified">Qualified</option>
+                  <option value="Proposal Sent">Proposal Sent</option>
+                  <option value="Negotiation">Negotiation</option>
+                  <option value="Closed Won">Closed Won</option>
+                  <option value="Closed Lost">Closed Lost</option>
+                  <option value="On Hold">On Hold</option>
+                  <option value="Do Not Contact">Do Not Contact</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Service Interested In</label>
+                <select
+                  name="serviceInterestedIn"
+                  value={editedLead.serviceInterestedIn || ''}
+                  onChange={handleChangeEdit}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                >
+                  <option value="">Service Interested In</option>
+                  <option value="Email Marketing">Email Marketing</option>
+                  <option value="Lead Generation">Lead Generation</option>
+                  <option value="Content Syndication">Content Syndication</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h3 className="font-semibold text-[#ff8633]">Additional Details</h3>
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Topic of Work</label>
+                <input
+                  type="text"
+                  name="topicOfWork"
+                  value={editedLead.topicOfWork || ''}
+                  onChange={handleChangeEdit}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Expected Closing Date</label>
+                <input
+                  type="date"
+                  name="closingDate"
+                  value={editedLead.closingDate ? editedLead.closingDate.split('T')[0] : ''}
+                  onChange={handleChangeEdit}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700">Notes</label>
+                <textarea
+                  name="notes"
+                  value={editedLead.notes || ''}
+                  onChange={handleChangeEdit}
+                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                  rows="3"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 flex justify-end space-x-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#ff8633] hover:bg-[#e67328]"
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+const DeleteConfirmationPopup = ({ lead, onClose, onConfirm }) => (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold text-gray-800">Confirm Deletion</h2>
+        <button
+          onClick={onClose}
+          className="text-gray-500 hover:text-gray-700"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <p className="mb-6">
+        Are you sure you want to delete the lead for <strong>{lead.customerFirstName} {lead.customerLastName}</strong> from <strong>{lead.companyName || 'Unknown Company'}</strong>?
+      </p>
+
+      <div className="flex justify-end space-x-3">
+        <button
+          onClick={onClose}
+          className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={() => onConfirm(lead.id)}
+          className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700"
+        >
+          Delete Lead
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
+const handleSaveLead = async (updatedLead) => {
+  try {
+    setIsSaving(true);
+    setApiError(null);
+
+    if (!updatedLead.id) {
+      throw new Error('Lead ID is missing. Cannot update lead.');
+    }
+
+    const token = localStorage.getItem('token');
+    const response = await fetch(
+      `http://localhost:3333/api/leads/${updatedLead.id}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedLead),
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.message || "Lead update failed");
+    }
+
+    setEditPopupOpen(false);
+    toast.success("Lead updated successfully!");
+    
+    // Refresh leads data
+    const leadsResponse = await fetch("http://localhost:3333/api/loggedData", {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await leadsResponse.json();
+    setLeadsData(data.data);
+  } catch (err) {
+    console.error("Lead update error:", err);
+    setApiError(err.message);
+    toast.error(err.message || "Failed to update lead");
+  } finally {
+    setIsSaving(false);
+  }
+};
+
+const handleDeleteLead = async (leadId) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await fetch(
+      `http://localhost:3333/api/leads/${leadId}`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.message || "Lead deletion failed");
+    }
+
+    setDeletePopupOpen(false);
+    toast.success("Lead deleted successfully!");
+    
+    // Refresh leads data
+    const leadsResponse = await fetch("http://localhost:3333/api/loggedData", {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await leadsResponse.json();
+    setLeadsData(data.data);
+  } catch (err) {
+    console.error("Lead deletion error:", err);
+    toast.error(err.message || "Failed to delete lead");
+  }
+};
+
+
   const [leadsData, setLeadsData] = useState({
   allLeads: 0,
   allNewLeads:[],
@@ -1321,7 +1737,7 @@ const [leadsLoading, setLeadsLoading] = useState(false);
                     {lead.serviceInterestedIn}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                     <button  className="p-1 text-blue-500 hover:text-blue-700 transition-colors">
+          <button onClick={() => { setCurrentLead(lead); setViewPopupOpen(true); }} className="p-1 text-blue-500 hover:text-blue-700 transition-colors">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
             <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
@@ -1329,14 +1745,14 @@ const [leadsLoading, setLeadsLoading] = useState(false);
         </button>
         
         {/* Edit Button */}
-        <button  className="p-1 text-green-500 hover:text-green-700 transition-colors">
+        <button onClick={() => { setCurrentLead(lead); setEditPopupOpen(true); }}  className="p-1 text-green-500 hover:text-green-700 transition-colors">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
           </svg>
         </button>
         
         {/* Delete Button */}
-        <button   className="p-1 text-red-500 hover:text-red-700 transition-colors">
+        <button onClick={() => { setCurrentLead(lead); setDeletePopupOpen(true); }}  className="p-1 text-red-500 hover:text-red-700 transition-colors">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
           </svg>
@@ -1796,6 +2212,29 @@ const [leadsLoading, setLeadsLoading] = useState(false);
           </div>
         </div>
       </div>
+      {/* Add these right before the closing </div> of your main component */}
+{viewPopupOpen && (
+  <ViewLeadPopup
+    lead={currentLead}
+    onClose={() => setViewPopupOpen(false)}
+  />
+)}
+
+{editPopupOpen && (
+  <EditLeadPopup
+    lead={currentLead}
+    onClose={() => setEditPopupOpen(false)}
+    onSave={handleSaveLead}
+  />
+)}
+
+{deletePopupOpen && (
+  <DeleteConfirmationPopup
+    lead={currentLead}
+    onClose={() => setDeletePopupOpen(false)}
+    onConfirm={handleDeleteLead}
+  />
+)}
     </div>
   );
 };
