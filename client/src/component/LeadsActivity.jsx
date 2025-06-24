@@ -9,6 +9,8 @@ const LeadsActivity = () => {
 const [editPopupOpen, setEditPopupOpen] = useState(false);
 const [deletePopupOpen, setDeletePopupOpen] = useState(false);
 const [currentLead, setCurrentLead] = useState(null);
+  const [isSaving, setIsSaving] = useState(false); // Add this line
+  const [apiError, setApiError] = useState(null);
 
 
   const [stats, setStats] = useState({
@@ -24,31 +26,68 @@ const [selectedLead, setSelectedLead] = useState(null);
     navigate("/dashboard");
   }, [navigate]);
 
-  // editing lead
-  const handleSaveLead = async (updatedLead) => {
-   
-      const token = localStorage.getItem('token');
-      const response = await fetch(
-        `http://localhost:3333/api/udleads/update-lead/${updatedLead.id}`,
-        {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(updatedLead),
-        }
-      );
+  
+ const handleSaveLead = async (updatedLead) => {
+  try {
+    setIsSaving(true);
+    setApiError(null);
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to update lead');
+    if (!updatedLead.id) {
+      throw new Error('Lead ID is missing. Cannot update lead.');
+    }
+
+
+    // Only send fields that exist in the Lead schema
+    const payload = {
+      uid: updatedLead.uid,
+      cid: updatedLead.cid,
+      title: updatedLead.title,
+      customerFirstName: updatedLead.customerFirstName,
+      customerLastName: updatedLead.customerLastName,
+      emailAddress: updatedLead.emailAddress,
+      phoneNumber: updatedLead.phoneNumber,
+      companyName: updatedLead.companyName,
+      jobTitle: updatedLead.jobTitle,
+      topicOfWork: updatedLead.topicOfWork,
+      industry: updatedLead.industry,
+      status: updatedLead.status,
+      serviceInterestedIn: updatedLead.serviceInterestedIn,
+      closingDate: updatedLead.closingDate,
+      notes: updatedLead.notes,
+      // createdAt and updatedAt are usually handled by the backend
+    };
+
+    const token = localStorage.getItem('token');
+
+    const response = await fetch(
+      `http://localhost:3333/api/udleads/update-lead/${updatedLead.id}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
       }
+    );   
+    const responseData = await response.json();
+    console.log('Response data:', responseData); 
 
-      setEditPopupOpen(false);
-      fetchData();
-    
-  };
+    if (!response.ok) {
+      setApiError(responseData.error || 'Failed to update lead');
+      throw new Error(responseData.error || 'Failed to update lead');
+    }
+
+    setEditPopupOpen(false);
+    await fetchData(); 
+  } catch (error) {
+    console.error('Error saving lead:', error);
+    setApiError(error.message);
+    alert('Failed to update lead: ' + error.message);
+  } finally {
+    setIsSaving(false);
+  }
+};
 
   // deleting lead
     const handleDeleteLead = async (leadId) => {
@@ -494,16 +533,17 @@ const ViewLeadPopup = React.memo (({ lead, onClose }) => (
 
 // Edit Lead Popup
 const EditLeadPopup = ({ lead, onClose, onSave }) => {
+  // Always keep the id in the editedLead state
   const [editedLead, setEditedLead] = useState(lead);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setEditedLead(prev => ({ ...prev, [name]: value }));
+    setEditedLead(prev => ({ ...prev, [name]: value, id: lead.id })); // Ensure id is always present
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onSave(editedLead);
+    onSave(editedLead); // Pass the full lead object including id
   };
 
   return (
