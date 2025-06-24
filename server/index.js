@@ -15,13 +15,16 @@ import recentActivities from "./api/recentActivities.api.js";
 import loggedData from "./api/loggedData.api.js"
 import addLeads from "./api/addLeads.api.js"
 import udleads from "./api/udleads.api.js"
+import downloadLeadsRouter from './api/downloadLeads.api.js';
 
 import updatePassword from "./middleware/updatePassword.middleware.js";
 import jwtTokenMiddleware from "./middleware/jwtoken.middleware.js"; 
 
 const app = express();
 app.use(cors({
-    origin: "http://localhost:5173"
+  origin: 'http://localhost:5173', 
+  credentials: true,
+  exposedHeaders: ['Content-Disposition'] 
 }));
 app.use(express.json()); 
 
@@ -40,6 +43,8 @@ app.use("/api/recent",recentActivities);
 app.use("/api/loggedData",loggedData);
 app.use("/api/leads",addLeads);
 app.use("/api/udleads",udleads);
+app.use('/api/downloadLeads', downloadLeadsRouter);
+
 app.get("/api/protected-route", jwtTokenMiddleware, (req, res) => {
   res.json({
     message: 'Protected route accessed!',
