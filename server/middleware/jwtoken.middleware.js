@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import prisma  from "../prisma/prismaClient.js";
+import prisma from "../prisma/prismaClient.js";
 
 const jwtTokenMiddleware = async (req, res, next) => {
   try {
@@ -14,8 +14,9 @@ const jwtTokenMiddleware = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if (!decoded.uid) {
-      return res.status(400).json({ message: 'Token payload missing uid' });
+
+    if (!decoded.uid || !decoded.role) {
+      return res.status(400).json({ message: 'Token payload missing uid or role' });
     }
 
     const user = await prisma.user.findUnique({
@@ -27,7 +28,12 @@ const jwtTokenMiddleware = async (req, res, next) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    req.user = { uid: user.id, email: user.email };
+    req.user = {
+      uid: user.id,
+      email: user.email,
+      userType: decoded.role
+    };
+
     next();
   } catch (error) {
     console.error('JWT error:', error);
@@ -40,4 +46,5 @@ const jwtTokenMiddleware = async (req, res, next) => {
     res.status(500).json({ message: 'Authentication failed' });
   }
 };
+
 export default jwtTokenMiddleware;

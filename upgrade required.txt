@@ -3,12 +3,14 @@
 3> the menu on the rightside of dahsboard ( Home,lead activity, seetings ) can either be remove or be functional..
 4> edit leads shall have drop down menu for spefic fields like industry instead of text input
 5> can also place edit view and delte option in button-right cornor of view lead pop up for proper functionlity ..
-
+6> download in leadactivity of user 
 
 Backened side : 
    i. CRUD  lead activity
    ii.way to chain the new edited leads..
-   iii.    
+   iii. alert and remainder ka Backened
+   iv. account setting ka backend.
+   v. edit profile in user side shall also work
 
 
 

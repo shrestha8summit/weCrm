@@ -74,6 +74,18 @@ model Lead {
   updatedAt           DateTime @updatedAt
 }
 
+
+model Alertsandremainder {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  uid         String
+  cid         String
+  topic       String
+  remainder   String
+  date        DateTime
+  time        String
+  description String
+}
+
 model OTP {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
   uid          String   
