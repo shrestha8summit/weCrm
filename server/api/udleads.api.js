@@ -23,13 +23,15 @@ router.delete("/delete-lead/:id", async (req, res) => {
 router.put("/update-lead/:id", async (req, res) => {
     const { id } = req.params;
     try {
+        const { id: _id, ...updateData } = req.body;
+        console.log("updateData", updateData); // Add this line
         const lead = await prisma.lead.update({
             where: { id: id },
-            data: { ...req.body }
+            data: updateData
         });
         res.status(200).json(lead);
     } catch (error) {
-        if (error.code === 'P2025') { // Prisma not found error
+        if (error.code === 'P2025') {
             res.status(404).json({ error: "Lead not found" });
         } else {
             res.status(500).json({ error: "Failed to update lead", details: error.message });
