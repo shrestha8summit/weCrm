@@ -5,12 +5,19 @@
 5> can also place edit view and delte option in button-right cornor of view lead pop up for proper functionlity ..
 6> download in leadactivity of user 
 
+head file -> memo -> required in frontend
+
 Backened side : 
    i. CRUD  lead activity
    ii.way to chain the new edited leads..
-   iii. alert and remainder ka Backened
    iv. account setting ka backend.
    v. edit profile in user side shall also work
 
+
+
+extra :
+ external - inquiries form integrate with other companies
+ company specif data janu paryo ...
+ cookies implementation (which pages are surfed ...)
 
 
