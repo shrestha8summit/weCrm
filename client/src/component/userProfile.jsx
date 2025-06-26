@@ -374,7 +374,16 @@ const handleSaveLead = async (updatedLead) => {
     }
 
     setEditPopupOpen(false);
-    toast.success("Lead updated successfully!");
+    toast.success("Leads updated successfully!", {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  style: { fontSize: '1.2rem' }, 
+                });
 
     // Refresh leads data
     const leadsResponse = await fetch("http://localhost:3333/api/loggedData", {
@@ -386,7 +395,16 @@ const handleSaveLead = async (updatedLead) => {
   } catch (err) {
     console.error("Lead update error:", err);
     setApiError(err.message);
-    toast.error(err.message || "Failed to update lead");
+    toast.error(err.message || "Failed to update lead", {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  style: { fontSize: '1.2rem' }, 
+                });
   } finally {
     setIsSaving(false);
   }
@@ -411,7 +429,16 @@ const handleDeleteLead = async (leadId) => {
     }
 
     setDeletePopupOpen(false);
-    toast.success("Lead deleted successfully!");
+    toast.success("Lead deleted successfully!", {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  style: { fontSize: '1.2rem' }, 
+                });
     
     // Refresh leads data
     const leadsResponse = await fetch("http://localhost:3333/api/loggedData", {
@@ -421,7 +448,16 @@ const handleDeleteLead = async (leadId) => {
     setLeadsData(data.data);
   } catch (err) {
     console.error("Lead deletion error:", err);
-    toast.error(err.message || "Failed to delete lead");
+    toast.error(err.message || "Failed to delete lead", {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  style: { fontSize: '1.2rem' }, 
+                });
   }
 };
 
@@ -519,7 +555,16 @@ const [leadsLoading, setLeadsLoading] = useState(false);
         console.groupEnd();
       } catch (error) {
         console.error('Profile loading error:', error);
-        toast.error("Failed to load profile data");
+        toast.error("Failed to load profile data", {
+                      position: "top-right",
+                      autoClose: 5000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      style: { fontSize: '1.2rem' }, 
+                    });
         setLoading(false);
         onLogout();
       }
@@ -611,7 +656,16 @@ const [leadsLoading, setLeadsLoading] = useState(false);
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        toast.error("Please log in to create leads");
+        toast.error("Please log in to create leads", {
+                      position: "top-right",
+                      autoClose: 5000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      style: { fontSize: '1.2rem' }, 
+                    });
         navigate('/login');
         return;
       }
@@ -646,11 +700,29 @@ const [leadsLoading, setLeadsLoading] = useState(false);
         throw new Error(error.message || "Lead creation failed");
       }
 
-      toast.success("Lead created successfully!");
+      toast.success("Lead created successfully!", {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    style: { fontSize: '1.2rem' }, 
+                  });
       setTimeout(() => navigate("/userProfile"), 2000);
     } catch (err) {
       console.error("Lead creation error:", err);
-      toast.error(err.message || "Failed to create lead");
+      toast.error(err.message || "Failed to create lead", {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    style: { fontSize: '1.2rem' }, 
+                  });
     } finally {
       setIsSubmitting(false);
     }
@@ -663,7 +735,16 @@ const [leadsLoading, setLeadsLoading] = useState(false);
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        toast.error("Please log in to add alerts and reminder");
+        toast.error("Please log in to add alerts and reminder", {
+                      position: "top-right",
+                      autoClose: 5000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      style: { fontSize: '1.2rem' }, 
+                    });
         navigate('/login');
         return;
       }
@@ -690,11 +771,29 @@ const [leadsLoading, setLeadsLoading] = useState(false);
         throw new Error(error.message || "Alert Creation Failed!");
       }
 
-      toast.success("Alert created successfully!");
+      toast.success("Alert created successfully!", {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    style: { fontSize: '1.2rem' }, 
+                  });
       setTimeout(() => navigate("/userProfile"), 2000);
     } catch (err) {
       console.error("Alert creation error:", err);
-      toast.error(err.message || "Failed to create Alert");
+      toast.error(err.message || "Failed to create Alert", {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    style: { fontSize: '1.2rem' }, 
+                  });
     } finally {
       setIsSubmitting(false);
     }
@@ -711,7 +810,16 @@ const [leadsLoading, setLeadsLoading] = useState(false);
         setLeadsLoading(true);
         const token = localStorage.getItem('token');
         if (!token) {
-          toast.error("Please log in to view leads");
+          toast.error("Please log in to view leads", {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        style: { fontSize: '1.2rem' }, 
+                      });
           navigate('/login');
           return;
         }
@@ -731,7 +839,16 @@ const [leadsLoading, setLeadsLoading] = useState(false);
         setLeadsData(data.data);
       } catch (error) {
         console.error('Error fetching leads:', error);
-        toast.error(error.message || "Failed to load leads");
+        toast.error(ErrorEvent.message || "Failed to load leads", {
+                      position: "top-right",
+                      autoClose: 5000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      style: { fontSize: '1.2rem' }, 
+                    });
       } finally {
         setLeadsLoading(false);
       }
@@ -911,7 +1028,17 @@ const [leadsLoading, setLeadsLoading] = useState(false);
 
         {activeTab === 'leads' && (
   <div className="bg-white rounded-lg shadow p-6">
-    <h2 className="text-xl lg:text-3xl font-bold text-gray-800 mb-6">Leads Activity</h2>
+         <div className="flex justify-center gap-10 items-center mb-4 border-b pb-2">
+        <h2 className="text-xl font-semibold text-center text-gray-700">
+          Leads ({leadsData.length})
+        </h2>
+        <button  className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors">
+          Download Leads
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+          </svg>
+        </button>
+      </div>
     
     {leadsLoading ? (
       <div className="flex justify-center">

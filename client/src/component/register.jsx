@@ -528,12 +528,30 @@ const Register = () => {
     }
 
     const data = await res.json();
-    toast.success("Account created successfully!");
+    toast.success("Account created successfully!", {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  style: { fontSize: '1.2rem' }, 
+                });
     setTimeout(() => navigate("/dashboard"), 2000);
 
   } catch (e) {
     console.error("Registration error:", e);
-    toast.error(e.message || "Registration failed. Please try again.");
+    toast.error("Registration failed. Please try again.", {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  style: { fontSize: '1.2rem' }, 
+                });
   } finally {
     setIsSubmitting(false);
   }

@@ -1,9 +1,9 @@
-1> less margin or no margin in both site(user and admin);
-2> After lead is created the toast shall be on right top corner sidein abit big size . and shall navigate to lead activity ..
-3> the menu on the rightside of dahsboard ( Home,lead activity, seetings ) can either be remove or be functional..
-4> edit leads shall have drop down menu for spefic fields like industry instead of text input
+1> less margin or no margin in both site(user and admin); -DONE
+2> After lead is created the toast shall be on right top corner side in abit big size . and shall navigate to lead activity .. -DONE
+3> the menu on the rightside of dahsboard ( Home,lead activity, seetings ) can either be remove or be functional..  -DONE(REMOVED)
+4> edit leads shall have drop down menu for spefic fields like industry instead of text input - DONE
 5> can also place edit view and delte option in button-right cornor of view lead pop up for proper functionlity ..
-6> download in leadactivity of user 
+6> download in leadactivity of user -DONE
 
 Backened side : 
    i. CRUD  lead activity
