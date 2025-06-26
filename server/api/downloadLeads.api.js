@@ -15,34 +15,46 @@ router.use((req, res, next) => {
 
 router.get("/", jwtTokenMiddleware, async (req, res) => {
   try {
-    const userId = req.user.uid;
-    
-    if (!userId) {
-      return res.status(400).json({ error: "User ID not found" });
+    const { uid: userId, userType } = req.user;
+
+    if (!userId || !userType) {
+      return res.status(400).json({ error: "Missing user ID or type" });
     }
 
-    const leads = await prisma.Lead.findMany({
-      where: { uid: userId },
+    const query = {
       select: {
-        id                  :true,
-        title               :true,
-        customerFirstName   :true,
-        customerLastName    :true,
-        emailAddress        :true,
-        phoneNumber         :true,
-        jobTitle            :true,
-        topicOfWork         :true,
-        industry            :true,  
-        status              :true, 
-        serviceInterestedIn :true, 
-        closingDate         :true,
-        notes               :true
+        id: true,
+        title: true,
+        customerFirstName: true,
+        customerLastName: true,
+        emailAddress: true,
+        phoneNumber: true,
+        jobTitle: true,
+        topicOfWork: true,
+        industry: true,
+        status: true,
+        serviceInterestedIn: true,
+        closingDate: true,
+        notes: true,
       },
-    });
+    };
+
+    if (userType !== "admin") {
+      query.where = { uid: userId };
+    }
+
+    const leads = await prisma.Lead.findMany(query);
+
     if (!leads.length) {
       return res.status(404).json({ error: "No leads found" });
     }
-    const fields = ["id", "title","customerFirstName","customerLastName","emailAddress","phoneNumber",        "jobTitle","topicOfwork","industry","status","serviceInterestedIn","closingDate","notes"];
+
+    const fields = [
+      "id", "title", "customerFirstName", "customerLastName", "emailAddress",
+      "phoneNumber", "jobTitle", "topicOfWork", "industry", "status",
+      "serviceInterestedIn", "closingDate", "notes"
+    ];
+
     const parser = new Parser({ fields });
     const csv = parser.parse(leads);
 

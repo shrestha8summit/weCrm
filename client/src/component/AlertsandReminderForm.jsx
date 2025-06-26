@@ -8,7 +8,7 @@ const AlertsandReminder = () => {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
-     alerttopic:'',
+    alerttopic:'',
     reminder:'',
     alertdate:'',
     remindertime:'',
@@ -47,7 +47,7 @@ const AlertsandReminder = () => {
         description: formData.description,
       };
       console.log(backendData)
-      const res = await fetch("http://localhost:3333/api/alertsandreminder", {
+      const res = await fetch("http://localhost:3333/api/alert", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

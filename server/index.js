@@ -16,6 +16,7 @@ import loggedData from "./api/loggedData.api.js"
 import addLeads from "./api/addLeads.api.js"
 import udleads from "./api/udleads.api.js"
 import downloadLeadsRouter from './api/downloadLeads.api.js';
+import alertRouter from './api/alerts&remainder.api.js'
 
 import updatePassword from "./middleware/updatePassword.middleware.js";
 import jwtTokenMiddleware from "./middleware/jwtoken.middleware.js"; 
@@ -44,6 +45,7 @@ app.use("/api/loggedData",loggedData);
 app.use("/api/leads",addLeads);
 app.use("/api/udleads",udleads);
 app.use('/api/downloadLeads', downloadLeadsRouter);
+app.use("/api/alert",alertRouter);
 
 app.get("/api/protected-route", jwtTokenMiddleware, (req, res) => {
   res.json({
