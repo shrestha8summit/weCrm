@@ -221,6 +221,8 @@ const LeadsActivity = () => {
 
 
   // dynamic
+  
+  
   const fetchData = useCallback(async () => {
   try {
     setLoading(true);
@@ -373,6 +375,18 @@ const LeadsActivity = () => {
         <ViewLeadPopup
           lead={currentLead}
           onClose={() => setViewPopupOpen(false)}
+          onViewClick={(lead) => {
+               setCurrentLead(lead);
+               setViewPopupOpen(true);
+               }}
+          onEditClick={(lead) => {
+              setCurrentLead(lead);
+              setEditPopupOpen(true);
+              }}
+          onDeleteClick={(lead) => {
+            setCurrentLead(lead);
+            setDeletePopupOpen(true);
+          }}
         />
       )}
 
@@ -498,55 +512,8 @@ const TableHeader = ({ children, className }) => (
   </th>
 );
 
-const StatusHistoryPopup = ({ lead, onClose }) => {
-  return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white shadow-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-4 relative">
-          <h2 className="text-xl font-bold text-center  mx-auto text-[#ff8633]">
-            Status History
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-
-        <div className="mb-6">
-          <h3 className="text-lg font-semibold">{lead.customerFirstName} {lead.customerLastName}</h3>
-          <p className="text-gray-600">{lead.companyName || "TechCorp Solutions"}</p>
-          <p className="text-sm mt-1">
-            Current Status: <span className="font-medium">{lead.status}</span>
-          </p>
-        </div>
-
-        <div className="mb-6">
-          <h4 className="font-medium text-gray-700 mb-2">Status Timeline</h4>
-          <ul className="space-y-8 relative">
-            <StatusItem completed={false} title="New" changedBy="System" description="Lead created from LinkedIn" date="22-5-2025" />
-            <StatusItem completed={false} title="Contacted" changedBy="John Smith" description="Initial outreach call completed" date="30-5-2025" />
-            <StatusItem completed={false} title="Engaged" changedBy="John Smith" description="Responded positively, showed interest" date="2-6-2025" />
-            <StatusItem completed={false} title="Qualified" changedBy="John Smith" description="Budget confirmed, decision maker identified" date="10-6-2025" />
-            <StatusItem completed={true} title="Demo Scheduled" changedBy="John Smith" description="Demo scheduled for next week" date="15-6-2025" />
-          </ul>
-        </div>
-
-        <div className="grid grid-cols-3 gap-4 text-center mb-6">
-          <StatBlock value="5" label="Total Changes" />
-          <StatBlock value="399" label="Days in Pipeline" />
-          <StatBlock value="7" label="Days in Current Status" />
-        </div>
-      </div>
-    </div>
-  );
-};
-
 // View Lead Popup
-const ViewLeadPopup = React.memo(({ lead, onClose }) => (
+const ViewLeadPopup = React.memo(({ lead, onClose,onViewClick,onEditClick,onDeleteClick  }) => (
   <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
     <div className="bg-white rounded-lg shadow-xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
       <div className="flex justify-between items-center mb-4">
@@ -611,6 +578,30 @@ const ViewLeadPopup = React.memo(({ lead, onClose }) => (
           <p><strong>Job Title:</strong> {lead.jobTitle || 'Not specified'}</p>
         </div>
 
+      </div>
+
+      <div className="flex mt-auto justify-end space-x-2">
+        {/* View Button */}
+        <button   onClick={() => onViewClick(lead)} className="p-1 text-blue-500 hover:text-blue-700 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+            <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+          </svg>
+        </button>
+
+        {/* Edit Button */}
+        <button onClick={() => onEditClick(lead)} className="p-1 text-green-500 hover:text-green-700 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+          </svg>
+        </button>
+
+        {/* Delete Button */}
+        <button  onClick={() => onDeleteClick(lead)}  className="p-1 text-red-500 hover:text-red-700 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+          </svg>
+        </button>
       </div>
     </div>
   </div>
@@ -872,40 +863,127 @@ const DeleteConfirmationPopup = React.memo(({ lead, onClose, onConfirm }) => (
   </div>
 ));
 
-
-
-
-const StatusItem = ({ completed, title, changedBy, description,date }) => {
+const StatusItem = ({ completed, title, changedBy, description, date }) => {
   return (
-    <li className="relative pl-8">  {/* Added relative and padding */}
-      {/* Connecting line - add this */}
-      <div className="absolute left-[11px] top-4 h-full w-0.5 bg-gray-300 -translate-y-1/2"></div>
-
-      {/* Status dot */}
-      <div className={`absolute left-0 top-1/2 h-6 w-6 rounded-full border-4 ${completed ? 'border-green-500' : 'bg-white border-gray-300'} transform -translate-y-1/2`}></div>
-
-      {/* Content */}
-      <div className="flex-0.5 text-left p-4">
-        <div className="flex flex-row justify-between items-center">
-          <h4 className="font-medium">{title}</h4>
-          <h4 className="font-medium">{date}</h4>
+    <li className="flex gap-4">
+      <div className="flex flex-col items-center">
+        <div className={`w-6 h-6 rounded-full flex items-center justify-center ${completed ? 'bg-green-500' : 'bg-gray-300'}`}>
+          {completed && (
+            <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+            </svg>
+          )}
         </div>
-
-        <p className="text-sm text-gray-500">Changed by: {changedBy}</p>
-        <p className="text-sm mt-1">{description}</p>
+        <div className={`w-0.5 h-full ${completed ? 'bg-green-500' : 'bg-gray-300'}`}></div>
       </div>
-
-
+      <div className="flex-1 pb-8">
+        <div className="flex justify-between items-start">
+          <h3 className={`font-medium ${completed ? 'text-green-600' : 'text-gray-600'}`}>{title}</h3>
+          <span className="text-xs text-gray-500">{date}</span>
+        </div>
+        <p className="text-sm text-gray-500 mt-1">Changed by: {changedBy}</p>
+        <p className="text-sm text-gray-600 mt-2">{description}</p>
+      </div>
     </li>
   );
-}
+};
 
-const StatBlock = ({ value, label }) => (
-  <div className="bg-gray-50 p-3 rounded">
-    <p className="text-xl font-bold">{value}</p>
-    <p className="text-xs text-gray-500">{label}</p>
-  </div>
-);
+const StatBlock = ({ value, label }) => {
+  return (
+    <div className="bg-gray-50 p-3 rounded-lg">
+      <p className="text-2xl font-bold text-[#ff8633]">{value}</p>
+      <p className="text-xs text-gray-500">{label}</p>
+    </div>
+  );
+};
+
+const StatusHistoryPopup = ({ lead, onClose }) => {
+  const statusHistory = [
+    {
+      title: "New",
+      changedBy: "System",
+      description: "Lead created from LinkedIn",
+      date: "22-5-2025",
+      completed: true
+    },
+    {
+      title: "Contacted",
+      changedBy: "John Smith",
+      description: "Initial outreach call completed",
+      date: "30-5-2025",
+      completed: true
+    },
+    {
+      title: "Engaged",
+      changedBy: "John Smith",
+      description: "Responded positively, showed interest",
+      date: "2-6-2025",
+      completed: true
+    },
+    {
+      title: "Qualified",
+      changedBy: "John Smith",
+      description: "Budget confirmed, decision maker identified",
+      date: "10-6-2025",
+      completed: true
+    },
+    {
+      title: "Demo Scheduled",
+      changedBy: "John Smith",
+      description: "Demo scheduled for next week",
+      date: "15-6-2025",
+      completed: false
+    }
+  ];
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold text-[#ff8633]">Status History</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold">{lead.customerFirstName} {lead.customerLastName}</h3>
+          <p className="text-gray-600">{lead.companyName || "TechCorp Solutions"}</p>
+          <p className="text-sm mt-1">
+            Current Status: <span className="font-medium">{lead.status}</span>
+          </p>
+        </div>
+
+        <div className="mb-6">
+          <h4 className="font-medium text-gray-700 mb-4">Status Timeline</h4>
+          <ul className="space-y-4">
+            {statusHistory.map((status, index) => (
+              <StatusItem
+                key={index}
+                completed={status.completed}
+                title={status.title}
+                changedBy={status.changedBy}
+                description={status.description}
+                date={status.date}
+              />
+            ))}
+          </ul>
+        </div>
+
+        <div className="grid grid-cols-3 gap-4 text-center">
+          <StatBlock value="5" label="Total Changes" />
+          <StatBlock value="399" label="Days in Pipeline" />
+          <StatBlock value="7" label="Days in Current Status" />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 
 
