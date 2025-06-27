@@ -34,7 +34,16 @@ const AlertsandReminder = () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        toast.error("Please log in to add alerts and reminder");
+        toast.error("Please log in to add alerts and reminder", {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              style: { fontSize: '1.2rem' }, 
+            });
         navigate('/login');
         return;
       }
@@ -61,11 +70,29 @@ const AlertsandReminder = () => {
         throw new Error(error.message || "Alert Creation Failed!");
       }
 
-      toast.success("Alert created successfully!");
+      toast.success("Alert created successfully!", {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              style: { fontSize: '1.2rem' }, 
+            });
       setTimeout(() => navigate("/userProfile"), 2000);
     } catch (err) {
       console.error("Alert creation error:", err);
-      toast.error(err.message || "Failed to create Alert");
+      toast.error("Failed to create Alert" || err.message , {
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              style: { fontSize: '1.2rem' }, 
+            });
     } finally {
       setIsSubmitting(false);
     }
@@ -76,7 +103,7 @@ const AlertsandReminder = () => {
  <button
     type="button"
     onClick={handlegobacktodashboard}
-    className="cursor-pointer flex items-center gap-2 px-4 py-2 bg-[#ff8633] text-white rounded-lg transition-colors hover:bg-[#e57328] ml-auto"
+    className="cursor-pointer flex items-center gap-2  m-3 px-2 p-2 bg-[#ff8633] text-white rounded-lg transition-colors hover:bg-[#e57328] ml-auto"
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"

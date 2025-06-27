@@ -3,6 +3,44 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
+const download = async () => {
+  try {
+    const token = localStorage.getItem('token');
+
+    const response = await fetch('http://localhost:3333/api/downloadLeads', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      credentials: 'include' 
+    });
+
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `Server responded with status ${response.status}`);
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'leads.csv';
+    document.body.appendChild(a);
+    a.click();
+
+    setTimeout(() => {
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }, 100);
+  } catch (error) {
+    console.error('Download error:', error);
+    alert(`Download failed: ${error.message}`);
+  }
+};
+
+
 const UserProfile = ({ onLogout }) => {
   const [userData, setUserData] = useState(null);
   const [allUsers, setAllUsers] = useState([]);
@@ -97,6 +135,8 @@ const [confirmPassword, setConfirmPassword] = useState('');
       e.preventDefault();
       onSave(editedLead);
     };
+
+    
 
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -377,8 +417,17 @@ const [confirmPassword, setConfirmPassword] = useState('');
         throw new Error(error.message || "Lead update failed");
       }
 
-      setEditPopupOpen(false);
-      toast.success("Lead updated successfully!");
+    setEditPopupOpen(false);
+    toast.success("Leads updated successfully!", {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  style: { fontSize: '1.2rem' }, 
+                });
 
       // Refresh leads data
       const leadsResponse = await fetch("http://localhost:3333/api/loggedData", {
@@ -390,7 +439,16 @@ const [confirmPassword, setConfirmPassword] = useState('');
     } catch (err) {
       console.error("Lead update error:", err);
       setApiError(err.message);
-      toast.error(err.message || "Failed to update lead");
+      toast.error(err.message || "Failed to update lead", {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  style: { fontSize: '1.2rem' }, 
+                });
     } finally {
       setIsSaving(false);
     }
@@ -414,20 +472,38 @@ const [confirmPassword, setConfirmPassword] = useState('');
         throw new Error(error.message || "Lead deletion failed");
       }
 
-      setDeletePopupOpen(false);
-      toast.success("Lead deleted successfully!");
-
-      // Refresh leads data
-      const leadsResponse = await fetch("http://localhost:3333/api/loggedData", {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const data = await leadsResponse.json();
-      setLeadsData(data.data);
-    } catch (err) {
-      console.error("Lead deletion error:", err);
-      toast.error(err.message || "Failed to delete lead");
-    }
-  };
+    setDeletePopupOpen(false);
+    toast.success("Lead deleted successfully!", {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  style: { fontSize: '1.2rem' }, 
+                });
+    
+    // Refresh leads data
+    const leadsResponse = await fetch("http://localhost:3333/api/loggedData", {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await leadsResponse.json();
+    setLeadsData(data.data);
+  } catch (err) {
+    console.error("Lead deletion error:", err);
+    toast.error(err.message || "Failed to delete lead", {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  style: { fontSize: '1.2rem' }, 
+                });
+  }
+};
 
 
   const [leadsData, setLeadsData] = useState({
@@ -523,7 +599,16 @@ const [confirmPassword, setConfirmPassword] = useState('');
         console.groupEnd();
       } catch (error) {
         console.error('Profile loading error:', error);
-        toast.error("Failed to load profile data");
+        toast.error("Failed to load profile data", {
+                      position: "top-right",
+                      autoClose: 5000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      style: { fontSize: '1.2rem' }, 
+                    });
         setLoading(false);
         onLogout();
       }
@@ -615,7 +700,16 @@ const [confirmPassword, setConfirmPassword] = useState('');
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        toast.error("Please log in to create leads");
+        toast.error("Please log in to create leads", {
+                      position: "top-right",
+                      autoClose: 5000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      style: { fontSize: '1.2rem' }, 
+                    });
         navigate('/login');
         return;
       }
@@ -650,11 +744,29 @@ const [confirmPassword, setConfirmPassword] = useState('');
         throw new Error(error.message || "Lead creation failed");
       }
 
-      toast.success("Lead created successfully!");
+      toast.success("Lead created successfully!", {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    style: { fontSize: '1.2rem' }, 
+                  });
       setTimeout(() => navigate("/userProfile"), 2000);
     } catch (err) {
       console.error("Lead creation error:", err);
-      toast.error(err.message || "Failed to create lead");
+      toast.error(err.message || "Failed to create lead", {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    style: { fontSize: '1.2rem' }, 
+                  });
     } finally {
       setIsSubmitting(false);
     }
@@ -667,7 +779,16 @@ const [confirmPassword, setConfirmPassword] = useState('');
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        toast.error("Please log in to add alerts and reminder");
+        toast.error("Please log in to add alerts and reminder", {
+                      position: "top-right",
+                      autoClose: 5000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      style: { fontSize: '1.2rem' }, 
+                    });
         navigate('/login');
         return;
       }
@@ -694,11 +815,29 @@ const [confirmPassword, setConfirmPassword] = useState('');
         throw new Error(error.message || "Alert Creation Failed!");
       }
 
-      toast.success("Alert created successfully!");
+      toast.success("Alert created successfully!", {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    style: { fontSize: '1.2rem' }, 
+                  });
       setTimeout(() => navigate("/userProfile"), 2000);
     } catch (err) {
       console.error("Alert creation error:", err);
-      toast.error(err.message || "Failed to create Alert");
+      toast.error(err.message || "Failed to create Alert", {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    style: { fontSize: '1.2rem' }, 
+                  });
     } finally {
       setIsSubmitting(false);
     }
@@ -709,16 +848,25 @@ const [confirmPassword, setConfirmPassword] = useState('');
 
   // the leads of the user
   useEffect(() => {
-    const fetchLeadsData = async () => {
-      if (activeTab === 'leads') {
-        try {
-          setLeadsLoading(true);
-          const token = localStorage.getItem('token');
-          if (!token) {
-            toast.error("Please log in to view leads");
-            navigate('/login');
-            return;
-          }
+  const fetchLeadsData = async () => {
+    if (activeTab === 'leads') {
+      try {
+        setLeadsLoading(true);
+        const token = localStorage.getItem('token');
+        if (!token) {
+          toast.error("Please log in to view leads", {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        style: { fontSize: '1.2rem' }, 
+                      });
+          navigate('/login');
+          return;
+        }
 
           const response = await fetch("http://localhost:3333/api/loggedData", {
             headers: {
@@ -730,17 +878,26 @@ const [confirmPassword, setConfirmPassword] = useState('');
             throw new Error('Failed to fetch leads data');
           }
 
-          const data = await response.json();
-          console.log('Leads data:', data); // Debug log
-          setLeadsData(data.data);
-        } catch (error) {
-          console.error('Error fetching leads:', error);
-          toast.error(error.message || "Failed to load leads");
-        } finally {
-          setLeadsLoading(false);
-        }
+        const data = await response.json();
+        console.log('Leads data:', data); // Debug log
+        setLeadsData(data.data);
+      } catch (error) {
+        console.error('Error fetching leads:', error);
+        toast.error(ErrorEvent.message || "Failed to load leads", {
+                      position: "top-right",
+                      autoClose: 5000,
+                      hideProgressBar: false,
+                      closeOnClick: true,
+                      pauseOnHover: true,
+                      draggable: true,
+                      progress: undefined,
+                      style: { fontSize: '1.2rem' }, 
+                    });
+      } finally {
+        setLeadsLoading(false);
       }
-    };
+    }
+  };
 
     fetchLeadsData();
   }, [activeTab, navigate]);
@@ -947,91 +1104,102 @@ const changepass = async (data) => {
               </div>
             )}
 
-            {activeTab === 'leads' && (
-              <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-xl lg:text-3xl font-bold text-gray-800 mb-6">Leads Activity</h2>
-
-                {leadsLoading ? (
-                  <div className="flex justify-center">
-                    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#ff8633]"></div>
-                  </div>
-                ) : (
-                  <div className="overflow-x-auto">
-                    {/* Combine all leads from all status categories */}
-                    {allCombinedLeads.length === 0 ? (
-                      <p className="text-gray-500 text-center py-4">No leads found</p>
-                    ) : (
-                      <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
-                          <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service</th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200 text-left">
-                          {allCombinedLeads.map((lead) => (
-                            <tr key={lead.id}>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="text-sm font-medium text-gray-900">
-                                  {lead.customerFirstName} {lead.customerLastName}
-                                </div>
-                                <div className="text-sm text-gray-500">{lead.emailAddress}</div>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {lead.companyName}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap">
-                                <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${lead.status === 'New' ? 'bg-blue-100 text-blue-800' :
-                                  lead.status === 'Contacted' ? 'bg-yellow-100 text-yellow-800' :
-                                    lead.status === 'Engaged' ? 'bg-green-100 text-green-800' :
-                                      lead.status === 'Qualified' ? 'bg-purple-100 text-purple-800' :
-                                        lead.status === 'Proposal Sent' ? 'bg-indigo-100 text-indigo-800' :
-                                          lead.status === 'Negotiation' ? 'bg-pink-100 text-pink-800' :
-                                            lead.status === 'Closed Won' ? 'bg-teal-100 text-teal-800' :
-                                              lead.status === 'Closed Lost' ? 'bg-red-100 text-red-800' :
-                                                lead.status === 'On Hold' ? 'bg-gray-100 text-gray-800' :
-                                                  'bg-orange-100 text-orange-800'
-                                  }`}>
-                                  {lead.status}
-                                </span>
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {lead.serviceInterestedIn}
-                              </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                <button onClick={() => { setCurrentLead(lead); setViewPopupOpen(true); }} className="p-1 text-blue-500 hover:text-blue-700 transition-colors">
-                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                                    <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-                                  </svg>
-                                </button>
-
-                                {/* Edit Button */}
-                                <button onClick={() => { setCurrentLead(lead); setEditPopupOpen(true); }} className="p-1 text-green-500 hover:text-green-700 transition-colors">
-                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                                  </svg>
-                                </button>
-
-                                {/* Delete Button */}
-                                <button onClick={() => { setCurrentLead(lead); setDeletePopupOpen(true); }} className="p-1 text-red-500 hover:text-red-700 transition-colors">
-                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
-                                  </svg>
-                                </button>
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
+        {activeTab === 'leads' && (
+  <div className="bg-white rounded-lg shadow p-6">
+         <div className="flex justify-center gap-10 items-center mb-4 border-b pb-2">
+        <h2 className="text-xl font-semibold text-center text-gray-700">
+          Leads ({leadsData.length})
+        </h2>
+         <button onClick={download} className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors">
+          Download Leads
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+          </svg>
+        </button>
+      </div>
+    
+    {leadsLoading ? (
+      <div className="flex justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#ff8633]"></div>
+      </div>
+    ) : (
+      <div className="overflow-x-auto">
+        {/* Combine all leads from all status categories */}
+        {allCombinedLeads.length === 0 ? (
+          <p className="text-gray-500 text-center py-4">No leads found</p>
+        ) : (
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Service</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200 text-left">
+              {allCombinedLeads.map((lead) => (
+                <tr key={lead.id}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900">
+                      {lead.customerFirstName} {lead.customerLastName}
+                    </div>
+                    <div className="text-sm text-gray-500">{lead.emailAddress}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {lead.companyName}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                      lead.status === 'New' ? 'bg-blue-100 text-blue-800' :
+                      lead.status === 'Contacted' ? 'bg-yellow-100 text-yellow-800' :
+                      lead.status === 'Engaged' ? 'bg-green-100 text-green-800' :
+                      lead.status === 'Qualified' ? 'bg-purple-100 text-purple-800' :
+                      lead.status === 'Proposal Sent' ? 'bg-indigo-100 text-indigo-800' :
+                      lead.status === 'Negotiation' ? 'bg-pink-100 text-pink-800' :
+                      lead.status === 'Closed Won' ? 'bg-teal-100 text-teal-800' :
+                      lead.status === 'Closed Lost' ? 'bg-red-100 text-red-800' :
+                      lead.status === 'On Hold' ? 'bg-gray-100 text-gray-800' :
+                      'bg-orange-100 text-orange-800'
+                    }`}>
+                      {lead.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {lead.serviceInterestedIn}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+          <button onClick={() => { setCurrentLead(lead); setViewPopupOpen(true); }} className="p-1 text-blue-500 hover:text-blue-700 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+            <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+          </svg>
+        </button>
+        
+        {/* Edit Button */}
+        <button onClick={() => { setCurrentLead(lead); setEditPopupOpen(true); }}  className="p-1 text-green-500 hover:text-green-700 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+          </svg>
+        </button>
+        
+        {/* Delete Button */}
+        <button onClick={() => { setCurrentLead(lead); setDeletePopupOpen(true); }}  className="p-1 text-red-500 hover:text-red-700 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clipRule="evenodd" />
+          </svg>
+        </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    )}
+  </div>
+)}
 
             {activeTab === 'settings' && (
   <div className="bg-white rounded-lg shadow p-6">

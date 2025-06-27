@@ -229,7 +229,16 @@ const LeadsActivity = () => {
     // 1. Get token from localStorage (instead of hardcoded login)
     const token = localStorage.getItem('token');
     if (!token) {
-      toast.error("Please log in to view data");
+      toast.error("Please log in to view data", {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    style: { fontSize: '1.2rem' }, 
+                  });
       navigate('/login');
       return;
     }
@@ -245,7 +254,16 @@ const LeadsActivity = () => {
     // 3. Handle unauthorized (401) responses
     if (recentResponse.status === 401) {
       localStorage.removeItem('token');
-      toast.error("Session expired, please login again");
+      toast.error("Session expired please login again", {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    style: { fontSize: '1.2rem' }, 
+                  });
       navigate('/login');
       return;
     }
@@ -269,7 +287,16 @@ const LeadsActivity = () => {
   } catch (err) {
     console.error("Error in data fetching:", err);
     setError(err.message);
-    toast.error(err.message || "Failed to fetch data");
+    toast.error("Failed to fetch data" || err.message , {
+                  position: "top-right",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                  progress: undefined,
+                  style: { fontSize: '1.2rem' }, 
+                });
   } finally {
     setLoading(false);
   }
@@ -291,20 +318,40 @@ const LeadsActivity = () => {
   return (
     <div className="min-h-screen bg-gray-50 p-6">
       <header className="mb-8">
-        <div className="flex flex-row justify-between items-center mb-6 relative">
-          <BackButton onClick={handlegobacktodashboard} />
-          <div className="flex items-center absolute left-1/2 transform -translate-x-1/2">
-            <h1 className="text-3xl font-bold text-gray-800 mr-2">
-              Leads Activity
-            </h1>
-            <button onClick={download} className="text-gray-600 hover:text-[#ff8633] transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-              </svg>
-            </button>
-          </div>
-          <div className="w-10"></div>
-        </div>
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-6 relative w-full">
+  {/* For small screens: Column layout */}
+  <div className="md:hidden sm:hidden  w-full flex flex-col items-center space-y-4 mb-4">
+    <div className="flex justify-center w-full items-center">
+       <h1 className="text-3xl font-bold text-gray-800">
+      Leads Activity
+    </h1>
+      <button onClick={download} className="text-gray-600 hover:text-[#ff8633] transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+        </svg>
+      </button>
+    </div>
+    <BackButton onClick={handlegobacktodashboard} />
+    
+  </div>
+
+  {/* For medium+ screens: Original row layout */}
+  <div className="hidden sm:flex md:flex w-full justify-between items-center">
+    
+    <div className="flex items-center absolute left-1/2 transform -translate-x-1/2">
+      <h1 className="text-3xl font-bold text-gray-800 mr-2">
+        Leads Activity
+      </h1>
+      <button onClick={download} className="text-gray-600 hover:text-[#ff8633] transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+        </svg>
+      </button>
+    </div>
+    <BackButton onClick={handlegobacktodashboard} />
+    <div className="w-10"></div> {/* Spacer to balance the flex layout */}
+  </div>
+</div>
         <div className="flex flex-wrap gap-4 mt-4">
           <StatCard title="Total Users" value={stats.userNumber} icon="👥" />
           <StatCard title="Total Leads" value={stats.leadsNumber} icon="📊" />
@@ -374,7 +421,7 @@ const BackButton = ({ onClick }) => (
   <button
     type="button"
     onClick={onClick}
-    className="cursor-pointer flex items-center gap-2 px-4 py-2 bg-[#ff8633] text-white rounded-lg transition-colors hover:bg-[#e57328] ml-auto"
+    className="cursor-pointer flex items-center gap-2 m-3 px-4 py-2 bg-[#ff8633] text-white rounded-lg transition-colors hover:bg-[#e57328] ml-auto"
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -676,15 +723,24 @@ const EditLeadPopup = ({ lead, onClose, onSave }) => {
                 />
               </div>
 
-              <div>
+
+               <div>
                 <label className="block text-sm font-medium text-gray-700">Industry</label>
-                <input
-                  type="text"
-                  name="Industry"
+                <select
+                  name="industry"
                   value={editedLead.industry || ''}
                   onChange={handleChange}
                   className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                />
+                >
+                  <option value="">Industry</option>
+                  <option value="Technology">Technology</option>
+                  <option value="Saas">Saas</option>
+                  <option value="Media">Media</option>
+                  <option value="Healthcare">Healthcare</option>
+                  <option value="Finance">Finance</option>
+                  <option value="Manufacturing">Manufacturing</option>
+                  <option value="Others">Others</option>
+                </select>
               </div>
 
 
