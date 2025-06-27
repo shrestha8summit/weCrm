@@ -3,102 +3,68 @@ import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
+const download = async () => {
+  try {
+    const token = localStorage.getItem('token');
+
+    const response = await fetch('http://localhost:3333/api/downloadLeads', {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+      credentials: 'include' 
+    });
+
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `Server responded with status ${response.status}`);
+    }
+
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'leads.csv';
+    document.body.appendChild(a);
+    a.click();
+
+    setTimeout(() => {
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    }, 100);
+  } catch (error) {
+    console.error('Download error:', error);
+    alert(`Download failed: ${error.message}`);
+  }
+};
+
+
 const UserProfile = ({ onLogout }) => {
   const [userData, setUserData] = useState(null);
   const [allUsers, setAllUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
+   const [currentPassword, setCurrentPassword] = useState('');
+const [newPassword, setNewPassword] = useState('');
+const [confirmPassword, setConfirmPassword] = useState('');
+  
 
   // Add these state declarations near your other state declarations
-const [viewPopupOpen, setViewPopupOpen] = useState(false);
-const [editPopupOpen, setEditPopupOpen] = useState(false);
-const [deletePopupOpen, setDeletePopupOpen] = useState(false);
-const [currentLead, setCurrentLead] = useState(null);
-const [isSaving, setIsSaving] = useState(false);
-const [apiError, setApiError] = useState(null);
+  const [viewPopupOpen, setViewPopupOpen] = useState(false);
+  const [editPopupOpen, setEditPopupOpen] = useState(false);
+  const [deletePopupOpen, setDeletePopupOpen] = useState(false);
+  const [currentLead, setCurrentLead] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [apiError, setApiError] = useState(null);
 
-// Add these popup components right before your return statement
-const ViewLeadPopup = ({ lead, onClose }) => (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-    <div className="bg-white rounded-lg shadow-xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold text-gray-800">Lead Details</h2>
-        <button
-          onClick={onClose}
-          className="text-gray-500 hover:text-gray-700"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="text-left">
-          <h3 className="font-semibold mb-2">Contact Information</h3>
-          <p><strong>Name:</strong>  {lead.customerFirstName} {lead.customerLastName}</p>
-          <p><strong>Email:</strong> {lead.emailAddress}</p>
-          <p><strong>Phone:</strong> {lead.phoneNumber}</p>
-          <p><strong>Job Title:</strong> {lead.jobTitle || 'Not specified'}</p>
-        </div>
-
-        <div className="text-left">
-          <h3 className="font-semibold mb-2">Company Information</h3>
-          <p><strong>Company Name:</strong>  {lead.companyName || 'Not Specified'}</p>
-          <p><strong>Industry:</strong>  {lead.industry || 'Not Specified'}</p>
-        </div>
-
-        <div className="text-left">
-          <h3 className="font-semibold mb-2">Lead Details</h3>
-          <p><strong>Title:</strong>  {lead.title || 'On Progress'}</p>
-          <p><strong>Status:</strong>  {lead.status || 'On Progress'}</p>
-          <p><strong>Created At:</strong> {lead.createdAt ? new Date(lead.createdAt).toLocaleString('en-US', {
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true
-          }) : 'Not specified'}</p>
-          <p><strong>Deadline:</strong> {lead.closingDate ? new Date(lead.closingDate).toLocaleString('en-US', {
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true
-          }) : 'Not specified'}</p>
-        </div>
-
-        <div className="text-left">
-          <h3 className="font-semibold mb-2">Tracking</h3>
-          <p><strong>Service Interested:</strong>  {lead.serviceInterestedIn || 'Not specified'}</p>
-          <p><strong>Topic of Work:</strong> {lead.topicOfWork || 'Not specified'}</p>
-          <p><strong>Notes:</strong> {lead.notes || 'Not specified'}</p>
-        </div>
-      </div>
-    </div>
-  </div>
-);
-
-const EditLeadPopup = ({ lead, onClose, onSave }) => {
-  const [editedLead, setEditedLead] = useState(lead);
-
-  const handleChangeEdit = (e) => {
-    const { name, value } = e.target;
-    setEditedLead(prev => ({ ...prev, [name]: value, id: lead.id }));
-  };
-
-  const handleSubmitEdit = (e) => {
-    e.preventDefault();
-    onSave(editedLead);
-  };
-
-  return (
+  // Add these popup components right before your return statement
+  const ViewLeadPopup = ({ lead, onClose }) => (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white shadow-xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-gray-800">Edit Lead</h2>
+          <h2 className="text-xl font-bold text-gray-800">Lead Details</h2>
           <button
             onClick={onClose}
             className="text-gray-500 hover:text-gray-700"
@@ -109,269 +75,347 @@ const EditLeadPopup = ({ lead, onClose, onSave }) => {
           </button>
         </div>
 
-        <form onSubmit={handleSubmitEdit}>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-4">
-              <h3 className="font-semibold text-[#ff8633]">Contact Information</h3>
-              <div className="flex flex-row gap-4">
-                <div>
-                  <label className="block text-base font-medium text-gray-700">First Name</label>
-                  <input
-                    type="text"
-                    name="customerFirstName"
-                    value={editedLead.customerFirstName || ''}
-                    onChange={handleChangeEdit}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                  />
-                </div>
-                <div>
-                  <label className="block text-base font-medium text-gray-700">Last Name</label>
-                  <input
-                    type="text"
-                    name="customerLastName"
-                    value={editedLead.customerLastName || ''}
-                    onChange={handleChangeEdit}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Email</label>
-                <input
-                  type="email"
-                  name="emailAddress"
-                  value={editedLead.emailAddress || ''}
-                  onChange={handleChangeEdit}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Phone</label>
-                <input
-                  type="tel"
-                  name="phoneNumber"
-                  value={editedLead.phoneNumber || ''}
-                  onChange={handleChangeEdit}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Job Title</label>
-                <input
-                  type="text"
-                  name="jobTitle"
-                  value={editedLead.jobTitle || ''}
-                  onChange={handleChangeEdit}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="font-semibold text-[#ff8633]">Company Information</h3>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Company Name</label>
-                <input
-                  type="text"
-                  name="companyName"
-                  value={editedLead.companyName || ''}
-                  onChange={handleChangeEdit}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Industry</label>
-                <select
-                  name="industry"
-                  value={editedLead.industry || ''}
-                  onChange={handleChangeEdit}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                >
-                  <option value="">Select an industry</option>
-                  <option value="Technology">Technology</option>
-                  <option value="SaaS">SaaS</option>
-                  <option value="Finance">Finance</option>
-                  <option value="Manufacturing">Manufacturing</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="font-semibold text-[#ff8633]">Lead Details</h3>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Title</label>
-                <input
-                  type="text"
-                  name="title"
-                  value={editedLead.title || ''}
-                  onChange={handleChangeEdit}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Status</label>
-                <select
-                  name="status"
-                  value={editedLead.status || ''}
-                  onChange={handleChangeEdit}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                >
-                  <option value="">New</option>
-                  <option value="Contacted">Contacted</option>
-                  <option value="Engaged">Engaged</option>
-                  <option value="Qualified">Qualified</option>
-                  <option value="Proposal Sent">Proposal Sent</option>
-                  <option value="Negotiation">Negotiation</option>
-                  <option value="Closed Won">Closed Won</option>
-                  <option value="Closed Lost">Closed Lost</option>
-                  <option value="On Hold">On Hold</option>
-                  <option value="Do Not Contact">Do Not Contact</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Service Interested In</label>
-                <select
-                  name="serviceInterestedIn"
-                  value={editedLead.serviceInterestedIn || ''}
-                  onChange={handleChangeEdit}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                >
-                  <option value="">Service Interested In</option>
-                  <option value="Email Marketing">Email Marketing</option>
-                  <option value="Lead Generation">Lead Generation</option>
-                  <option value="Content Syndication">Content Syndication</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="font-semibold text-[#ff8633]">Additional Details</h3>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Topic of Work</label>
-                <input
-                  type="text"
-                  name="topicOfWork"
-                  value={editedLead.topicOfWork || ''}
-                  onChange={handleChangeEdit}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Expected Closing Date</label>
-                <input
-                  type="date"
-                  name="closingDate"
-                  value={editedLead.closingDate ? editedLead.closingDate.split('T')[0] : ''}
-                  onChange={handleChangeEdit}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700">Notes</label>
-                <textarea
-                  name="notes"
-                  value={editedLead.notes || ''}
-                  onChange={handleChangeEdit}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                  rows="3"
-                />
-              </div>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="text-left">
+            <h3 className="font-semibold mb-2">Contact Information</h3>
+            <p><strong>Name:</strong>  {lead.customerFirstName} {lead.customerLastName}</p>
+            <p><strong>Email:</strong> {lead.emailAddress}</p>
+            <p><strong>Phone:</strong> {lead.phoneNumber}</p>
+            <p><strong>Job Title:</strong> {lead.jobTitle || 'Not specified'}</p>
           </div>
 
-          <div className="mt-6 flex justify-end space-x-3">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#ff8633] hover:bg-[#e67328]"
-            >
-              Save Changes
-            </button>
+          <div className="text-left">
+            <h3 className="font-semibold mb-2">Company Information</h3>
+            <p><strong>Company Name:</strong>  {lead.companyName || 'Not Specified'}</p>
+            <p><strong>Industry:</strong>  {lead.industry || 'Not Specified'}</p>
           </div>
-        </form>
+
+          <div className="text-left">
+            <h3 className="font-semibold mb-2">Lead Details</h3>
+            <p><strong>Title:</strong>  {lead.title || 'On Progress'}</p>
+            <p><strong>Status:</strong>  {lead.status || 'On Progress'}</p>
+            <p><strong>Created At:</strong> {lead.createdAt ? new Date(lead.createdAt).toLocaleString('en-US', {
+              month: 'long',
+              day: 'numeric',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: true
+            }) : 'Not specified'}</p>
+            <p><strong>Deadline:</strong> {lead.closingDate ? new Date(lead.closingDate).toLocaleString('en-US', {
+              month: 'long',
+              day: 'numeric',
+              year: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: true
+            }) : 'Not specified'}</p>
+          </div>
+
+          <div className="text-left">
+            <h3 className="font-semibold mb-2">Tracking</h3>
+            <p><strong>Service Interested:</strong>  {lead.serviceInterestedIn || 'Not specified'}</p>
+            <p><strong>Topic of Work:</strong> {lead.topicOfWork || 'Not specified'}</p>
+            <p><strong>Notes:</strong> {lead.notes || 'Not specified'}</p>
+          </div>
+        </div>
       </div>
     </div>
   );
-};
 
-const DeleteConfirmationPopup = ({ lead, onClose, onConfirm }) => (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-    <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold text-gray-800">Confirm Deletion</h2>
-        <button
-          onClick={onClose}
-          className="text-gray-500 hover:text-gray-700"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </button>
+  const EditLeadPopup = ({ lead, onClose, onSave }) => {
+    const [editedLead, setEditedLead] = useState(lead);
+
+    const handleChangeEdit = (e) => {
+      const { name, value } = e.target;
+      setEditedLead(prev => ({ ...prev, [name]: value, id: lead.id }));
+    };
+
+    const handleSubmitEdit = (e) => {
+      e.preventDefault();
+      onSave(editedLead);
+    };
+
+    
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white shadow-xl p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold text-gray-800">Edit Lead</h2>
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <form onSubmit={handleSubmitEdit}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <h3 className="font-semibold text-[#ff8633]">Contact Information</h3>
+                <div className="flex flex-row gap-4">
+                  <div>
+                    <label className="block text-base font-medium text-gray-700">First Name</label>
+                    <input
+                      type="text"
+                      name="customerFirstName"
+                      value={editedLead.customerFirstName || ''}
+                      onChange={handleChangeEdit}
+                      className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-base font-medium text-gray-700">Last Name</label>
+                    <input
+                      type="text"
+                      name="customerLastName"
+                      value={editedLead.customerLastName || ''}
+                      onChange={handleChangeEdit}
+                      className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Email</label>
+                  <input
+                    type="email"
+                    name="emailAddress"
+                    value={editedLead.emailAddress || ''}
+                    onChange={handleChangeEdit}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Phone</label>
+                  <input
+                    type="tel"
+                    name="phoneNumber"
+                    value={editedLead.phoneNumber || ''}
+                    onChange={handleChangeEdit}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Job Title</label>
+                  <input
+                    type="text"
+                    name="jobTitle"
+                    value={editedLead.jobTitle || ''}
+                    onChange={handleChangeEdit}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="font-semibold text-[#ff8633]">Company Information</h3>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Company Name</label>
+                  <input
+                    type="text"
+                    name="companyName"
+                    value={editedLead.companyName || ''}
+                    onChange={handleChangeEdit}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Industry</label>
+                  <select
+                    name="industry"
+                    value={editedLead.industry || ''}
+                    onChange={handleChangeEdit}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                  >
+                    <option value="">Select an industry</option>
+                    <option value="Technology">Technology</option>
+                    <option value="SaaS">SaaS</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Manufacturing">Manufacturing</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="font-semibold text-[#ff8633]">Lead Details</h3>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Title</label>
+                  <input
+                    type="text"
+                    name="title"
+                    value={editedLead.title || ''}
+                    onChange={handleChangeEdit}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Status</label>
+                  <select
+                    name="status"
+                    value={editedLead.status || ''}
+                    onChange={handleChangeEdit}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                  >
+                    <option value="">New</option>
+                    <option value="Contacted">Contacted</option>
+                    <option value="Engaged">Engaged</option>
+                    <option value="Qualified">Qualified</option>
+                    <option value="Proposal Sent">Proposal Sent</option>
+                    <option value="Negotiation">Negotiation</option>
+                    <option value="Closed Won">Closed Won</option>
+                    <option value="Closed Lost">Closed Lost</option>
+                    <option value="On Hold">On Hold</option>
+                    <option value="Do Not Contact">Do Not Contact</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Service Interested In</label>
+                  <select
+                    name="serviceInterestedIn"
+                    value={editedLead.serviceInterestedIn || ''}
+                    onChange={handleChangeEdit}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                  >
+                    <option value="">Service Interested In</option>
+                    <option value="Email Marketing">Email Marketing</option>
+                    <option value="Lead Generation">Lead Generation</option>
+                    <option value="Content Syndication">Content Syndication</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="font-semibold text-[#ff8633]">Additional Details</h3>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Topic of Work</label>
+                  <input
+                    type="text"
+                    name="topicOfWork"
+                    value={editedLead.topicOfWork || ''}
+                    onChange={handleChangeEdit}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Expected Closing Date</label>
+                  <input
+                    type="date"
+                    name="closingDate"
+                    value={editedLead.closingDate ? editedLead.closingDate.split('T')[0] : ''}
+                    onChange={handleChangeEdit}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Notes</label>
+                  <textarea
+                    name="notes"
+                    value={editedLead.notes || ''}
+                    onChange={handleChangeEdit}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                    rows="3"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#ff8633] hover:bg-[#e67328]"
+              >
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
+    );
+  };
 
-      <p className="mb-6">
-        Are you sure you want to delete the lead for <strong>{lead.customerFirstName} {lead.customerLastName}</strong> from <strong>{lead.companyName || 'Unknown Company'}</strong>?
-      </p>
+  const DeleteConfirmationPopup = ({ lead, onClose, onConfirm }) => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold text-gray-800">Confirm Deletion</h2>
+          <button
+            onClick={onClose}
+            className="text-gray-500 hover:text-gray-700"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
 
-      <div className="flex justify-end space-x-3">
-        <button
-          onClick={onClose}
-          className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={() => onConfirm(lead.id)}
-          className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700"
-        >
-          Delete Lead
-        </button>
+        <p className="mb-6">
+          Are you sure you want to delete the lead for <strong>{lead.customerFirstName} {lead.customerLastName}</strong> from <strong>{lead.companyName || 'Unknown Company'}</strong>?
+        </p>
+
+        <div className="flex justify-end space-x-3">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={() => onConfirm(lead.id)}
+            className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700"
+          >
+            Delete Lead
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
 
-const handleSaveLead = async (updatedLead) => {
-  try {
-    setIsSaving(true);
-    setApiError(null);
+  const handleSaveLead = async (updatedLead) => {
+    try {
+      setIsSaving(true);
+      setApiError(null);
 
-    if (!updatedLead.id) {
-      throw new Error('Lead ID is missing. Cannot update lead.');
-    }
-
-    const token = localStorage.getItem('token');
-    const response = await fetch(
-      `http://localhost:3333/api/udleads/update-lead/${updatedLead.id}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedLead),
+      if (!updatedLead.id) {
+        throw new Error('Lead ID is missing. Cannot update lead.');
       }
-    );
 
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      throw new Error(error.message || "Lead update failed");
-    }
+      const token = localStorage.getItem('token');
+      const response = await fetch(
+        `http://localhost:3333/api/udleads/update-lead/${updatedLead.id}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedLead),
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.message || "Lead update failed");
+      }
 
     setEditPopupOpen(false);
     toast.success("Leads updated successfully!", {
@@ -385,17 +429,17 @@ const handleSaveLead = async (updatedLead) => {
                   style: { fontSize: '1.2rem' }, 
                 });
 
-    // Refresh leads data
-    const leadsResponse = await fetch("http://localhost:3333/api/loggedData", {
-      method: 'GET',
-      headers: { 'Authorization': `Bearer ${token}` }
-    });
-    const data = await leadsResponse.json();
-    setLeadsData(data.data);
-  } catch (err) {
-    console.error("Lead update error:", err);
-    setApiError(err.message);
-    toast.error(err.message || "Failed to update lead", {
+      // Refresh leads data
+      const leadsResponse = await fetch("http://localhost:3333/api/loggedData", {
+        method: 'GET',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await leadsResponse.json();
+      setLeadsData(data.data);
+    } catch (err) {
+      console.error("Lead update error:", err);
+      setApiError(err.message);
+      toast.error(err.message || "Failed to update lead", {
                   position: "top-right",
                   autoClose: 5000,
                   hideProgressBar: false,
@@ -405,28 +449,28 @@ const handleSaveLead = async (updatedLead) => {
                   progress: undefined,
                   style: { fontSize: '1.2rem' }, 
                 });
-  } finally {
-    setIsSaving(false);
-  }
-};
-
-const handleDeleteLead = async (leadId) => {
-  try {
-    const token = localStorage.getItem('token');
-    const response = await fetch(
-      `http://localhost:3333/api/udleads/delete-lead/${leadId}`,
-      {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      }
-    );
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({}));
-      throw new Error(error.message || "Lead deletion failed");
+    } finally {
+      setIsSaving(false);
     }
+  };
+
+  const handleDeleteLead = async (leadId) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(
+        `http://localhost:3333/api/udleads/delete-lead/${leadId}`,
+        {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.message || "Lead deletion failed");
+      }
 
     setDeletePopupOpen(false);
     toast.success("Lead deleted successfully!", {
@@ -463,45 +507,45 @@ const handleDeleteLead = async (leadId) => {
 
 
   const [leadsData, setLeadsData] = useState({
-  allLeads: 0,
-  allNewLeads:[],
-  newLeadsCount:0,
-  allContacted:[],
-  contactedCount:0,
-  allEngaged:[],
-  engagedCount:0,
-  allQualified:[],
-  qualifiedCount:0,
-  allProposalSent:[],
-  proposalSentCount:0,
-  allNegotiation: [],
-  negotiationCount: 0,
-  allClosedWon: [],
-  closedWonCount: 0,
-  allClosedLost: [],
-  closedLostCount: 0,
-  allOnHold: [],
-  onHoldCount: 0,
-  allDoNotContact: [],
-  doNotContactCount: 0,
-});
+    allLeads: 0,
+    allNewLeads: [],
+    newLeadsCount: 0,
+    allContacted: [],
+    contactedCount: 0,
+    allEngaged: [],
+    engagedCount: 0,
+    allQualified: [],
+    qualifiedCount: 0,
+    allProposalSent: [],
+    proposalSentCount: 0,
+    allNegotiation: [],
+    negotiationCount: 0,
+    allClosedWon: [],
+    closedWonCount: 0,
+    allClosedLost: [],
+    closedLostCount: 0,
+    allOnHold: [],
+    onHoldCount: 0,
+    allDoNotContact: [],
+    doNotContactCount: 0,
+  });
 
-// Combine all leads from all status categories
-const allCombinedLeads = [
-  ...leadsData.allNewLeads,
-  ...leadsData.allContacted,
-  ...leadsData.allEngaged,
-  ...leadsData.allQualified,
-  ...leadsData.allProposalSent,
-  ...leadsData.allNegotiation,
-  ...leadsData.allClosedWon,
-  ...leadsData.allClosedLost,
-  ...leadsData.allOnHold,
-  ...leadsData.allDoNotContact
-];
+  // Combine all leads from all status categories
+  const allCombinedLeads = [
+    ...leadsData.allNewLeads,
+    ...leadsData.allContacted,
+    ...leadsData.allEngaged,
+    ...leadsData.allQualified,
+    ...leadsData.allProposalSent,
+    ...leadsData.allNegotiation,
+    ...leadsData.allClosedWon,
+    ...leadsData.allClosedLost,
+    ...leadsData.allOnHold,
+    ...leadsData.allDoNotContact
+  ];
 
 
-const [leadsLoading, setLeadsLoading] = useState(false);
+  const [leadsLoading, setLeadsLoading] = useState(false);
 
   // UserProfile.jsx
   useEffect(() => {
@@ -633,11 +677,11 @@ const [leadsLoading, setLeadsLoading] = useState(false);
     topicofwork: '',
     expectedtoclose: '',
     notesforfuture: '',
-    alerttopic:'',
-    reminder:'',
-    alertdate:'',
-    remindertime:'',
-    description:'',
+    alerttopic: '',
+    reminder: '',
+    alertdate: '',
+    remindertime: '',
+    description: '',
 
   });
 
@@ -802,7 +846,7 @@ const [leadsLoading, setLeadsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
 
 
-    // the leads of the user
+  // the leads of the user
   useEffect(() => {
   const fetchLeadsData = async () => {
     if (activeTab === 'leads') {
@@ -824,15 +868,15 @@ const [leadsLoading, setLeadsLoading] = useState(false);
           return;
         }
 
-        const response = await fetch("http://localhost:3333/api/loggedData", {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
+          const response = await fetch("http://localhost:3333/api/loggedData", {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
 
-        if (!response.ok) {
-          throw new Error('Failed to fetch leads data');
-        }
+          if (!response.ok) {
+            throw new Error('Failed to fetch leads data');
+          }
 
         const data = await response.json();
         console.log('Leads data:', data); // Debug log
@@ -855,8 +899,8 @@ const [leadsLoading, setLeadsLoading] = useState(false);
     }
   };
 
-  fetchLeadsData();
-}, [activeTab, navigate]);
+    fetchLeadsData();
+  }, [activeTab, navigate]);
 
 
   if (loading) {
@@ -866,6 +910,40 @@ const [leadsLoading, setLeadsLoading] = useState(false);
       </div>
     );
   }
+
+
+const handleNewPass = async (e) => {
+  e.preventDefault();
+
+  if (newPassword !== confirmPassword) {
+    console.error('New passwords do not match!');
+    return;
+  }
+
+  const data = {
+    currentPassword,
+    newPassword,
+    confirmPassword
+  };
+
+  console.log('Submitted Password Data:', data);
+
+  // Simulated API call
+  try {
+    const response = await changepass(data);
+    console.log('API Response:', response);
+  } catch (error) {
+    console.error('Error changing password:', error);
+  }
+};
+
+const changepass = async (data) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({ success: true, message: 'Password updated successfully!', data });
+    }, 1000);
+  });
+};
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -1032,7 +1110,7 @@ const [leadsLoading, setLeadsLoading] = useState(false);
         <h2 className="text-xl font-semibold text-center text-gray-700">
           Leads ({leadsData.length})
         </h2>
-        <button  className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors">
+         <button onClick={download} className="flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-md transition-colors">
           Download Leads
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
@@ -1124,49 +1202,92 @@ const [leadsLoading, setLeadsLoading] = useState(false);
 )}
 
             {activeTab === 'settings' && (
-              <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-xl lg:text-3xl font-bold text-gray-800 mb-6">Account Settings</h2>
-                <p className="text-gray-600 mb-4">Last login: {user.lastLogin}</p>
+  <div className="bg-white rounded-lg shadow p-6">
+    <h2 className="text-xl lg:text-3xl font-bold text-gray-800 mb-6">Account Settings</h2>
+    <p className="text-gray-600 mb-4">Last login: {user.lastLogin}</p>
 
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-700 mb-2">Change Password</h3>
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
-                        <input type="password" className="w-full px-3 py-2 border border-gray-300 rounded-md" />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
-                        <input type="password" className="w-full px-3 py-2 border border-gray-300 rounded-md" />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
-                        <input type="password" className="w-full px-3 py-2 border border-gray-300 rounded-md" />
-                      </div>
-                      <button className="px-4 py-2 bg-[#ff8633] text-white rounded-lg  transition-colors">
-                        Update Password
-                      </button>
-                    </div>
-                  </div>
+    <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-semibold text-gray-700 mb-2">Change Password</h3>
+        <form className="space-y-4" onSubmit={async (e) => {
+          e.preventDefault();
+          
+          if (newPassword !== confirmPassword) {
+            toast.error("Passwords don't match!");
+            return;
+          }
 
-                  <div className="pt-4 border-t border-gray-200">
-                    <h3 className="text-lg font-semibold text-gray-700 mb-2">Notification Preferences</h3>
-                    <div className="space-y-2">
-                      <label className="flex items-center">
-                        <input type="checkbox" className="h-4 w-4 text-[#ff8633] focus:ring-blue-500 border-gray-300 rounded" />
-                        <span className="ml-2 text-sm text-gray-700">Email notifications</span>
-                      </label>
-                      <label className="flex items-center">
-                        <input type="checkbox" className="h-4 w-4 text-[#ff8633] focus:ring-blue-500 border-gray-300 rounded" />
-                        <span className="ml-2 text-sm text-gray-700">Push notifications</span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
+          try {
+            const token = localStorage.getItem('token');
+            const response = await fetch("http://localhost:3333/api/changePass", {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+              },
+              body: JSON.stringify({
+                currentPassword,
+                newPassword
+              })
+            });
 
+            if (!response.ok) {
+              const error = await response.json();
+              throw new Error(error.message || "Password change failed");
+            }
+
+            toast.success("Password changed successfully!");
+            setCurrentPassword('');
+            setNewPassword('');
+            setConfirmPassword('');
+          } catch (error) {
+            console.error('Password change error:', error);
+            toast.error(error.message || "Failed to change password");
+          }
+        }}>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Current Password</label>
+            <input
+              type="password"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
+            <input
+              type="password"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              required
+              minLength={8}
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Confirm New Password</label>
+            <input
+              type="password"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+              minLength={8}
+            />
+          </div>
+          <button
+            type="submit"
+            className="px-4 py-2 bg-[#ff8633] text-white rounded-lg transition-colors hover:bg-[#e2762d]"
+          >
+            Update Password
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+)}
 
             {activeTab === 'addleads' && (
               <div className="flex items-center justify-center min-h-screen p-0 bg-gradient-to-br from-gray-50 to-gray-100">
@@ -1463,9 +1584,9 @@ const [leadsLoading, setLeadsLoading] = useState(false);
                       <h2 className="text-xl lg:text-3xl font-bold text-gray-800 mb-2">Alerts And Reminder</h2>
                     </div>
 
-                     <div className="mb-4">
+                    <div className="mb-4">
                       <label htmlFor="alerttopic" className="block text-sm font-medium text-gray-700 mb-1">
-                       Alert Topic
+                        Alert Topic
                       </label>
                       <input
                         type="text"
@@ -1483,22 +1604,22 @@ const [leadsLoading, setLeadsLoading] = useState(false);
 
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                        <div className="mb-4">
-                      <label htmlFor="reminder" className="block text-sm font-medium text-gray-700 mb-1">
-                        Reminder
-                      </label>
-                      <input
-                        type="text"
-                        id="reminder"
-                        name="reminder"
-                        value={formData.reminder}
-                        onChange={handleChange}
-                        required
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-                        placeholder="reminder"
-                        autoComplete="reminder"
-                      />
-                    </div>
+                      <div className="mb-4">
+                        <label htmlFor="reminder" className="block text-sm font-medium text-gray-700 mb-1">
+                          Reminder
+                        </label>
+                        <input
+                          type="text"
+                          id="reminder"
+                          name="reminder"
+                          value={formData.reminder}
+                          onChange={handleChange}
+                          required
+                          className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                          placeholder="reminder"
+                          autoComplete="reminder"
+                        />
+                      </div>
                       <div>
                         <label htmlFor="alertdate" className="block text-sm font-medium text-gray-700 mb-1">
                           Date
@@ -1518,20 +1639,20 @@ const [leadsLoading, setLeadsLoading] = useState(false);
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                    <div className="mb-4">
-  <label htmlFor="remindertime" className="block text-sm font-medium text-gray-700 mb-1">
-    Reminder Time:
-  </label>
-  <input
-    type="time"
-    id="remindertime"
-    name="remindertime"
-    value={formData.remindertime || ''}
-    onChange={handleChange}
-    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-    required
-  />
-</div>
+                      <div className="mb-4">
+                        <label htmlFor="remindertime" className="block text-sm font-medium text-gray-700 mb-1">
+                          Reminder Time:
+                        </label>
+                        <input
+                          type="time"
+                          id="remindertime"
+                          name="remindertime"
+                          value={formData.remindertime || ''}
+                          onChange={handleChange}
+                          className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                          required
+                        />
+                      </div>
                       <div>
                         <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
                           Description
@@ -1568,28 +1689,28 @@ const [leadsLoading, setLeadsLoading] = useState(false);
         </div>
       </div>
       {/* Add these right before the closing </div> of your main component */}
-{viewPopupOpen && (
-  <ViewLeadPopup
-    lead={currentLead}
-    onClose={() => setViewPopupOpen(false)}
-  />
-)}
+      {viewPopupOpen && (
+        <ViewLeadPopup
+          lead={currentLead}
+          onClose={() => setViewPopupOpen(false)}
+        />
+      )}
 
-{editPopupOpen && (
-  <EditLeadPopup
-    lead={currentLead}
-    onClose={() => setEditPopupOpen(false)}
-    onSave={handleSaveLead}
-  />
-)}
+      {editPopupOpen && (
+        <EditLeadPopup
+          lead={currentLead}
+          onClose={() => setEditPopupOpen(false)}
+          onSave={handleSaveLead}
+        />
+      )}
 
-{deletePopupOpen && (
-  <DeleteConfirmationPopup
-    lead={currentLead}
-    onClose={() => setDeletePopupOpen(false)}
-    onConfirm={handleDeleteLead}
-  />
-)}
+      {deletePopupOpen && (
+        <DeleteConfirmationPopup
+          lead={currentLead}
+          onClose={() => setDeletePopupOpen(false)}
+          onConfirm={handleDeleteLead}
+        />
+      )}
     </div>
   );
 };
