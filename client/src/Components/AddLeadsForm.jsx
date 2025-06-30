@@ -91,7 +91,6 @@ const AddLeadsForm = () => {
    window.location.reload();
   } else if (userType === 'admin') {
     setTimeout(() => navigate("/dashboard"), 2000);
-    window.location.reload();
   } 
       
 
