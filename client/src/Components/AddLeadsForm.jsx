@@ -91,9 +91,7 @@ const AddLeadsForm = () => {
    window.location.reload();
   } else if (userType === 'admin') {
     setTimeout(() => navigate("/dashboard"), 2000);
-  } 
-      
-
+  }     
     } catch (e) {
       console.error("Lead Creation Failed - Full Error:", e);
       console.error("Error details:", {

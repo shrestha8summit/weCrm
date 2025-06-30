@@ -2651,28 +2651,6 @@ const changepass = async (data) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Navigation Bar */}
-      {/* <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-semibold text-gray-800">User Dashboard</h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Link to="/" className="text-gray-500 hover:text-gray-700 px-3 py-2 text-sm font-medium">
-                Home
-              </Link>
-              <Link to="/leads" className="text-gray-500 hover:text-gray-700 px-3 py-2 text-sm font-medium">
-                Leads Activity
-              </Link>
-              <Link to="/settings" className="text-gray-500 hover:text-gray-700 px-3 py-2 text-sm font-medium">
-                Settings
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav> */}
-
       {/* Main Content */}
       <div className="mx-auto px-4 sm:px-6 lg:px-0 py-8">
         <div className="flex flex-col md:flex-row gap-8">

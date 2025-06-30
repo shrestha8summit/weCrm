@@ -324,7 +324,7 @@ const LeadsActivity = () => {
   {/* For small screens: Column layout */}
   <div className="md:hidden sm:hidden  w-full flex flex-col items-center space-y-4 mb-4">
     <div className="flex justify-center w-full items-center">
-       <h1 className="text-3xl font-bold text-gray-800">
+       <h1 className="text-base font-bold text-gray-800">
       Leads Activity
     </h1>
       <button onClick={download} className="text-gray-600 hover:text-[#ff8633] transition-colors">
@@ -341,7 +341,7 @@ const LeadsActivity = () => {
   <div className="hidden sm:flex md:flex w-full justify-between items-center">
     
     <div className="flex items-center absolute left-1/2 transform -translate-x-1/2">
-      <h1 className="text-3xl font-bold text-gray-800 mr-2">
+      <h1 className="text-3xl md:text-lg lg:text-3xl  font-bold text-gray-800 mr-2">
         Leads Activity
       </h1>
       <button onClick={download} className="text-gray-600 hover:text-[#ff8633] transition-colors">
@@ -445,7 +445,7 @@ const BackButton = ({ onClick }) => (
     >
       <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
     </svg>
-    <span>Back to Dashboard</span>
+    <span >Back to Dashboard</span>
   </button>
 );
 
