@@ -10,7 +10,7 @@ const Dashboard = ({ onLogout }) => {
   };
 
    const showAllUsers = () => {
-    navigate('/users'); // Navigates to the sign.jsx route
+    navigate('/users'); // Navigates to the AllUsers.jsx route
   };
 
     const addLeads = () => {

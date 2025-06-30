@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './component/login.jsx';
-import Sign from './component/sign.jsx';
-import Dashboard from './component/dashboard.jsx';
-import UserProfile from './component/userProfile.jsx';
-import Register from './component/register.jsx';
+import Login from './Pages/login.jsx';
+import Sign from './Components/sign.jsx';
+import Dashboard from './Pages/dashboard.jsx';
+import UserProfile from './Pages/userProfile.jsx';
+import Register from './Pages/register.jsx';
 import './App.css';
-import ProtectedRoute from './component/protectedRoute.js';
-import ForgetPassword from './component/forgetPassword.jsx';
-import OTPPage from './component/Otp.jsx';
-import  UpdatePassword from "./component/UpdatePassword.jsx"
-import AllUsers from './component/AllUsers.jsx';
-import EditUser from './component/EditUser.jsx';
+import ProtectedRoute from './Pages/protectedRoute.js';
+import ForgetPassword from './Pages/forgetPassword.jsx';
+import OTPPage from './Pages/Otp.jsx';
+import  UpdatePassword from "./Pages/UpdatePassword.jsx"
+import AllUsers from './Pages/AllUsers.jsx';
+import EditUser from './Pages/EditUser.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import AddLeadsForm from './component/AddLeadsForm.jsx';
-import LeadsActivity from './component/LeadsActivity.jsx';
-import AlertsandReminderForm from './component/AlertsandReminderForm.jsx';
+import AddLeadsForm from './Pages/AddLeadsForm.jsx';
+import LeadsActivity from './Pages/LeadsActivity.jsx';
+import AlertsandReminderForm from './Pages/AlertsandReminderForm.jsx';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("loggedIn") === "true");
