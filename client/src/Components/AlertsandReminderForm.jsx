@@ -100,10 +100,12 @@ const AlertsandReminder = () => {
 
   return (
     <>
- <button
+
+{localStorage.getItem('userType') === 'admin' && (
+  <button
     type="button"
     onClick={handlegobacktodashboard}
-    className="cursor-pointer flex items-center gap-2  m-3 px-2 p-2 bg-[#ff8633] text-white rounded-lg transition-colors hover:bg-[#e57328] ml-auto"
+    className="cursor-pointer flex items-center gap-2 m-3 px-2 p-2 bg-[#ff8633] text-white rounded-lg transition-colors hover:bg-[#e57328] ml-auto"
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -115,6 +117,8 @@ const AlertsandReminder = () => {
     </svg>
     <span>Back to Dashboard</span>
   </button>
+)}
+
    <div className="flex items-center justify-center  p-0">
      
                   <Suspense fallback={
@@ -227,7 +231,7 @@ const AlertsandReminder = () => {
                         className={`w-full cursor-pointer bg-gradient-to-r from-[#ff8633] to-[#ff9a52] text-white py-3 rounded-lg font-medium hover:from-[#e6732b] hover:to-[#e6732b] transition-all shadow-md hover:shadow-lg active:scale-95 transform ${isSubmitting ? 'opacity-75 cursor-not-allowed' : ''
                           }`}
                       >
-                        {isSubmitting ? 'Adding the lead...' : 'Add Lead'}
+                        {isSubmitting ? 'Adding the Alert...' : 'Add Alert and Reminder'}
                       </button>
                     </form>
                   </Suspense>

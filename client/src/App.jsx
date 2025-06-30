@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './Pages/login.jsx';
-import Sign from './Components/sign.jsx';
+import Sign from './Pages/sign.jsx';
 import Dashboard from './Pages/dashboard.jsx';
 import UserProfile from './Pages/userProfile.jsx';
 import Register from './Pages/register.jsx';
@@ -14,9 +14,9 @@ import AllUsers from './Pages/AllUsers.jsx';
 import EditUser from './Pages/EditUser.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import AddLeadsForm from './Pages/AddLeadsForm.jsx';
+import AddLeadsForm from './Components/AddLeadsForm.jsx';
 import LeadsActivity from './Pages/LeadsActivity.jsx';
-import AlertsandReminderForm from './Pages/AlertsandReminderForm.jsx';
+import AlertsandReminderForm from './Components/AlertsandReminderForm.jsx';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("loggedIn") === "true");
