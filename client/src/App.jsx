@@ -17,6 +17,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import AddLeadsForm from './Components/AddLeadsForm.jsx';
 import LeadsActivity from './Pages/LeadsActivity.jsx';
 import AlertsandReminderForm from './Components/AlertsandReminderForm.jsx';
+import Quoreb2b from './Pages/Quoreb2b.jsx';
+import Comparebazar from './Pages/Comparebazar.jsx';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem("loggedIn") === "true");
@@ -75,6 +77,8 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgetPassword" element={ <ForgetPassword/>} />
+            <Route path="/quorecomment" element={<Quoreb2b />} />
+            <Route path="/comparebazarcomment" element={<Comparebazar />} />
 
             {/* OTP Component tabhi navigate hoga , when otp  is sent */}
 
