@@ -27,30 +27,34 @@ const Quoreb2b = () => {
     navigate('/dashboard');
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) throw new Error('No authentication token found');
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsSubmitting(true);
 
-      const body = {
-        userFirstName: formData.firstName,
-        userLastName: formData.lastName,
-        comment: formData.comment,
-      };
+  try {
+    const body = {
+      userFirstName: formData.firstName,
+      userLastName: formData.lastName,
+      comment: formData.comment,
+    };
 
-      const res = await fetch("http://localhost:3333/api/quorecomment", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(body),
-      });
+    console.log("Sending body:", body);
 
-      const responseData = await res.json();
-      toast.success("Comment added Successfully!", {
+    const res = await fetch("http://localhost:3333/api/quareb2b/form", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'  
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || "Failed to submit comment");
+    }
+
+    const responseData = await res.json();
+    toast.success("Comment added Successfully!", {
       position: "top-right",
       autoClose: 5000,
       hideProgressBar: false,
@@ -58,26 +62,27 @@ const Quoreb2b = () => {
       pauseOnHover: true,
       draggable: true,
       progress: undefined,
-      style: { fontSize: '1.2rem' }, // Increased font size
+      style: { fontSize: '1.2rem' },
     });
-    const userType = localStorage.getItem('userType'); 
-   if (userType === 'user') {
-   setTimeout(() => navigate("/userProfile"), 2000);
-   window.location.reload();
-  } else if (userType === 'admin') {
-    setTimeout(() => navigate("/dashboard"), 2000);
-  }     
-    } catch (e) {
-      console.error("Comment Failed - Full Error:", e);
-      console.error("Error details:", {
-        message: e.message,
-        stack: e.stack,
-      });
-      toast.error(e.message || "Comment  Failed. Please try again.");
-    } finally {
-      setIsSubmitting(false);
+
+    const userType = localStorage.getItem('userType');
+    if (userType === 'user') {
+      setTimeout(() => {
+        navigate("/userProfile");
+        window.location.reload(); 
+      }, 2000);
+    } else if (userType === 'admin') {
+      setTimeout(() => navigate("/dashboard"), 2000);
     }
-  };
+
+  } catch (e) {
+    console.error("Comment Failed - Full Error:", e);
+    toast.error(e.message || "Comment Failed. Please try again.");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   return (
     <>

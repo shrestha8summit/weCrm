@@ -97,3 +97,16 @@ model OTP {
   expiresAt    DateTime                      
 }
 
+model QB2b{
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  firstName String
+  lastName String
+  comment String
+}
+
+model compare{
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  firstName String
+  lastName String
+  comment String
+}
