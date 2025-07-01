@@ -3,7 +3,6 @@
 head file -> memo -> required in frontend
 
 Backened side : 
-   i. U  lead activity
    ii.way to chain the new edited leads..
    iii. edit profile in user side shall also work
    iv. cookie implementation(later)

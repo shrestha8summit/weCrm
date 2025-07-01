@@ -31,20 +31,18 @@ const Comparebazar = () => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      const token = localStorage.getItem('token');
-      if (!token) throw new Error('No authentication token found');
-
       const body = {
         userFirstName: formData.firstName,
         userLastName: formData.lastName,
         comment: formData.comment,
       };
 
-      const res = await fetch("http://localhost:3333/api/comparebazarcomment", {
+      console.log(body)
+
+      const res = await fetch("http://localhost:3333/api/compareb/form", {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'  
         },
         body: JSON.stringify(body),
       });
