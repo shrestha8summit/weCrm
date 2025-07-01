@@ -1773,7 +1773,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import AddLeadsForm from '../Components/AddLeadsForm';
 import AlertsandReminderForm from '../Components/AlertsandReminderForm';
-
+import RealtimeTracking from '../Components/RealtimeTracking';
 
 const download = async () => {
   try {
@@ -1827,6 +1827,7 @@ const [confirmPassword, setConfirmPassword] = useState('');
   const [viewPopupOpen, setViewPopupOpen] = useState(false);
   const [editPopupOpen, setEditPopupOpen] = useState(false);
   const [deletePopupOpen, setDeletePopupOpen] = useState(false);
+  const [editProfilePopupOpen, setEditProfilePopupOpen] = useState(false);
   const [currentLead, setCurrentLead] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [apiError, setApiError] = useState(null);
@@ -2186,6 +2187,153 @@ const [confirmPassword, setConfirmPassword] = useState('');
     </div>
   );
 
+  // Edit Profile Popup
+  const EditProfilePopup = ({ profile, onClose, onSave }) => {
+    const [editedProfile, setEditedProfile] = useState(profile);
+
+    const handleChangeEdit = (e) => {
+      const { name, value } = e.target;
+      setEditedProfile(prev => ({ ...prev, [name]: value, id: profile.id }));
+    };
+
+    const handleSkillChange = (index, value) => {
+      const newSkills = [...editedProfile.skills];
+      newSkills[index] = value;
+      setEditedProfile(prev => ({ ...prev, skills: newSkills }));
+    };
+
+    const addSkill = () => {
+      setEditedProfile(prev => ({ ...prev, skills: [...prev.skills, ''] }));
+    };
+
+    const removeSkill = (index) => {
+      const newSkills = editedProfile.skills.filter((_, i) => i !== index);
+      setEditedProfile(prev => ({ ...prev, skills: newSkills }));
+    };
+
+    const handleSubmitEdit = (e) => {
+      e.preventDefault();
+      onSave(editedProfile);
+    };
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white shadow-xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-xl font-bold text-gray-800">Edit Profile</h2>
+            <button
+              onClick={onClose}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <form onSubmit={handleSubmitEdit}>
+            <div className="grid grid-cols-1 gap-6">
+              <div className="space-y-4">
+                <h3 className="font-semibold text-[#ff8633]">Contact Information</h3>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={editedProfile.email || ''}
+                    onChange={handleChangeEdit}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Phone Number</label>
+                  <input
+                    type="tel"
+                    name="phoneNumber"
+                    value={editedProfile.phoneNumber || ''}
+                    onChange={handleChangeEdit}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="font-semibold text-[#ff8633]">About</h3>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">About You</label>
+                  <textarea
+                    name="about"
+                    value={editedProfile.about || ''}
+                    onChange={handleChangeEdit}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                    rows="4"
+                    placeholder="Tell us about yourself, your experience, and your professional background"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <h3 className="font-semibold text-[#ff8633]">Skills</h3>
+                <div className="space-y-3">
+                  {editedProfile.skills?.map((skill, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={skill}
+                        onChange={(e) => handleSkillChange(index, e.target.value)}
+                        className="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
+                        placeholder="Skill"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeSkill(index)}
+                        className="p-2 text-red-500 hover:text-red-700"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={addSkill}
+                    className="flex items-center text-sm text-[#ff8633] hover:text-[#e67328]"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Add Skill
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end space-x-3">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#ff8633] hover:bg-[#e67328]"
+              >
+                Save Changes
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    );
+  };
+
+
   const handleSaveLead = async (updatedLead) => {
     try {
       setIsSaving(true);
@@ -2476,76 +2624,7 @@ const [confirmPassword, setConfirmPassword] = useState('');
     }));
   }, []);
 
-  const handleSubmitAlert = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
 
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        toast.error("Please log in to add alerts and reminder", {
-                      position: "top-right",
-                      autoClose: 5000,
-                      hideProgressBar: false,
-                      closeOnClick: true,
-                      pauseOnHover: true,
-                      draggable: true,
-                      progress: undefined,
-                      style: { fontSize: '1.2rem' }, 
-                    });
-        navigate('/login');
-        return;
-      }
-
-      const backendData = {
-        alerttopic: formData.alerttopic,
-        reminder: formData.reminder,
-        alertdate: formData.alertdate,
-        remindertime: formData.remindertime,
-        description: formData.description,
-      };
-      console.log(backendData)
-      const res = await fetch("http://localhost:3333/api/alert", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(backendData),
-      });
-
-      if (!res.ok) {
-        const error = await res.json().catch(() => ({}));
-        throw new Error(error.message || "Alert Creation Failed!");
-      }
-
-      toast.success("Alert created successfully!", {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    style: { fontSize: '1.2rem' }, 
-                  });
-      setTimeout(() => navigate("/userProfile"), 2000);
-    } catch (err) {
-      console.error("Alert creation error:", err);
-      toast.error(err.message || "Failed to create Alert", {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    style: { fontSize: '1.2rem' }, 
-                  });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const [activeTab, setActiveTab] = useState('dashboard');
 
@@ -2712,6 +2791,24 @@ const changepass = async (data) => {
                   Phone Tracking And Analysis
                 </button>
 
+
+                <button
+                  onClick={() => setActiveTab('report')}
+                  className={`cursor-pointer w-full text-left px-4 py-2 rounded-lg ${activeTab === 'report' ? 'bg-blue-50 text-[#ff8633]' : 'text-gray-600 hover:bg-gray-100'}`}
+                >
+                  Report
+                </button>
+
+
+
+                <button
+                  onClick={() => setActiveTab('connectsocialmedia')}
+                  className={`cursor-pointer w-full text-left px-4 py-2 rounded-lg ${activeTab === 'connectsocialmedia' ? 'bg-blue-50 text-[#ff8633]' : 'text-gray-600 hover:bg-gray-100'}`}
+                >
+                  Connect Social Media
+                </button>
+
+
                 <button
                   onClick={() => setActiveTab('settings')}
                   className={`cursor-pointer w-full text-left px-4 py-2 rounded-lg ${activeTab === 'settings' ? 'bg-blue-50 text-[#ff8633]' : 'text-gray-600 hover:bg-gray-100'}`}
@@ -2777,7 +2874,7 @@ const changepass = async (data) => {
                 </div>
 
                 <div className="mt-8 flex flex-row gap-10">
-                  <button className="cursor-pointer px-4 py-2 bg-[#ff8633] text-white rounded-lg transition-colors">
+                  <button onClick={() => { setEditProfilePopupOpen(true); }} className="cursor-pointer px-4 py-2 bg-[#ff8633] text-white rounded-lg transition-colors">
                     Edit Profile
                   </button>
 
@@ -2885,6 +2982,101 @@ const changepass = async (data) => {
   </div>
 )}
 
+         {activeTab === 'connectsocialmedia' && (
+                  <div className="bg-white rounded-lg shadow p-6">
+            <h2 className="text-xl lg:text-3xl font-bold text-gray-800 mb-6">Connect to Social Media</h2>
+            
+            <div className="space-y-8">
+
+              {/* Social Media Connections */}
+              <div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* WhatsApp */}
+                  <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className="bg-green-100 p-2 rounded-full mr-3">
+                      <svg className="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-800">WhatsApp</h4>
+                      <p className="text-sm text-gray-500">Connect your WhatsApp account</p>
+                    </div>
+                    <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200">
+                      Connect
+                    </button>
+                  </div>
+
+                  {/* LinkedIn */}
+                  <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className="bg-blue-100 p-2 rounded-full mr-3">
+                      <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-800">LinkedIn</h4>
+                      <p className="text-sm text-gray-500">Connect your LinkedIn account</p>
+                    </div>
+                    <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200">
+                      Connect
+                    </button>
+                  </div>
+
+                  {/* Instagram */}
+                  <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className="bg-pink-100 p-2 rounded-full mr-3">
+                      <svg className="w-6 h-6 text-pink-600" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-800">Instagram</h4>
+                      <p className="text-sm text-gray-500">Connect your Instagram account</p>
+                    </div>
+                    <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200">
+                      Connect
+                    </button>
+                  </div>
+
+                  {/* Facebook */}
+                  <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className="bg-blue-100 p-2 rounded-full mr-3">
+                      <svg className="w-6 h-6 text-blue-700" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M22.675 0H1.325C.593 0 0 .593 0 1.325v21.351C0 23.407.593 24 1.325 24H12.82v-9.294H9.692v-3.622h3.128V8.413c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12V24h6.116c.73 0 1.323-.593 1.323-1.325V1.325C24 .593 23.407 0 22.675 0z"/>
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-800">Facebook</h4>
+                      <p className="text-sm text-gray-500">Connect your Facebook account</p>
+                    </div>
+                    <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200">
+                      Connect
+                    </button>
+                  </div>
+
+                  {/* GitHub */}
+                  <div className="flex items-center p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className="bg-gray-100 p-2 rounded-full mr-3">
+                      <svg className="w-6 h-6 text-gray-800" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+                      </svg>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-medium text-gray-800">GitHub</h4>
+                      <p className="text-sm text-gray-500">Connect your GitHub account</p>
+                    </div>
+                    <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded-md text-sm hover:bg-gray-200">
+                      Connect
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+            )}
+
+
             {activeTab === 'settings' && (
   <div className="bg-white rounded-lg shadow p-6">
     <h2 className="text-xl lg:text-3xl font-bold text-gray-800 mb-6">Account Settings</h2>
@@ -2977,6 +3169,10 @@ const changepass = async (data) => {
               <AddLeadsForm/>
             )}
 
+             {activeTab === 'realtimetracking' && (
+                <RealtimeTracking />
+            )}
+
             {activeTab === 'alertsandreminder' && (
              <AlertsandReminderForm/>
             )}
@@ -3017,6 +3213,14 @@ const changepass = async (data) => {
           lead={currentLead}
           onClose={() => setDeletePopupOpen(false)}
           onConfirm={handleDeleteLead}
+        />
+      )}
+
+       {editProfilePopupOpen && (
+        <EditProfilePopup
+          profile={user}
+          onClose={() => setEditProfilePopupOpen(false)}
+          onSave={handleSaveLead}
         />
       )}
     </div>
