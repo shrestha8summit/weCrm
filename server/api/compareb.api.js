@@ -28,6 +28,17 @@ router.post("/", async (req, res) => {
   }
 });
 
-
+router.get("/", async (req, res) => {
+  console.log("I am working for compare")
+  try {
+    const comments = await prisma.compare.findMany();
+    return res.status(200).json(comments);
+  } catch (error) {
+    console.error("Error fetching data", error);
+    return res.status(500).json({ 
+      message: "Internal server error",
+    });
+  }
+});
 
 export default router
