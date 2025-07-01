@@ -18,6 +18,9 @@ import udleads from "./api/udleads.api.js"
 import downloadLeadsRouter from './api/downloadLeads.api.js';
 import alertRouter from "./api/alerts&remainder.api.js";
 import changePass from "./api/changePass.api.js";
+import qb2b from "./api/qb2b.api.js"
+import compareb from "./api/compareb.api.js"
+
 
 import updatePassword from "./middleware/updatePassword.middleware.js";
 import jwtTokenMiddleware from "./middleware/jwtoken.middleware.js"; 
@@ -69,6 +72,8 @@ app.use("/api/udleads",udleads);
 app.use('/api/downloadLeads', downloadLeadsRouter);
 app.use("/api/alert",alertRouter);
 app.use("/api/changePass",changePass);
+app.use("/api/quareb2b/form",qb2b);
+app.use("/api/compareb/form",compareb);
 
 app.get("/api/protected-route", jwtTokenMiddleware, (req, res) => {
   res.json({

@@ -6,8 +6,6 @@ const router = express.Router();
 
 router.post("/", jwtTokenMiddleware, async (req, res) => {
   try {
-    console.log("aaudai cha hai alert");
-
     const { uid } = req.user;
     const {
       cid = "0",
