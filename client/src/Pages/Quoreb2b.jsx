@@ -172,7 +172,7 @@ const Quoreb2b = () => {
               onChange={handleChange}
               required
               className="w-full px-4 py-3 text-center rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#ff8633] focus:border-transparent transition-all"
-              placeholder='Eg. Need to maintain it in future'
+              placeholder='Type your comment...'
               autoComplete="comment"
             />
           </div>

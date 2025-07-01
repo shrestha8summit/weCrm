@@ -2785,14 +2785,6 @@ const changepass = async (data) => {
                 </button>
 
                 <button
-                  onClick={() => setActiveTab('phonetrackingandanalysis')}
-                  className={`cursor-pointer w-full text-left px-4 py-2 rounded-lg ${activeTab === 'phonetrackingandanalysis' ? 'bg-blue-50 text-[#ff8633]' : 'text-gray-600 hover:bg-gray-100'}`}
-                >
-                  Phone Tracking And Analysis
-                </button>
-
-
-                <button
                   onClick={() => setActiveTab('report')}
                   className={`cursor-pointer w-full text-left px-4 py-2 rounded-lg ${activeTab === 'report' ? 'bg-blue-50 text-[#ff8633]' : 'text-gray-600 hover:bg-gray-100'}`}
                 >
