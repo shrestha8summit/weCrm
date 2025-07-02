@@ -76,7 +76,13 @@ const AlertsandReminder = () => {
               progress: undefined,
               style: { fontSize: '1.2rem' }, 
             });
-      setTimeout(() => navigate("/userProfile"), 2000);
+          const userType = localStorage.getItem('userType'); 
+   if (userType === 'user') {
+   setTimeout(() => navigate("/userProfile"), 2000);
+   window.location.reload();
+  } else if (userType === 'admin') {
+    setTimeout(() => navigate("/dashboard"), 2000);
+  } 
     } catch (err) {
       console.error("Alert creation error:", err);
       toast.error("Failed to create Alert" || err.message , {
