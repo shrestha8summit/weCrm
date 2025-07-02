@@ -1,6 +1,7 @@
 import React, { useState, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
 const ReactToastifyCSS = lazy(() => import('react-toastify/dist/ReactToastify.css'));
 
@@ -56,19 +57,14 @@ const AlertsandReminder = () => {
         description: formData.description,
       };
       console.log(backendData)
-      const res = await fetch("http://localhost:3333/api/alert", {
-        method: 'POST',
+      const response = await axios.post("api/api/alert", 
+        backendData, {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(backendData),
+        }
       });
 
-      if (!res.ok) {
-        const error = await res.json().catch(() => ({}));
-        throw new Error(error.message || "Alert Creation Failed!");
-      }
 
       toast.success("Alert created successfully!", {
               position: "top-right",

@@ -1,6 +1,7 @@
 import React, { useState, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
 const ReactToastifyCSS = lazy(() => import('react-toastify/dist/ReactToastify.css'));
 
@@ -40,20 +41,16 @@ const Quoreb2b = () => {
 
     console.log("Sending body:", body);
 
-    const res = await fetch("http://localhost:3333/api/quareb2b/form", {
-      method: 'POST',
+    const response = await axios.post("api/api/quareb2b/form", 
+      body,
+      {
       headers: {
         'Content-Type': 'application/json'  
-      },
-      body: JSON.stringify(body),
-    });
-
-    if (!res.ok) {
-      const errorData = await res.json();
-      throw new Error(errorData.message || "Failed to submit comment");
+      }
     }
+  );
 
-    const responseData = await res.json();
+
     toast.success("Comment added Successfully!", {
       position: "top-right",
       autoClose: 5000,

@@ -44,16 +44,16 @@ const ContactQuore = () => {
         message: formData.message,
       };
 
-      const res = await fetch("http://localhost:3333/api/contactquore", {
-        method: 'POST',
+      const res = await axios.post(
+      "api/api/contactquore",
+      body,
+      {
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify(body),
-      });
+          'Content-Type': 'application/json'
+        }
+      }
+    );
 
-      const responseData = await res.json();
       toast.success("Lead Created Successfully!", {
       position: "top-right",
       autoClose: 5000,

@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -29,21 +30,20 @@ const QuoreandCompareComments = () => {
       }
 
       const apiUrl = activeTab === 'compare' 
-        ? 'http://localhost:3333/api/compareb/form' 
-        : 'http://localhost:3333/api/quareb2b/form';
+        ? 'api/api/compareb/form' 
+        : 'api/api/quareb2b/form';
       
-      const response = await fetch(apiUrl, {
+      const response = await axios.get(apiUrl, {
         headers: {
           'Authorization': `Bearer ${token}`,
         }
       });
 
-      const data = await response.json();
       
       if (activeTab === 'compare') {
-        setCompareComments(data);
+        setCompareComments(response.data);
       } else {
-        setQuoreComments(data);
+        setQuoreComments(response.data);
       }
     } catch (error) {
       console.error('Error fetching comments:', error);
