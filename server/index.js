@@ -20,37 +20,34 @@ import alertRouter from "./api/alerts&remainder.api.js";
 import changePass from "./api/changePass.api.js";
 import qb2b from "./api/qb2b.api.js"
 import compareb from "./api/compareb.api.js"
-
+import conqb2b from "./api/contactform.api.js"
 
 import updatePassword from "./middleware/updatePassword.middleware.js";
 import jwtTokenMiddleware from "./middleware/jwtoken.middleware.js"; 
 
 const app = express();
+app.use(cors({
+  origin: ['http://localhost:3000', 'https://www.quoreb2b.com/'], 
+  credentials: true,
+  exposedHeaders: ['Content-Disposition']
+}));
+
 // app.use(cors({
-//   origin: 'http://localhost:5173', 
+//   origin: function (origin, callback) {
+//     // Allow requests with no origin (like mobile apps or curl requests)
+//     if (!origin) return callback(null, true);
+    
+//     // Check if the origin matches your development pattern
+//     if (/^https?:\/\/localhost(:\d+)?$/.test(origin)) {
+//       return callback(null, true);
+//     }
+    
+//     // You can add other allowed origins here if needed
+//     callback(new Error('Not allowed by CORS'));
+//   },
 //   credentials: true,
 //   exposedHeaders: ['Content-Disposition'] 
 // }));
-
-
-app.use(cors({
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    // Check if the origin matches your development pattern
-    if (/^https?:\/\/localhost(:\d+)?$/.test(origin)) {
-      return callback(null, true);
-    }
-    
-    // You can add other allowed origins here if needed
-    callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true,
-  exposedHeaders: ['Content-Disposition'] 
-}));
-
-
 
 app.use(express.json()); 
 
@@ -74,6 +71,7 @@ app.use("/api/alert",alertRouter);
 app.use("/api/changePass",changePass);
 app.use("/api/quareb2b/form",qb2b);
 app.use("/api/compareb/form",compareb);
+app.use("/api/contactquore",conqb2b)
 
 app.get("/api/protected-route", jwtTokenMiddleware, (req, res) => {
   res.json({

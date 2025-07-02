@@ -104,6 +104,25 @@ model QB2b{
   comment String
 }
 
+model Qb2bContact{
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  firstName String
+  lastName String
+  email String
+  phone String
+  message String
+}
+
+model Qb2bLeads {
+  id String @id @default(auto()) @map("_id") @db.ObjectId
+  name String
+  email String
+  phone String
+  goals String
+  more String
+  hear String
+}
+
 model compare{
   id String @id @default(auto()) @map("_id") @db.ObjectId
   firstName String
