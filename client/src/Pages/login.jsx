@@ -1,3 +1,7 @@
+
+
+
+
 import axios from 'axios';
 import React, { useState, lazy, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -81,15 +85,10 @@ const Login = () => {
 }
       }
     } catch (error) {
-     console.error("Login error:", error);
-    
-    const errorMessage = axios.isCancel(error)
-      ? error.message // "Request timed out. Please try again."
-      : error.response?.data?.message 
-      ? error.response.data.message
-      : error.message || "Login failed. Please check your credentials.";
-    
-    alert(errorMessage);
+      console.error("Login error:", error);
+      alert(error.name === 'AbortError' 
+        ? "Request timed out. Please try again." 
+        : error.message || "Login failed. Please check your credentials.");
     } finally {
       setIsLoading(false);
     }
